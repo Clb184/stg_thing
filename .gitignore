@@ -1,0 +1,9 @@
+out/ 
+.vs/
+build/
+*.exe 
+include/sal.h
+demo/*
+CMakeSettings.json
+*~
+*.swp
