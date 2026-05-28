@@ -1,7 +1,20 @@
 #include "XASM2/Command.hpp"
 #include "XASM2/VM.hpp"
+#include "cstdio"
+#include "cstdlib"
 
 int XASM2Move(xasm2_vm_t* vm, float dt) {
+
+	//Before moving logic, check if there's time pending
+	if(vm->wait_time > 0) {
+		vm->wait_time -= dt;
+		return 0;
+	}
+	// Or if VM is halted or terminated
+	if((XASM2VM_HALT | XASM2VM_TERMINATE) & vm->flags) {
+		return 0;
+	}
+
 	// Setup all
 	uint8_t* cmd = vm->cmd;
 	xasm2_num_t r1 = vm->r1, r2 = vm->r2, r3 = vm->r3, r4 = vm->r4;
@@ -118,17 +131,17 @@ start:
 	case XASM2_CALL:
 	call_proc:
 		cmd++;
-		vm->stack[stack_ptr++] = int((cmd + 4) - src_cmd);
+		vm->stack[stack_ptr++] = int((cmd + 4) - vm->src_cmd);
 		vm->stack[stack_ptr++] = frame_ptr;
 		frame_ptr = stack_ptr;
 
-		cmd = src_cmd + *(uint8_t*)cmd;
+		cmd = vm->src_cmd + *(uint8_t*)cmd;
 		goto start;
 
 	case XASM2_RET:
 		stack_ptr--;
 		frame_ptr = vm->stack[stack_ptr--];
-		cmd = src_cmd + int(vm->stack[stack_ptr]);
+		cmd = vm->src_cmd + int(vm->stack[stack_ptr]);
 		
 		goto start;
 
@@ -147,13 +160,14 @@ start:
 	case XASM2_JMP:
 	jmp_offset:
 		cmd++;
-		cmd = src_cmd + *(uint8_t*)cmd;
+		cmd = vm->src_cmd + *(uint8_t*)cmd;
 		goto start;
 
 	case XASM2_WAIT:
 		cmd++;
+		vm->wait_time = *(float*)cmd;
 		cmd += sizeof(float);
-		goto start;
+		goto exit;
 	
 	// Arithmetic
 	case XASM2_ADD:
@@ -198,8 +212,30 @@ start:
 		cmd++;
 		r1.i--;
 		goto start;
-
+	
+	default:
+		goto exception;
 	}
+
+exception:
+	fprintf(stdout, "XASM2 exception | CMD was: 0x%p\n", cmd);
+	fprintf(stdout, "r1 i: %d f: %f\n", r1.i, r1.f);
+	fprintf(stdout, "r2 i: %d f: %f\n", r2.i, r2.f);
+	fprintf(stdout, "r3 i: %d f: %f\n", r3.i, r3.f);
+	fprintf(stdout, "r4 i: %d f: %f\n", r4.i, r4.f);
+	fprintf(stdout, "Frame pointer was: %d\n", frame_ptr);
+	fprintf(stdout, "Stack pointer was: %d\n", stack_ptr);
+	fprintf(stdout, "VM WILL TERMINATE\n");
+	vm->flags |= XASM2VM_TERMINATE;
+
+exit:
+	vm->cmd = cmd;
+	vm->r1 = r1;
+	vm->r2 = r2;
+	vm->r3 = r3;
+	vm->r4 = r4;
+	vm->frame_ptr = frame_ptr;
+	vm->stack_ptr = stack_ptr;
 
 	// A return of 0 means OK
 	return 0;

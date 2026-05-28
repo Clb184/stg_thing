@@ -26,13 +26,23 @@ union xasm2_num_t {
 	constexpr float operator=(double x) { f = x; return x; }
 
 	constexpr operator int() { return i; }
+	constexpr operator unsigned int() { return i; }
 	constexpr operator float() { return f; }
 	constexpr operator double() { return f; }
+};
+
+enum XASM2VM_FLAG : uint32_t {
+	XASM2VM_HALT = 1,
+	XASM2VM_TERMINATE,
 };
 
 typedef struct {
 	uint8_t* src_cmd = nullptr;
 	uint8_t* cmd = nullptr;
+	int* member_reg = nullptr;
+	int* global_reg = nullptr;
+	uint32_t flags = 0;
+	float wait_time = 0.0f;
 	xasm2_num_t r1 = 0;
 	xasm2_num_t r2 = 0;
 	xasm2_num_t r3 = 0;

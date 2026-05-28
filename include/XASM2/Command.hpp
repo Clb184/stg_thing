@@ -38,6 +38,8 @@ enum XASM2_CMD : uint8_t {
 	XASM2_JMPT, // (int) offset // Jump if true
 	XASM2_JMPF, // (int) offset // Jump if false
 	XASM2_WAIT, // (float) time // Wait for seconds
+	XASM2_HALT, // Stops the VM
+	XASM2_EXIT, // Terminates the VM
 
 	// Math (Integer)
 	XASM2_ADD = 0x20, // Add (r1 += r2)
