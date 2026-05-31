@@ -52,6 +52,8 @@ typedef struct {
 	xasm2_num_t stack[XASM2_STACK_SIZE];
 } xasm2_vm_t;
 
+void XASM2RandomInit(uint64_t seed);
+
 int XASM2Move(xasm2_vm_t* vm, float dt);
 
 #endif
