@@ -51,7 +51,7 @@ enum XASM2_CMD : uint8_t {
 	XASM2_DIV, // r1 /= r2
 	XASM2_DIVC, // r1 /= c
 	XASM2_MOD, // r1 %= r2
-	XASM2_MOC, // r1 %= c
+	XASM2_MODC, // r1 %= c
 	XASM2_SQRT, // sqrt(r1)
 	XASM2_ITOF, // itof(r1)
 	XASM2_INC, // r1++
@@ -82,6 +82,10 @@ enum XASM2_CMD : uint8_t {
 	XASM2_SHLC, // r1 >>= c
 	XASM2_SHR, // r1 <<= r2
 	XASM2_SHRC, // r1 <<= c
+	XASM2_MIN, // min(r1, r2)
+	XASM2_MINC, // min(r1, c)
+	XASM2_MAX, // max(r1, r2)
+	XASM2_MAXC, // max(r1, c)
 
 	// Math (float)
 	XASM2_ADDF = 0x50,
@@ -117,6 +121,10 @@ enum XASM2_CMD : uint8_t {
 	XASM2_COS,
 	XASM2_NORMRAD,
 	XASM2_ABSF,
+	XASM2_MINF, // min(r1, r2)
+	XASM2_MINFC, // min(r1, c)
+	XASM2_MAXF, // max(r1, r2)
+	XASM2_MAXFC, // max(r1, c)
 
 };
 

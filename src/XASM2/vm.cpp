@@ -4,6 +4,7 @@
 #include "cstdlib"
 #include "cmath"
 
+#include "cassert"
 #include "random"
 
 // Random devices
@@ -331,7 +332,7 @@ start:
 	
 	case XASM2_EQC:
 		vm->cmd++;
-		vm->r1.i = vm->r1.i == *(int)cmd;
+		vm->r1.i = vm->r1.i == *(int*)cmd;
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -342,7 +343,7 @@ start:
 	
 	case XASM2_NEQC:
 		vm->cmd++;
-		vm->r1.i = vm->r1.i != *(int)cmd;
+		vm->r1.i = vm->r1.i != *(int*)cmd;
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -399,6 +400,28 @@ start:
 		if(vm->r1.i < 0) vm->r1.i = -vm->r1.i;
 		goto start;
 	
+	case XASM2_MIN:
+		vm->cmd++;
+		vm->r1.i = (vm->r1.i < vm->r2.i) ? vm->r1.i : vm->r2.i;
+		goto start;
+	
+	case XASM2_MINC:
+		vm->cmd++;
+		vm->r1.i = (vm->r1.i < *(int*)cmd) ? vm->r1.i : *(int*)cmd;
+		vm->cmd += sizeof(int);
+		goto start;
+
+	case XASM2_MAX:
+		vm->cmd++;
+		vm->r1.i = (vm->r1.i > vm->r2.i) ? vm->r1.i : vm->r2.i;
+		goto start;
+	
+	case XASM2_MAXC:
+		vm->cmd++;
+		vm->r1.i = (vm->r1.i > *(int*)cmd) ? vm->r1.i : *(int*)cmd;
+		vm->cmd += sizeof(int);
+		goto start;
+
 	// Float ops
 	case XASM2_ADDF:
 		vm->cmd++;
@@ -578,6 +601,28 @@ start:
 		if(vm->r1.f < 0.0f) vm->r1.f = -vm->r1.f;
 		goto start;
 	
+	case XASM2_MINF:
+		vm->cmd++;
+		vm->r1.f = (vm->r1.f < vm->r2.f) ? vm->r1.f : vm->r2.f;
+		goto start;
+	
+	case XASM2_MINFC:
+		vm->cmd++;
+		vm->r1.f = (vm->r1.f < *(float*)cmd) ? vm->r1.f : *(float*)cmd;
+		vm->cmd += sizeof(float);
+		goto start;
+
+	case XASM2_MAXF:
+		vm->cmd++;
+		vm->r1.f = (vm->r1.f > vm->r2.f) ? vm->r1.f : vm->r2.f;
+		goto start;
+	
+	case XASM2_MAXFC:
+		vm->cmd++;
+		vm->r1.f = (vm->r1.f > *(float*)cmd) ? vm->r1.f : *(float*)cmd;
+		vm->cmd += sizeof(float);
+		goto start;
+
 	default:
 		goto exception;
 	}
