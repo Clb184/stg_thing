@@ -3,7 +3,7 @@
 
 #include "cstdint"
 
-const int XASM2_STACK_SIZE = 64;
+const int XASM2_STACK_SIZE = 16;
 
 union xasm2_num_t {
 	int32_t i;
@@ -36,7 +36,7 @@ enum XASM2VM_FLAG : uint32_t {
 	XASM2VM_TERMINATE,
 };
 
-typedef struct {
+typedef struct xasm2_vm_t {
 	uint8_t* src_cmd = nullptr;
 	uint8_t* cmd = nullptr;
 	int* member_reg = nullptr;
@@ -50,10 +50,12 @@ typedef struct {
 	uint32_t frame_ptr = 0;
 	uint32_t stack_ptr = 0;
 	xasm2_num_t stack[XASM2_STACK_SIZE];
-} xasm2_vm_t;
+};
+
+typedef int(*xasm2_vm_ext)(uint8_t, xasm2_vm_t*, void*);
 
 void XASM2RandomInit(uint64_t seed);
 
-int XASM2Move(xasm2_vm_t* vm, float dt);
+int XASM2Move(xasm2_vm_t* vm, float dt, xasm2_vm_ext extension, void* data);
 
 #endif

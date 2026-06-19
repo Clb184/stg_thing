@@ -18,17 +18,22 @@ void XASM2RandomInit(uint64_t seed) {
 	g_RandomDevice.seed(seed);
 }
 
-int XASM2Move(xasm2_vm_t* vm, float dt) {
+int XASM2Move(xasm2_vm_t* vm, float dt, xasm2_vm_ext extension, void* data) {
 	assert(nullptr != vm);
+	assert(nullptr != vm->src_cmd);
+	assert(nullptr != vm->cmd);
 	assert(nullptr != vm->stack);
+	// Or if VM is halted or terminated
+	if((XASM2VM_HALT | XASM2VM_TERMINATE) & vm->flags) {
+		return 0;
+	}
+
 	//Before moving logic, check if there's time pending
 	if(vm->wait_time > 0) {
 		vm->wait_time -= dt;
 		return 0;
-	}
-	// Or if VM is halted or terminated
-	if((XASM2VM_HALT | XASM2VM_TERMINATE) & vm->flags) {
-		return 0;
+	} else {
+	//	printf("finish sleep\n");
 	}
 
 start:
@@ -43,11 +48,11 @@ start:
 
 	case XASM2_LOAD:
 		vm->cmd++;
-		switch(*cmd) {
-			case 0: vm->r1 = vm->stack[vm->frame_ptr + *(int*)(cmd + 1)]; break;
-			case 1: vm->r2 = vm->stack[vm->frame_ptr + *(int*)(cmd + 1)]; break;
-			case 2: vm->r3 = vm->stack[vm->frame_ptr + *(int*)(cmd + 1)]; break;
-			case 3: vm->r4 = vm->stack[vm->frame_ptr + *(int*)(cmd + 1)]; break;
+		switch(*vm->cmd) {
+			case 0: vm->r1 = vm->stack[vm->frame_ptr + *(int*)(vm->cmd + 1)]; break;
+			case 1: vm->r2 = vm->stack[vm->frame_ptr + *(int*)(vm->cmd + 1)]; break;
+			case 2: vm->r3 = vm->stack[vm->frame_ptr + *(int*)(vm->cmd + 1)]; break;
+			case 3: vm->r4 = vm->stack[vm->frame_ptr + *(int*)(vm->cmd + 1)]; break;
 		}
 		
 		vm->cmd += 1 + sizeof(int);
@@ -55,11 +60,11 @@ start:
 
 	case XASM2_LOADC:
 		vm->cmd++;
-		switch(*cmd) {
-			case 0: vm->r1 = *(xasm2_num_t*)(cmd + 1); break;
-			case 1: vm->r2 = *(xasm2_num_t*)(cmd + 1); break;
-			case 2: vm->r3 = *(xasm2_num_t*)(cmd + 1); break;
-			case 3: vm->r4 = *(xasm2_num_t*)(cmd + 1); break;
+		switch(*vm->cmd) {
+			case 0: vm->r1 = *(xasm2_num_t*)(vm->cmd + 1); break;
+			case 1: vm->r2 = *(xasm2_num_t*)(vm->cmd + 1); break;
+			case 2: vm->r3 = *(xasm2_num_t*)(vm->cmd + 1); break;
+			case 3: vm->r4 = *(xasm2_num_t*)(vm->cmd + 1); break;
 		}
 		
 		vm->cmd += 1 + sizeof(int);
@@ -67,29 +72,29 @@ start:
 	
 	case XASM2_STORE:
 		vm->cmd++;
-		vm->stack[vm->frame_ptr + *(int*)cmd] = vm->r1;
+		vm->stack[vm->frame_ptr + *(int*)vm->cmd] = vm->r1;
 		vm->cmd += sizeof(int);
 		goto start;
 
 	case XASM2_LOADM:
 		assert(nullptr != vm->member_reg);
 		vm->cmd++;
-		switch(*cmd) {
-			case 0: vm->r1 = (xasm2_num_t)vm->member_reg[*(int*)(cmd + 1)]; break;
-			case 1: vm->r2 = (xasm2_num_t)vm->member_reg[*(int*)(cmd + 1)]; break;
-			case 2: vm->r3 = (xasm2_num_t)vm->member_reg[*(int*)(cmd + 1)]; break;
-			case 3: vm->r4 = (xasm2_num_t)vm->member_reg[*(int*)(cmd + 1)]; break;
+		switch(*vm->cmd) {
+			case 0: vm->r1 = (xasm2_num_t)vm->member_reg[*(int*)(vm->cmd + 1)]; break;
+			case 1: vm->r2 = (xasm2_num_t)vm->member_reg[*(int*)(vm->cmd + 1)]; break;
+			case 2: vm->r3 = (xasm2_num_t)vm->member_reg[*(int*)(vm->cmd + 1)]; break;
+			case 3: vm->r4 = (xasm2_num_t)vm->member_reg[*(int*)(vm->cmd + 1)]; break;
 		}
 		vm->cmd += 1 + sizeof(int);
 		goto start;
 	case XASM2_LOADG:
 		assert(nullptr != vm->global_reg);
 		vm->cmd++;
-		switch(*cmd) {
-			case 0: vm->r1 = (xasm2_num_t)vm->global_reg[*(int*)(cmd + 1)]; break;
-			case 1: vm->r2 = (xasm2_num_t)vm->global_reg[*(int*)(cmd + 1)]; break;
-			case 2: vm->r3 = (xasm2_num_t)vm->global_reg[*(int*)(cmd + 1)]; break;
-			case 3: vm->r4 = (xasm2_num_t)vm->global_reg[*(int*)(cmd + 1)]; break;
+		switch(*vm->cmd) {
+			case 0: vm->r1 = (xasm2_num_t)vm->global_reg[*(int*)(vm->cmd + 1)]; break;
+			case 1: vm->r2 = (xasm2_num_t)vm->global_reg[*(int*)(vm->cmd + 1)]; break;
+			case 2: vm->r3 = (xasm2_num_t)vm->global_reg[*(int*)(vm->cmd + 1)]; break;
+			case 3: vm->r4 = (xasm2_num_t)vm->global_reg[*(int*)(vm->cmd + 1)]; break;
 		}
 		vm->cmd += 1 + sizeof(int);
 		goto start;
@@ -97,26 +102,26 @@ start:
 	case XASM2_STOREM:
 		assert(nullptr != vm->member_reg);
 		vm->cmd++;
-		vm->member_reg[*(int*)cmd] = vm->r1;
+		vm->member_reg[*(int*)vm->cmd] = vm->r1;
 		vm->cmd += sizeof(int);
 		goto start;
 
 	case XASM2_STOREG:
 		assert(nullptr != vm->global_reg);
 		vm->cmd++;
-		vm->global_reg[*(int*)cmd] = vm->r1;
+		vm->global_reg[*(int*)vm->cmd] = vm->r1;
 		vm->cmd += sizeof(int);
 		goto start;
 
 	case XASM2_SET:
 		vm->cmd++;
-		vm->stack[vm->frame_ptr + *(int*)cmd] = *(xasm2_num_t*)(cmd + sizeof(int));
+		vm->stack[vm->frame_ptr + *(int*)vm->cmd] = *(xasm2_num_t*)(vm->cmd + sizeof(int));
 		vm->cmd += sizeof(int) + sizeof(xasm2_num_t);
 		goto start;
 	
 	case XASM2_MOV:
 		vm->cmd++;
-		vm->stack[vm->frame_ptr + *(int*)cmd] = vm->stack[vm->frame_ptr + *(int*)(cmd + sizeof(int))];
+		vm->stack[vm->frame_ptr + *(int*)vm->cmd] = vm->stack[vm->frame_ptr + *(int*)(vm->cmd + sizeof(int))];
 		vm->cmd += 2 * sizeof(int);
 		goto start;
 
@@ -127,11 +132,12 @@ start:
 	
 	case XASM2_POP:
 		vm->cmd++;
-		switch(*cmd) {
-			case 0: vm->r1 = vm->stack[vm->stack_ptr--]; break;
-			case 1: vm->r2 = vm->stack[vm->stack_ptr--]; break;
-			case 2: vm->r3 = vm->stack[vm->stack_ptr--]; break;
-			case 3: vm->r4 = vm->stack[vm->stack_ptr--]; break;
+		vm->stack_ptr--;
+		switch(*vm->cmd) {
+			case 0: vm->r1 = vm->stack[vm->stack_ptr]; break;
+			case 1: vm->r2 = vm->stack[vm->stack_ptr]; break;
+			case 2: vm->r3 = vm->stack[vm->stack_ptr]; break;
+			case 3: vm->r4 = vm->stack[vm->stack_ptr]; break;
 		}
 
 		vm->cmd++;
@@ -144,12 +150,12 @@ start:
 
 	case XASM2_ENTER:
 		vm->cmd++;
-		vm->stack_ptr += *(int*)cmd;
+		vm->stack_ptr += *(int*)(vm->cmd);
+		vm->cmd += sizeof(int);
 		goto start;
 
 	case XASM2_LEAVE:
 		vm->cmd++;
-		vm->stack_ptr = vm->frame_ptr;
 		goto start;
 
 	// Call procedure
@@ -167,16 +173,23 @@ start:
 	case XASM2_CALL:
 	call_proc:
 		vm->cmd++;
-		vm->stack[vm->stack_ptr++] = int((cmd + 4) - vm->src_cmd);
+		vm->stack[vm->stack_ptr++] = int((vm->cmd + 4) - vm->src_cmd);
+		printf("Return offset -> %x\n", vm->stack[vm->stack_ptr - 1]);
+		printf("Src script: %p\n", vm->src_cmd);
+		printf("Going to: %p\n", vm->src_cmd + *(uint32_t*)vm->cmd);
+		printf("This: %p, Return: %x\n", vm->cmd - 1, int((vm->cmd + 4) - vm->src_cmd));
 		vm->stack[vm->stack_ptr++] = vm->frame_ptr;
 		vm->frame_ptr = vm->stack_ptr;
 
-		vm->cmd = vm->src_cmd + *(uint8_t*)cmd;
+		vm->cmd = vm->src_cmd + *(uint32_t*)vm->cmd;
 		goto start;
 
 	case XASM2_RET:
+		vm->stack_ptr = vm->frame_ptr;
+		printf("Return offset -> %x\n", vm->stack[vm->stack_ptr - 2]);
 		vm->stack_ptr--;
 		vm->frame_ptr = vm->stack[vm->stack_ptr--];
+		printf("Returning to %p\n", vm->src_cmd + int(vm->stack[vm->stack_ptr]));
 		vm->cmd = vm->src_cmd + int(vm->stack[vm->stack_ptr]);
 		
 		goto start;
@@ -196,15 +209,26 @@ start:
 	case XASM2_JMP:
 	jmp_offset:
 		vm->cmd++;
-		vm->cmd = vm->src_cmd + *(uint8_t*)cmd;
+		vm->cmd = vm->src_cmd + *(uint8_t*)vm->cmd;
 		goto start;
 
 	case XASM2_WAIT:
 		vm->cmd++;
-		vm->wait_time = *(float*)cmd;
+		vm->wait_time = *(float*)vm->cmd;
 		vm->cmd += sizeof(float);
 		goto exit;
 	
+	case XASM2_HALT:
+		vm->cmd++;
+		vm->flags |= XASM2VM_HALT;
+		printf("VM WILL HALT P: %p\n", vm);
+		goto exit;
+
+	case XASM2_EXIT:
+		vm->cmd++;
+		vm->flags |= XASM2VM_TERMINATE;
+		goto terminate;	
+
 	// Arithmetic
 	case XASM2_ADD:
 		vm->cmd++;
@@ -213,7 +237,7 @@ start:
 
 	case XASM2_ADDC:
 		vm->cmd++;
-		vm->r1.i += *(int*)cmd;
+		vm->r1.i += *(int*)(vm->cmd);
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -224,7 +248,7 @@ start:
 
 	case XASM2_SUBC:
 		vm->cmd++;
-		vm->r1.i -= *(int*)cmd;
+		vm->r1.i -= *(int*)(vm->cmd);
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -235,7 +259,7 @@ start:
 
 	case XASM2_MULC:
 		vm->cmd++;
-		vm->r1.i *= *(int*)cmd;
+		vm->r1.i *= *(int*)(vm->cmd);
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -246,7 +270,7 @@ start:
 
 	case XASM2_DIVC:
 		vm->cmd++;
-		vm->r1.i /= *(int*)cmd;
+		vm->r1.i /= *(int*)(vm->cmd);
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -257,7 +281,7 @@ start:
 	
 	case XASM2_MODC:
 		vm->cmd++;
-		vm->r1.i %= *(int*)cmd;
+		vm->r1.i %= *(int*)(vm->cmd);
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -288,7 +312,7 @@ start:
 	
 	case XASM2_GREATC:
 		vm->cmd++;
-		vm->r1.i = vm->r1.i > *(int*)cmd;
+		vm->r1.i = vm->r1.i > *(int*)(vm->cmd);
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -299,7 +323,7 @@ start:
 	
 	case XASM2_GEQC:
 		vm->cmd++;
-		vm->r1.i = vm->r1.i >= *(int*)cmd;
+		vm->r1.i = vm->r1.i >= *(int*)(vm->cmd);
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -310,7 +334,7 @@ start:
 	
 	case XASM2_LESSC:
 		vm->cmd++;
-		vm->r1.i = vm->r1.i < *(int*)cmd;
+		vm->r1.i = vm->r1.i < *(int*)(vm->cmd);
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -321,7 +345,7 @@ start:
 	
 	case XASM2_LEQC:
 		vm->cmd++;
-		vm->r1.i = vm->r1.i <= *(int*)cmd;
+		vm->r1.i = vm->r1.i <= *(int*)(vm->cmd);
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -332,7 +356,7 @@ start:
 	
 	case XASM2_EQC:
 		vm->cmd++;
-		vm->r1.i = vm->r1.i == *(int*)cmd;
+		vm->r1.i = vm->r1.i == *(int*)(vm->cmd);
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -343,7 +367,7 @@ start:
 	
 	case XASM2_NEQC:
 		vm->cmd++;
-		vm->r1.i = vm->r1.i != *(int*)cmd;
+		vm->r1.i = vm->r1.i != *(int*)(vm->cmd);
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -359,7 +383,7 @@ start:
 	
 	case XASM2_ANDC:
 		vm->cmd++;
-		vm->r1.i &= *(int*)cmd;
+		vm->r1.i &= *(int*)(vm->cmd);
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -370,7 +394,7 @@ start:
 	
 	case XASM2_ORC:
 		vm->cmd++;
-		vm->r1.i |= *(int*)cmd;
+		vm->r1.i |= *(int*)(vm->cmd);
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -381,7 +405,7 @@ start:
 	
 	case XASM2_XORC:
 		vm->cmd++;
-		vm->r1.i ^= *(int*)cmd;
+		vm->r1.i ^= *(int*)(vm->cmd);
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -407,7 +431,7 @@ start:
 	
 	case XASM2_MINC:
 		vm->cmd++;
-		vm->r1.i = (vm->r1.i < *(int*)cmd) ? vm->r1.i : *(int*)cmd;
+		vm->r1.i = (vm->r1.i < *(int*)vm->cmd) ? vm->r1.i : *(int*)vm->cmd;
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -418,7 +442,7 @@ start:
 	
 	case XASM2_MAXC:
 		vm->cmd++;
-		vm->r1.i = (vm->r1.i > *(int*)cmd) ? vm->r1.i : *(int*)cmd;
+		vm->r1.i = (vm->r1.i > *(int*)vm->cmd) ? vm->r1.i : *(int*)vm->cmd;
 		vm->cmd += sizeof(int);
 		goto start;
 
@@ -430,7 +454,7 @@ start:
 	
 	case XASM2_ADDFC:
 		vm->cmd++;
-		vm->r1.f += *(float*)cmd;
+		vm->r1.f += *(float*)vm->cmd;
 		vm->cmd += sizeof(float);
 		goto start;
 
@@ -441,7 +465,7 @@ start:
 	
 	case XASM2_SUBFC:
 		vm->cmd++;
-		vm->r1.f -= *(float*)cmd;
+		vm->r1.f -= *(float*)vm->cmd;
 		vm->cmd += sizeof(float);
 		goto start;
 
@@ -452,7 +476,7 @@ start:
 	
 	case XASM2_MULFC:
 		vm->cmd++;
-		vm->r1.f *= *(float*)cmd;
+		vm->r1.f *= *(float*)vm->cmd;
 		vm->cmd += sizeof(float);
 		goto start;
 
@@ -463,7 +487,7 @@ start:
 	
 	case XASM2_DIVFC:
 		vm->cmd++;
-		vm->r1.f /= *(float*)cmd;
+		vm->r1.f /= *(float*)vm->cmd;
 		vm->cmd += sizeof(float);
 		goto start;
 
@@ -474,7 +498,7 @@ start:
 	
 	case XASM2_MODFC:
 		vm->cmd++;
-		vm->r1.f = fmodf(vm->r1.f, *(float*)cmd);
+		vm->r1.f = fmodf(vm->r1.f, *(float*)vm->cmd);
 		vm->cmd += sizeof(float);
 		goto start;
 
@@ -495,7 +519,7 @@ start:
 	
 	case XASM2_GREATFC:
 		vm->cmd++;
-		vm->r1.f = vm->r1.f > *(float*)cmd;
+		vm->r1.f = vm->r1.f > *(float*)vm->cmd;
 		vm->cmd += sizeof(float);
 		goto start;
 
@@ -506,7 +530,7 @@ start:
 	
 	case XASM2_GEQFC:
 		vm->cmd++;
-		vm->r1.f = vm->r1.f >= *(float*)cmd;
+		vm->r1.f = vm->r1.f >= *(float*)vm->cmd;
 		vm->cmd += sizeof(float);
 		goto start;
 
@@ -517,7 +541,7 @@ start:
 	
 	case XASM2_LESSFC:
 		vm->cmd++;
-		vm->r1.f = vm->r1.f < *(float*)cmd;
+		vm->r1.f = vm->r1.f < *(float*)vm->cmd;
 		vm->cmd += sizeof(float);
 		goto start;
 
@@ -528,7 +552,7 @@ start:
 	
 	case XASM2_LEQFC:
 		vm->cmd++;
-		vm->r1.f = vm->r1.f <= *(float*)cmd;
+		vm->r1.f = vm->r1.f <= *(float*)vm->cmd;
 		vm->cmd += sizeof(float);
 		goto start;
 
@@ -539,7 +563,7 @@ start:
 	
 	case XASM2_EQFC:
 		vm->cmd++;
-		vm->r1.f = vm->r1.f == *(float*)cmd;
+		vm->r1.f = vm->r1.f == *(float*)vm->cmd;
 		vm->cmd += sizeof(float);
 		goto start;
 
@@ -550,7 +574,7 @@ start:
 	
 	case XASM2_NEQFC:
 		vm->cmd++;
-		vm->r1.f = vm->r1.f != *(float*)cmd;
+		vm->r1.f = vm->r1.f != *(float*)vm->cmd;
 		vm->cmd += sizeof(float);
 		goto start;
 
@@ -608,7 +632,7 @@ start:
 	
 	case XASM2_MINFC:
 		vm->cmd++;
-		vm->r1.f = (vm->r1.f < *(float*)cmd) ? vm->r1.f : *(float*)cmd;
+		vm->r1.f = (vm->r1.f < *(float*)vm->cmd) ? vm->r1.f : *(float*)vm->cmd;
 		vm->cmd += sizeof(float);
 		goto start;
 
@@ -619,22 +643,27 @@ start:
 	
 	case XASM2_MAXFC:
 		vm->cmd++;
-		vm->r1.f = (vm->r1.f > *(float*)cmd) ? vm->r1.f : *(float*)cmd;
+		vm->r1.f = (vm->r1.f > *(float*)vm->cmd) ? vm->r1.f : *(float*)vm->cmd;
 		vm->cmd += sizeof(float);
 		goto start;
 
 	default:
+		vm->cmd++;
+		if(0 != extension && (0 == extension(*cmd, vm, data))) {
+			goto start;
+		}
 		goto exception;
 	}
 
 exception:
-	fprintf(stdout, "XASM2 exception | CMD was: 0x%p\n", cmd);
+	fprintf(stdout, "XASM2 exception | CMD was: 0x%p (0x%x, %d)\n", cmd, *cmd, *cmd);
 	fprintf(stdout, "r1 i: %d f: %f\n", vm->r1.i, vm->r1.f);
 	fprintf(stdout, "r2 i: %d f: %f\n", vm->r2.i, vm->r2.f);
 	fprintf(stdout, "r3 i: %d f: %f\n", vm->r3.i, vm->r3.f);
 	fprintf(stdout, "r4 i: %d f: %f\n", vm->r4.i, vm->r4.f);
 	fprintf(stdout, "Frame pointer was: %d\n", vm->frame_ptr);
 	fprintf(stdout, "Stack pointer was: %d\n", vm->stack_ptr);
+terminate:
 	fprintf(stdout, "VM WILL TERMINATE\n");
 	vm->flags |= XASM2VM_TERMINATE;
 
