@@ -3,6 +3,8 @@ project(shooting LANGUAGES C CXX)
 
 add_subdirectory(deps/XPFW)
 
+set(CMAKE_CXX_STANDARD 20)
+
 file(GLOB src src/*.cpp src/XASM2/*.cpp)
 add_executable(shooting ${src})
 target_link_libraries(shooting XPFW)
@@ -11,5 +13,5 @@ set_target_properties(shooting PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRE
 
 file(GLOB src_xasm2 xasm2/*.cpp)
 add_executable(xasm2c ${src_xasm2})
-target_include_directories(xasm2c PUBLIC include/XASM2/)
+target_include_directories(xasm2c PUBLIC include/XASM2/ include/)
 set_target_properties(xasm2c PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
