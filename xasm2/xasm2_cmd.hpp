@@ -61,6 +61,8 @@ inline const std::unordered_map<std::string, uint8_t> cmd2byte = { // Table with
 	{"wait", XASM2_WAIT},
 	{"halt", XASM2_HALT},
 	{"exit", XASM2_EXIT},
+	{"sti", XASM2_STI},
+	{"cli", XASM2_CLI},
 		
 	{"add", XASM2_ADD},
 	{"addc", XASM2_ADDC},
@@ -177,6 +179,7 @@ inline const std::map<uint8_t, std::vector<ARG_TYPE>> g_Args = { // Default base
 	{XASM2_JMPT, {ARG_ADDRESS}},
 	{XASM2_JMPF, {ARG_ADDRESS}},
 	{XASM2_WAIT, {ARG_FLOAT}},
+	{XASM2_STI, {ARG_ADDRESS}},
 
 	{XASM2_ADDC, {ARG_INTEGER}},
 	{XASM2_SUBC, {ARG_INTEGER}},

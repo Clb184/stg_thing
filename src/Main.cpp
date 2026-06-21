@@ -20,16 +20,8 @@ size_t LoadData(const char* name, char** data) {
 
 inline xasm2_vm_t vm;
 
-int XASM2ExtensionExample(uint8_t cmd, xasm2_vm_t* vm, void*) {
-	switch(cmd) {
-		case 0x80: printf("r1: %d, %.3f; r2: %d, %.3f; r3: %d, %.3f; r4: %d, %.3f\n", vm->r1.i, vm->r1.f, vm->r2.i, vm->r2.f, vm->r3.i, vm->r3.f, vm->r4.i, vm->r4.f); break;
-		default: return -1;
-	}
-	return 0;
-}
-
 void Move(window_t* window, float dt, void* data) {
-	XASM2Move(&vm, dt, XASM2ExtensionExample, nullptr);
+	XASM2Move(&vm, dt, nullptr, nullptr);
 	if(!(vm.flags & (XASM2VM_TERMINATE | XASM2VM_HALT))) {
 		if(vm.wait_time <= 0.0) {
 			printf("r1: %d dt: %.4f\n", vm.r1.i, dt);

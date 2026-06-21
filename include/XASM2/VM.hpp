@@ -42,7 +42,9 @@ typedef struct xasm2_vm_t {
 	int* member_reg = nullptr;
 	int* global_reg = nullptr;
 	uint32_t flags = 0;
+	uint32_t interrupt = 0;
 	float wait_time = 0.0f;
+	float life_time = 0.0f;
 	xasm2_num_t r1 = 0;
 	xasm2_num_t r2 = 0;
 	xasm2_num_t r3 = 0;
@@ -57,5 +59,7 @@ typedef int(*xasm2_vm_ext)(uint8_t, xasm2_vm_t*, void*);
 void XASM2RandomInit(uint64_t seed);
 
 int XASM2Move(xasm2_vm_t* vm, float dt, xasm2_vm_ext extension, void* data);
+
+int XASM2TriggerInterrupt(xasm2_vm_t* vm);
 
 #endif

@@ -40,6 +40,8 @@ enum XASM2_CMD : uint8_t {
 	XASM2_WAIT, // (float) time // Wait for seconds
 	XASM2_HALT, // Stops the VM
 	XASM2_EXIT, // Terminates the VM
+	XASM2_STI, // Set interrupt
+	XASM2_CLI, // Clear interrupt
 
 	// Math (Integer)
 	XASM2_ADD = 0x20, // r1 += r2

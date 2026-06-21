@@ -27,13 +27,12 @@ int XASM2Move(xasm2_vm_t* vm, float dt, xasm2_vm_ext extension, void* data) {
 	if((XASM2VM_HALT | XASM2VM_TERMINATE) & vm->flags) {
 		return 0;
 	}
+	vm->life_time += dt;
 
 	//Before moving logic, check if there's time pending
 	if(vm->wait_time > 0) {
 		vm->wait_time -= dt;
 		return 0;
-	} else {
-	//	printf("finish sleep\n");
 	}
 
 start:
@@ -174,10 +173,10 @@ start:
 	call_proc:
 		vm->cmd++;
 		vm->stack[vm->stack_ptr++] = int((vm->cmd + 4) - vm->src_cmd);
-		printf("Return offset -> %x\n", vm->stack[vm->stack_ptr - 1]);
-		printf("Src script: %p\n", vm->src_cmd);
-		printf("Going to: %p\n", vm->src_cmd + *(uint32_t*)vm->cmd);
-		printf("This: %p, Return: %x\n", vm->cmd - 1, int((vm->cmd + 4) - vm->src_cmd));
+		//printf("Return offset -> %x\n", vm->stack[vm->stack_ptr - 1]);
+		//printf("Src script: %p\n", vm->src_cmd);
+		//printf("Going to: %p\n", vm->src_cmd + *(uint32_t*)vm->cmd);
+		//printf("This: %p, Return: %x\n", vm->cmd - 1, int((vm->cmd + 4) - vm->src_cmd));
 		vm->stack[vm->stack_ptr++] = vm->frame_ptr;
 		vm->frame_ptr = vm->stack_ptr;
 
@@ -186,10 +185,10 @@ start:
 
 	case XASM2_RET:
 		vm->stack_ptr = vm->frame_ptr;
-		printf("Return offset -> %x\n", vm->stack[vm->stack_ptr - 2]);
+		//printf("Return offset -> %x\n", vm->stack[vm->stack_ptr - 2]);
 		vm->stack_ptr--;
 		vm->frame_ptr = vm->stack[vm->stack_ptr--];
-		printf("Returning to %p\n", vm->src_cmd + int(vm->stack[vm->stack_ptr]));
+		//printf("Returning to %p\n", vm->src_cmd + int(vm->stack[vm->stack_ptr]));
 		vm->cmd = vm->src_cmd + int(vm->stack[vm->stack_ptr]);
 		
 		goto start;
@@ -228,6 +227,17 @@ start:
 		vm->cmd++;
 		vm->flags |= XASM2VM_TERMINATE;
 		goto terminate;	
+	
+	case XASM2_STI:
+		vm->cmd++;	
+		vm->interrupt = *(uint32_t*)vm->cmd;
+		vm->cmd += sizeof(int);
+		goto start;
+
+	case XASM2_CLI:
+		vm->cmd++;
+		vm->interrupt = 0;
+		goto start;
 
 	// Arithmetic
 	case XASM2_ADD:
@@ -670,5 +680,11 @@ terminate:
 exit:
 
 	// A return of 0 means OK
+	return 0;
+}
+
+int XASM2TriggerInterrupt(xasm2_vm_t* vm) {
+	vm->cmd = vm->src_cmd += vm->interrupt;
+	vm->interrupt = 0;
 	return 0;
 }
