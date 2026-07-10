@@ -36,7 +36,7 @@ enum XASM2VM_FLAG : uint32_t {
 	XASM2VM_TERMINATE,
 };
 
-typedef struct xasm2_vm_t {
+struct xasm2_vm_t {
 	uint8_t* src_cmd = nullptr;
 	uint8_t* cmd = nullptr;
 	int* member_reg = nullptr;
