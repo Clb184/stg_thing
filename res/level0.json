@@ -1,0 +1,13 @@
+{
+	"binary" : "text.bin",
+	"textures" : [ "grp/" ],
+	"sprites" : [
+	{
+		"quad" : [128, 128],
+		"texture" : 0,
+		"uv" : [0.0, 0.0, 1.0, 1.0]
+	}
+	],
+	"bgm" : ["bgm/audio.ogg"],
+	"sound" : ["snd/s00.ogg"]
+}
