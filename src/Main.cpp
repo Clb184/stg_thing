@@ -40,7 +40,10 @@ int main() {
 	vm.src_cmd = (uint8_t*)dat;
 	vm.cmd = (uint8_t*)dat + *(uint32_t*)(dat + 8);
 	XASM2RandomInit(123);
-	CreateGLWindow("Test", 1280, 960, false, &window);
+	if(false == CreateGLWindow("Test", 1280, 960, false, &window)) {
+		printf("Failed to initialize game\n");
+		return -1;
+	}
 	RunMainLoopDT(&window, nullptr, Move, Draw);
 	return 0;
 }

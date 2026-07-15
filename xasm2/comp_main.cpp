@@ -419,6 +419,7 @@ int main(int argc, char** argv) {
 				return -1;
 			}
 		} else {
+			// Go through each translation unit
 			if(0 == OpenReadFile(argv[i], &size, &text)) {
 				if(nullptr != text) {
 					//printf("%s\n", text);
