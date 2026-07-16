@@ -1,0 +1,84 @@
+Engine is composed by:
+
+Classes:
+-ConfigCtrl
+-ScoreCtrl
+-GameState
+-MusicCtrol
+-SoundCtrol
+-UICtrol
+-SceneMain
+-SceneTitle
+-SceneGameMain
+-EffectCtrl
+-TextCtrl
+-CutInCtrl
+-EnemyCtrl
+-BulletCtrl
+-ShortLaserCtrl
+-LongLaserCtrl
+-BossCtrl
+-EnmAtkCtrl
+-PlayerCtrl
+-PlayerShotCtrl
+-BackgroundCtrl
+-ScriptManager
+-ScriptSearchCtrl
+
+
+Types:
+-Config -> Configuration that game retrieves at start
+-ScoreTable -> Score table compiling information about past runs
+{
+	
+
+}
+
+-ScoreInfo -> Info includes Name, Score, Date, ShotName
+Retrieved from following JSON:
+{
+	"name" : "",
+	"score" : 00000,
+	"date" : "01/01/2026",
+	"shotname" : "Shot sample"
+}
+
+-MusicEntry -> Music Entry fed to the Music Control, composed by:
+Retrieved from following JSON:
+{
+	"path" : "", // Path of music file, mandatory, if failed to add, no music is played
+	"loop" : true, // True by default
+	"beginloop" : "0", // Start of track in samples by default
+	"endloop" : "20000" // End of track in samples by default
+}
+
+-SoundEntry -> Sound Entry fed to the Sound Control, composed by:
+{
+	"path" : "sound.ogg", // 
+	"nbuffers" : 2 // Number of buffers, default is 1
+}
+-TaskStage
+-TaskUI
+-TaskEnemy
+-TaskPlayer
+-TaskPlayerShot
+-DamageArea
+-HitboxArea
+-TaskBackground
+-TaskCutIn
+-TaskText -> Data related to text rendering, 
+-TaskEffect
+
+
+Config has:
+-playername (string)
+-lives (int)
+-bombs (int)
+-sndvol (int 0-100)
+-snden (bool)
+-bgmvol (int 0-100)
+-bgmen (bool)
+-windowed (int)
+-resolution (int)
+-fetch_url (string)
+
