@@ -30,11 +30,12 @@ Types:
 -Config -> Configuration that game retrieves at start
 -ScoreTable -> Score table compiling information about past runs
 {
-	
+	int number_of_entries
+	ScoreInfo* score_entry
 
 }
 
--ScoreInfo -> Info includes Name, Score, Date, ShotName
+-ScoreEntry -> Entry includes Name, Score, Date, ShotName
 Retrieved from following JSON:
 {
 	"name" : "",
@@ -44,7 +45,6 @@ Retrieved from following JSON:
 }
 
 -MusicEntry -> Music Entry fed to the Music Control, composed by:
-Retrieved from following JSON:
 {
 	"path" : "", // Path of music file, mandatory, if failed to add, no music is played
 	"loop" : true, // True by default
@@ -57,10 +57,44 @@ Retrieved from following JSON:
 	"path" : "sound.ogg", // 
 	"nbuffers" : 2 // Number of buffers, default is 1
 }
--TaskStage
--TaskUI
--TaskEnemy
--TaskPlayer
+
+-TaskStage -> Task related to stage control logic
+{
+	vm task
+	float gr[8];
+	vm_interrupt interrupts[4]
+}
+
+-TaskGUI -> Task for drawing the in-game GUI
+{
+	vm task
+	float x, y
+	float gr[8]
+	vm_interrupt interrupts[4]
+}
+
+-TaskEnemy -> Task for enemies
+{
+	vm task
+	vm anmtask
+	float x, y
+	int enm_flags
+	int hp
+	int scoreval
+	float gr[8]
+	int atk_ids[4]
+	// TaskEnemy* parent -> to implement later
+	// TaskEnemy child[4]
+}
+
+-TaskPlayer -> Task that handles player states
+{
+	float x, y
+	int state_flags
+	float gr[4]
+	vm_interrupt interrupts[4]
+}
+
 -TaskPlayerShot
 -DamageArea
 -HitboxArea
@@ -68,7 +102,11 @@ Retrieved from following JSON:
 -TaskCutIn
 -TaskText -> Data related to text rendering, 
 -TaskEffect
-
+-TaskBoss
+-TaskEnmAtk
+-TaskBullet
+-TaskShortLaser
+-TaskLongLaser
 
 Config has:
 -playername (string)
