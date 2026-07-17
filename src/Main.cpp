@@ -1,6 +1,6 @@
 #include "XPFW.h"
 #include "XASM2/VM.hpp"
-
+#include "GameCore.hpp"
 
 
 size_t LoadData(const char* name, char** data) {
@@ -34,16 +34,16 @@ void Draw(window_t* window, float dt, void* data) {
 }
 
 int main() {
-	window_t window;
 	char* dat = nullptr;
 	size_t sz = LoadData("data.bin", &dat);
 	vm.src_cmd = (uint8_t*)dat;
 	vm.cmd = (uint8_t*)dat + *(uint32_t*)(dat + 8);
-	XASM2RandomInit(123);
-	if(false == CreateGLWindow("Test", 1280, 960, false, &window)) {
+
+
+	GameCore core;
+	if(false == core.InitGame()) {
 		printf("Failed to initialize game\n");
 		return -1;
 	}
-	RunMainLoopDT(&window, nullptr, Move, Draw);
 	return 0;
 }

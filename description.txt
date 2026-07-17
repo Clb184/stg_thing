@@ -92,13 +92,39 @@ Retrieved from following JSON:
 	float x, y
 	int state_flags
 	float gr[4]
-	vm_interrupt interrupts[4]
+	vm_function on_spawn
+	vm_function on_death
+
+	vm_function bomb_proc
 }
 
--TaskPlayerShot
--DamageArea
--HitboxArea
--TaskBackground
+-TaskPlayerShot -> Task that handles a player shot
+{
+	float x, y
+	int damage -> This is always positive, else will be 0
+	float gr[4]
+}
+
+-DamageArea -> Describes a circular damage área
+{
+	float x, y
+	int damage_cnt -> If negative, heals enemies and Boss
+	
+}
+
+-HitboxArea -> Describes an enemy circular hitbox
+{
+	float x, y
+	float r -> radius to compare to
+}
+
+-TaskBackground -> Object shown in 3D background
+{
+	float x, y, z
+	float pitch, yaw, roll
+	uint32 color
+}
+
 -TaskCutIn
 -TaskText -> Data related to text rendering, 
 -TaskEffect
