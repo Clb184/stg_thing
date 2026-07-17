@@ -27,9 +27,11 @@ bool GameCore::InitGame() {
 
 	// Start running the loop
 	RunMainLoopDT(m_Window.GetWindowData(), this, GameCoreMove, GameCoreDraw);
+	return true;
 }
 
 void GameCore::StopGame() {
+	m_Window.GetWindowData()->on_exit = true;
 	m_CFG.SaveConfig();
 }
 

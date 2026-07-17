@@ -10,7 +10,9 @@ ConfigCtrl::ConfigCtrl() {
 	nlohmann::json config;
 
 	if(true == LoadTextFromFile(g_ConfigName, &source, 0)) {
+		LOG_INFO("Parsing JS");
 		config = nlohmann::json::parse(source);
+		LOG_INFO("Freeing source JSON");
 		free(source);
 		if(true == ValidateJSON(config)) {
 			LOG_INFO("Success on loading config");
@@ -103,6 +105,8 @@ void ConfigCtrl::SaveConfig() {
 	save_cfg["bgmen"] = m_LoadedConfig.bgm_enable;
 	save_cfg["window"] = (int)m_LoadedConfig.win_state;
 	save_cfg["resolution"] = m_LoadedConfig.resolution;
+	save_cfg["fetch_url"] = m_LoadedConfig.fetch_url;
+	save_cfg["0"] = "Any extra keys or incorrect values will reset the config, be careful";
 
 #ifdef EN_DEBUG
 	fprintf(stdout, "JSON CONFIG: \n%s\n", save_cfg.dump().c_str());
@@ -132,6 +136,28 @@ void ConfigCtrl::LoadDefaultConfig() {
 	m_LoadedConfig.fetch_url = "localhost:184845";
 }
 
-bool ConfigCtrl::ValidateJSON(const nlohmann::json& json_data) {
-	return false;
+bool ConfigCtrl::ValidateJSON(const nlohmann::json& js) {
+	LOG_INFO("Validating config JSON");
+	// Validate string:
+	if(js.find("playername") == js.end() || js.find("lives") == js.end() || js.find("bombs") == js.end() || js.find("sndvol") == js.end() || js.find("bgmvol") == js.end() || js.find("window") == js.end() || js.find("resolution") == js.end() || js.find("snden") == js.end() || js.find("bgmen") == js.end() || js.find("fetch_url") == js.end()) return false;
+	try {
+		std::string str = js["playername"];
+		str = js["fetch_url"];
+		
+		int integer = 0;
+		integer = js["lives"];
+		integer = js["bombs"];
+		integer = js["sndvol"];
+		integer = js["bgmvol"];
+		integer = js["window"];
+		integer = js["resolution"];
+
+		bool boolean = true;
+		boolean = js["snden"];
+		boolean = js["bgmen"];
+	}
+	catch(...) {
+		return false;
+	}
+	return true;
 }
