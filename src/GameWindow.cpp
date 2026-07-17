@@ -25,19 +25,28 @@ bool GameWindow::CreateWindow(const ConfigCtrl& cfg) {
 		return false;
 	}
 	
+	m_Width = width; m_Height = height;
+
 	return true;
 }
 
 void GameWindow::SetGameTitle(const char* title) {
-
+	glfwSetWindowTitle(m_WindowData.window, title);
 }
 
 void GameWindow::SetWindowState(int state) {
-
+	GLFWmonitor* monitor = nullptr;
+	switch(state) {
+		case WS_FULLSCREEN: monitor = glfwGetPrimaryMonitor(); break;
+		default:
+		case WS_WINDOW: monitor = nullptr; break;
+		case WS_BORDERLESS: monitor = nullptr; break;
+	}
+	glfwSetWindowMonitor(m_WindowData.window, monitor, 0, 0, m_Width, m_Height, GLFW_DONT_CARE);
 }
 
 void GameWindow::DestroyWindow() {
-
+	glfwDestroyWindow(m_WindowData.window);
 }
 
 window_t* GameWindow::GetWindowData() {

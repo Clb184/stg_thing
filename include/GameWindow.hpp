@@ -17,6 +17,8 @@ public:
 
 private:
 	window_t m_WindowData;
+	int m_Width;
+	int m_Height;
 };
 
 #endif
