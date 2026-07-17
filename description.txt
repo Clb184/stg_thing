@@ -7,6 +7,8 @@ Classes:
 -MusicCtrol
 -SoundCtrol
 -UICtrol
+-GameCore
+-GameState
 -SceneMain
 -SceneTitle
 -SceneGameMain
@@ -28,6 +30,19 @@ Classes:
 
 Types:
 -Config -> Configuration that game retrieves at start
+{
+-playername (string)
+-lives (int)
+-bombs (int)
+-sndvol (int 0-100)
+-snden (bool)
+-bgmvol (int 0-100)
+-bgmen (bool)
+-windowed (int)
+-resolution (int)
+-fetch_url (string)
+
+}
 -ScoreTable -> Score table compiling information about past runs
 {
 	int number_of_entries
@@ -89,6 +104,7 @@ Retrieved from following JSON:
 
 -TaskPlayer -> Task that handles player states
 {
+	vm task
 	float x, y
 	int state_flags
 	float gr[4]
@@ -100,6 +116,7 @@ Retrieved from following JSON:
 
 -TaskPlayerShot -> Task that handles a player shot
 {
+	vm task
 	float x, y
 	int damage -> This is always positive, else will be 0
 	float gr[4]
@@ -120,29 +137,74 @@ Retrieved from following JSON:
 
 -TaskBackground -> Object shown in 3D background
 {
+	vm task
 	float x, y, z
 	float pitch, yaw, roll
 	uint32 color
 }
 
--TaskCutIn
+-TaskCutIn -> Big Sprite
+{
+	vm task
+	float x, y
+	float gr[4]
+}
+
 -TaskText -> Data related to text rendering, 
--TaskEffect
+{
+	vm task
+	float x, y
+	int font_id
+	string text
+}
+
+-TaskEffect -> Effects, that's it
+{
+	vm task
+	float x, y
+	float gr[4]
+}
 -TaskBoss
+{
+	vm task
+	vm anmtask
+	float x, y
+	int enm_flags
+	int hp
+	int scoreval
+	float gr[8]
+	int atk_ids[4]
+	// TaskEnemy* parent -> to implement later
+	// TaskEnemy child[4]
+}
 -TaskEnmAtk
+{
+	vm task
+	float x, y
+	int mode
+	int cnt, rounds
+	float dir
+	float spacing_incangle
+	float speed
+	float inc_speed
+	int Sprite
+	float gr[4]
+	enemy* owner
+}
 -TaskBullet
+{
+	vm task
+	vm anmtask
+	int flags
+	int sprite
+	float x, y
+	float dir
+	float speed
+	float gr[4]
+	
+}
 -TaskShortLaser
 -TaskLongLaser
 
 Config has:
--playername (string)
--lives (int)
--bombs (int)
--sndvol (int 0-100)
--snden (bool)
--bgmvol (int 0-100)
--bgmen (bool)
--windowed (int)
--resolution (int)
--fetch_url (string)
 
