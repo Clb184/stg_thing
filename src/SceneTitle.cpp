@@ -1,5 +1,7 @@
 #include "SceneTitle.hpp"
+#include "cassert"
 #include "Output.h"
+#include "GameState.hpp"
 
 SceneTitle::SceneTitle() {
 
@@ -9,7 +11,8 @@ SceneTitle::~SceneTitle() {
 
 }
 
-bool SceneTitle::Init(void* data) {
+bool SceneTitle::Init(GameState* state, void* data) {
+	assert(nullptr != state);
 	LOG_INFO("Initializing Title Scene");
 	return true;
 }

@@ -13,7 +13,7 @@ public:
 	~SceneMain();
 
 	// Inherited
-	bool Init(void* data);
+	bool Init(GameState* state, void* data);
 	void Move(float dt);
 	void Draw();
 private:

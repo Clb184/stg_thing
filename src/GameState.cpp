@@ -7,6 +7,7 @@ GameState::GameState(GameCore* core) {
 	m_pCurrentScene = nullptr;
 
 	m_pMain = new SceneMain();
+	m_pPKGSel = new ScenePKGSelect();
 	m_pTitle = new SceneTitle();
 	m_pGameMain = new SceneGameMain();
 	
@@ -39,7 +40,7 @@ bool GameState::Init() {
 	m_pCurrentScene = m_pMain;
 	m_CurrentSceneType = SCENE_MAIN;
 
-	if(false == m_pCurrentScene->Init(this)) {
+	if(false == m_pCurrentScene->Init(this, nullptr)) {
 		LOG_ERROR("Failed initializing default scene");
 		return false;
 	}
@@ -63,7 +64,7 @@ void GameState::Move(float dt) {
 		m_bOnSceneChange = false;
 
 		m_CurrentSceneType = m_TargetSceneChange;
-		m_pCurrentScene->Init(this);
+		m_pCurrentScene->Init(this, nullptr);
 	}
 
 

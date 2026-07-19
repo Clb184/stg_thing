@@ -12,12 +12,12 @@ SceneGameMain::~SceneGameMain() {
 
 }
 
-bool SceneGameMain::Init(void* data) {
-	assert(nullptr != data);
+bool SceneGameMain::Init(GameState* state, void* data) {
+	assert(nullptr != state);
 
 	LOG_INFO("Initializing GameMain");
 	
-	m_pState = (GameState*)data;
+	m_pState = state;
 
 	// Set XASM2 seed
 	XASM2RandomInit(123);

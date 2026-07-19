@@ -2,8 +2,9 @@
 #define GAMESTATE_INCLUDED
 
 #include "Scene.hpp"
-#include "SceneTitle.hpp"
 #include "SceneMain.hpp"
+#include "ScenePKGSelect.hpp"
+#include "SceneTitle.hpp"
 #include "SceneGameMain.hpp"
 
 
@@ -36,6 +37,7 @@ private:
 	int m_CurrentSceneType;
 
 	SceneMain* m_pMain;
+	ScenePKGSelect* m_pPKGSel;
 	SceneTitle* m_pTitle;
 	SceneGameMain* m_pGameMain;
 
