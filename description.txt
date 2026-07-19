@@ -73,6 +73,24 @@ Retrieved from following JSON:
 	"nbuffers" : 2 // Number of buffers, default is 1
 }
 
+-Sprite -> Basic sprite info
+{
+	int tex_id
+	float x, y
+	float w, h
+	uint32_t color
+	float x1, y1, x2, y2
+	int vb
+}
+
+-SpriteBatchBit -> Basic Batched sprite info
+{
+	float x, y
+	float w, h
+	uint32_t color
+	float x1, y1, x2, y2
+}
+
 -TaskStage -> Task related to stage control logic
 {
 	vm task
