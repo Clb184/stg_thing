@@ -5,6 +5,7 @@
 #include "XASM2/VM.hpp"
 #include "ConfigCtrl.hpp"
 #include "GameWindow.hpp"
+#include "GameState.hpp"
 
 class GameCore {
 public:
@@ -19,6 +20,7 @@ public:
 private:
 	ConfigCtrl m_CFG;
 	GameWindow m_Window;
+	GameState m_State;
 };
 
 #endif

@@ -108,12 +108,12 @@ void ConfigCtrl::SaveConfig() {
 	save_cfg["fetch_url"] = m_LoadedConfig.fetch_url;
 	save_cfg["0"] = "Any extra keys or incorrect values will reset the config, be careful";
 
-#ifdef EN_DEBUG
-	fprintf(stdout, "JSON CONFIG: \n%s\n", save_cfg.dump().c_str());
+#ifdef NDEBUG
 #endif
+	fprintf(stdout, "JSON CONFIG: \n%s\n", save_cfg.dump(4).c_str());
 	FILE* fp = fopen(g_ConfigName, "w");
 	if(0 != fp) {
-		const std::string str = save_cfg.dump();
+		const std::string str = save_cfg.dump(4);
 		fwrite(str.c_str(), str.length(), 1, fp);
 		fclose(fp);
 	}

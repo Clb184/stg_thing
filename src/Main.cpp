@@ -12,8 +12,14 @@ void Move(window_t* window, float dt, void* data) {
 
 
 int main() {
-	GameCore core;
-	if(false == core.InitGame()) {
+	GameCore* core = new GameCore();
+
+	if(nullptr == core) {
+		printf("Out of memory\n");
+		return -1;
+	}
+
+	if(false == core->InitGame()) {
 		printf("Failed to initialize game\n");
 		return -1;
 	}

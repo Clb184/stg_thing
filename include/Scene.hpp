@@ -5,7 +5,7 @@ class Scene {
 	public:
 		virtual bool Init(void*) = 0;
 		virtual void Move(float dt) = 0;
-		virtual void Draw();
+		virtual void Draw() = 0;
 };
 
 #endif

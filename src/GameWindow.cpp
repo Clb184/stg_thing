@@ -6,6 +6,7 @@ GameWindow::GameWindow() {
 }
 
 GameWindow::~GameWindow() {
+
 }
 
 bool GameWindow::CreateWindow(const ConfigCtrl& cfg) {
@@ -14,9 +15,12 @@ bool GameWindow::CreateWindow(const ConfigCtrl& cfg) {
 	bool fullscreen = false;
 
 	// Get resolution from value, using a formula
-	int baseval = 160 + 40 * cfg.GetWindowResolution();
+	int resolution = cfg.GetWindowResolution();
+	resolution = (resolution > 0) ? resolution : 1;
+	int baseval = 160 + 40 * resolution;
 	height = baseval * 3;
 	width = baseval * 4;
+	fprintf(stdout, "Resolution: %d, Width: %d, Height: %d\n", resolution, width, height);
 
 	if(cfg.GetWindowState() == WS_FULLSCREEN) fullscreen = true;
 
