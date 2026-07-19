@@ -5,7 +5,7 @@
 
 class GameState;
 
-class SceneGameMain {
+class SceneGameMain : public Scene {
 public:
 	SceneGameMain();
 	~SceneGameMain();

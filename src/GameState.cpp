@@ -25,6 +25,7 @@ GameState::~GameState() {
 }
 
 bool GameState::Init() {
+	LOG_INFO("Initializing GameState");
 	char buf[512] = "";
 	// Check if all scenes are initialized
 	if(nullptr == m_pMain || nullptr == m_pTitle || nullptr == m_pGameMain)	{
@@ -50,6 +51,22 @@ void GameState::Move(float dt) {
 	assert(0 != m_pCurrentScene);
 
 	m_pCurrentScene->Move(dt);
+
+	if(m_bOnSceneChange) {
+		switch(m_TargetSceneChange) {
+			default: m_TargetSceneChange = SCENE_MAIN;
+			case SCENE_MAIN: m_pCurrentScene = m_pMain;  break;
+			case SCENE_TITLE: m_pCurrentScene = m_pTitle; break;
+			case SCENE_GAMEMAIN: m_pCurrentScene = m_pGameMain; break;
+		}
+
+		m_bOnSceneChange = false;
+
+		m_CurrentSceneType = m_TargetSceneChange;
+		m_pCurrentScene->Init(this);
+	}
+
+
 }
 
 void GameState::Draw() {
@@ -58,3 +75,9 @@ void GameState::Draw() {
 	m_pCurrentScene->Draw();
 
 }
+
+void GameState::ChangeScene(SCENE_TYPE type) {
+	m_bOnSceneChange = true;
+	m_TargetSceneChange = type;
+}
+

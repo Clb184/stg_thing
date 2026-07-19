@@ -21,11 +21,12 @@ public:
 	GameState(GameCore* core);
 	~GameState();
 
+	// Inherited
 	bool Init();
 	void Move(float dt);
 	void Draw();
 
-	void ChangeScene();
+	void ChangeScene(SCENE_TYPE type);
 
 private:
 	bool m_bOnSceneChange;
