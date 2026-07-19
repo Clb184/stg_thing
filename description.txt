@@ -135,7 +135,12 @@ Retrieved from following JSON:
 	float r -> radius to compare to
 }
 
--TaskBackground -> Object shown in 3D background
+-TaskBackground2D -> Object show as Surface background
+{
+	uint32 color
+}
+
+-TaskBackground3D -> Object shown in 3D background
 {
 	vm task
 	float x, y, z
@@ -147,6 +152,7 @@ Retrieved from following JSON:
 {
 	vm task
 	float x, y
+	uint32 color
 	float gr[4]
 }
 
@@ -154,6 +160,7 @@ Retrieved from following JSON:
 {
 	vm task
 	float x, y
+	uint32 color
 	int font_id
 	string text
 }
@@ -162,6 +169,7 @@ Retrieved from following JSON:
 {
 	vm task
 	float x, y
+	uint32 color
 	float gr[4]
 }
 -TaskBoss
@@ -169,6 +177,7 @@ Retrieved from following JSON:
 	vm task
 	vm anmtask
 	float x, y
+	uint32 color
 	int enm_flags
 	int hp
 	int scoreval
@@ -196,15 +205,38 @@ Retrieved from following JSON:
 	vm task
 	vm anmtask
 	int flags
-	int sprite
+	int Sprite
 	float x, y
 	float dir
 	float speed
+	uint32 color
+	float sprite_ang
 	float gr[4]
-	
 }
 -TaskShortLaser
+{
+	vm task
+	int state
+	int flags
+	int sprite
+	float x, y
+	uint32 color
+	float length
+	float width
+	float dir
+	float speed
+	float gr[4]
+}
 -TaskLongLaser
-
-Config has:
+{
+	vm task
+	int state
+	int flags
+	int Sprite
+	uint32 color
+	float x, y
+	float dir
+	float width
+	float gr[4]
+}
 
