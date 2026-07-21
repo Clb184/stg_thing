@@ -1,0 +1,34 @@
+@proc1:
+	enter 2
+	cli
+	loadc r1, 2
+	inc
+	subc 3
+	mulc 4
+	;printreg
+	ret
+
+@main:
+	enter 4
+	sti proc1
+	loadc r1, 1		; This is a comment
+	loadc r2, 20.0		; And another comment
+	push
+loop:
+	pop r1
+	inc
+	push
+	geqc 4
+	wait 1.0
+	jmpf loop
+	;printreg
+	call proc1
+	call proc
+	halt
+
+@proc:
+	loadc 0, -2
+	addc 20
+	xorc 0x2059E
+	;printreg
+	ret

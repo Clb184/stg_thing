@@ -123,8 +123,6 @@ void SceneMain::CreateBackground() {
 	
 	InitializeFreeType(&m_FTLib);
 	LoadFontFromFile(m_FTLib, &m_Desc, "DAT/PermanentMarker.ttf");
-	
-
 	CreateFontWithAtlas(m_Desc, &m_Font, 32);
 
 }

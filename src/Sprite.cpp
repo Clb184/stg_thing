@@ -63,7 +63,7 @@ void Sprite::SetColor(uint32_t color) {
 
 void Sprite::Draw() {
 	GLERR;
-	if(true) {
+	if(m_bNeedUpdate) {
 		TLVertex2D* vertices = (TLVertex2D*)glMapNamedBuffer(m_VB, GL_WRITE_ONLY);
 		assert(nullptr != vertices);
 		float c = DirectX::XMScalarCos(m_SpriteInf.ang), s = DirectX::XMScalarSin(m_SpriteInf.ang),
