@@ -39,12 +39,15 @@ private:
 private:
 	FT_Library m_FTLib;
 	font_t m_Font;
+	font_t m_SmallFont;
 	font_descriptor_t m_Desc;
 
 	int m_XIndex;
-	int m_YIndex;
 	int m_LeftOptIndex;
+	int m_YIndex;
+	int m_YIndexMax;
 
+	float m_FailLive;
 
 	float m_XOptionDelay;
 	float m_YOptionDelay;

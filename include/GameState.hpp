@@ -32,6 +32,7 @@ public:
 	
 	std::string GetFetchURL();
 	void ChangeScene(SCENE_TYPE type);
+	void PrepareGameMain(const char* resource_root);
 	void Exit();
 
 private:

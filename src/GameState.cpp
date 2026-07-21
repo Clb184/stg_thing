@@ -40,6 +40,11 @@ bool GameState::Init(InputDevice* input) {
 	m_pCurrentScene = m_pMain;
 	m_CurrentSceneType = SCENE_MAIN;
 	
+	// For debug purpose
+	m_pCurrentScene = m_pGameMain;
+	m_CurrentSceneType = SCENE_GAMEMAIN;
+	m_pGameMain->SetResourceRoot("pkgs/test/");
+
 	m_pInput = input;
 
 	if(false == m_pCurrentScene->Init(this, input)) {
@@ -91,6 +96,10 @@ std::string GameState::GetFetchURL() {
 void GameState::ChangeScene(SCENE_TYPE type) {
 	m_bOnSceneChange = true;
 	m_TargetSceneChange = type;
+}
+
+void GameState::PrepareGameMain(const char* resource_root) {
+	m_pGameMain->SetResourceRoot(resource_root);
 }
 
 void GameState::Exit() {
