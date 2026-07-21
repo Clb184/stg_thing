@@ -11,7 +11,7 @@ public:
 	~SceneGameMain();
 
 	// Inherited
-	bool Init(GameState* state, void* data);
+	bool Init(GameState* state, InputDevice* input);
 	void Move(float dt);
 	void Draw();
 

@@ -25,7 +25,7 @@ GameState::~GameState() {
 	if(nullptr != m_pGameMain) delete m_pGameMain;
 }
 
-bool GameState::Init() {
+bool GameState::Init(InputDevice* input) {
 	LOG_INFO("Initializing GameState");
 	char buf[512] = "";
 	// Check if all scenes are initialized
@@ -39,8 +39,10 @@ bool GameState::Init() {
 	// Main Scene is the default scene
 	m_pCurrentScene = m_pMain;
 	m_CurrentSceneType = SCENE_MAIN;
+	
+	m_pInput = input;
 
-	if(false == m_pCurrentScene->Init(this, nullptr)) {
+	if(false == m_pCurrentScene->Init(this, input)) {
 		LOG_ERROR("Failed initializing default scene");
 		return false;
 	}
@@ -57,6 +59,7 @@ void GameState::Move(float dt) {
 		switch(m_TargetSceneChange) {
 			default: m_TargetSceneChange = SCENE_MAIN;
 			case SCENE_MAIN: m_pCurrentScene = m_pMain;  break;
+			case SCENE_PKGSEL: m_pCurrentScene = m_pPKGSel; break;
 			case SCENE_TITLE: m_pCurrentScene = m_pTitle; break;
 			case SCENE_GAMEMAIN: m_pCurrentScene = m_pGameMain; break;
 		}
@@ -64,7 +67,7 @@ void GameState::Move(float dt) {
 		m_bOnSceneChange = false;
 
 		m_CurrentSceneType = m_TargetSceneChange;
-		m_pCurrentScene->Init(this, nullptr);
+		m_pCurrentScene->Init(this, m_pInput);
 	}
 
 
@@ -77,8 +80,15 @@ void GameState::Draw() {
 
 }
 
+void GameState::ChangeWindowTitle(const char* title) {
+	m_pCore->SetWindowTitle(title);
+}
+
 void GameState::ChangeScene(SCENE_TYPE type) {
 	m_bOnSceneChange = true;
 	m_TargetSceneChange = type;
 }
 
+void GameState::Exit() {
+	m_pCore->StopGame();
+}

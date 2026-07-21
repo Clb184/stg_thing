@@ -6,6 +6,7 @@
 #include "ConfigCtrl.hpp"
 #include "GameWindow.hpp"
 #include "GameState.hpp"
+#include "InputDevice.hpp"
 
 class GameCore {
 public:
@@ -17,8 +18,12 @@ public:
 
 	void Move(float dt);
 	void Draw(float dt);
+	
+	void SetWindowTitle(const char* title);
+	GLFWwindow* GetWindowPtr();
 private:
 	ConfigCtrl m_CFG;
+	InputDevice m_Input;
 	GameWindow m_Window;
 	GameState m_State;
 };

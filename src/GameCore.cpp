@@ -22,21 +22,22 @@ bool GameCore::InitGame() {
 	// Create window
 	if(false == m_Window.CreateWindow(m_CFG)) return false;
 
+	// Input Device
+	m_Input.Init(m_Window.GetWindowData()->window);
 
 	// Initialize GameState, else it will fail
-	if(false == m_State.Init()) {
+	if(false == m_State.Init(&m_Input)) {
 		fprintf(stdout, "Failed initializing GameState\n");
 	}
 
 	// Start running the loop
 	RunMainLoopDT(m_Window.GetWindowData(), this, GameCoreMove, GameCoreDraw);
-	StopGame();
+	m_CFG.SaveConfig();
 	return true;
 }
 
 void GameCore::StopGame() {
 	m_Window.GetWindowData()->on_exit = true;
-	m_CFG.SaveConfig();
 }
 
 void GameCore::Move(float dt) {
@@ -47,3 +48,12 @@ void GameCore::Move(float dt) {
 void GameCore::Draw(float dt) {
 	m_State.Draw();
 }
+
+void GameCore::SetWindowTitle(const char* title) {
+	m_Window.SetGameTitle(title);
+}
+
+GLFWwindow* GameCore::GetWindowPtr() {
+	return m_Window.GetWindowData()->window;
+}
+

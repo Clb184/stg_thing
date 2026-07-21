@@ -11,7 +11,7 @@ SceneTitle::~SceneTitle() {
 
 }
 
-bool SceneTitle::Init(GameState* state, void* data) {
+bool SceneTitle::Init(GameState* state, InputDevice* input) {
 	assert(nullptr != state);
 	LOG_INFO("Initializing Title Scene");
 	return true;

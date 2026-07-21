@@ -13,8 +13,9 @@ private:
 public:
 	TextureManager();
 	~TextureManager();
-
-	bool LoadTexture(char* data, size_t size);
+	
+	void Init();
+	GLuint LoadTexture(char* data, size_t size);
 	GLuint GetTextureID(int id);
 	texture_metric_t GetTextureMetrics(int id);
 	void Cleanup();

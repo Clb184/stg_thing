@@ -10,6 +10,7 @@
 
 enum SCENE_TYPE : int {
 	SCENE_MAIN,
+	SCENE_PKGSEL,
 	SCENE_TITLE,
 	SCENE_GAMEMAIN,
 	SCENE_NULL = -1
@@ -23,11 +24,14 @@ public:
 	~GameState();
 
 	// Inherited
-	bool Init();
+	bool Init(InputDevice* input);
 	void Move(float dt);
 	void Draw();
 
+	void ChangeWindowTitle(const char* title);
+
 	void ChangeScene(SCENE_TYPE type);
+	void Exit();
 
 private:
 	bool m_bOnSceneChange;
@@ -40,6 +44,8 @@ private:
 	ScenePKGSelect* m_pPKGSel;
 	SceneTitle* m_pTitle;
 	SceneGameMain* m_pGameMain;
+
+	InputDevice* m_pInput;
 
 	GameCore* m_pCore;
 };

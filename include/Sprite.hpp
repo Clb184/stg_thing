@@ -5,13 +5,13 @@
 #include "GL/glew.h"
 
 struct sprite_inf_t {
-	int tex_id;
-	float ang;
-	float x, y;
-	float w, h;
-	float sx, sy;
-	uint32_t color;
-	float u0, v0, u1, v1;
+	GLuint tex_id = 0;
+	float ang = 0.0f;
+	float x = 0.0f, y = 0.0f;
+	float w = 16.0f, h = 16.0f;
+	float sx = 1.0f, sy = 1.0f;
+	uint32_t color = 0xffffffff;
+	float u0 = 0.0f, v0 = 0.0f, u1 = 1.0f, v1 = 1.0f;
 };
 
 class Sprite {
@@ -20,6 +20,7 @@ public:
 	~Sprite();
 	
 	bool Init();
+	void SetTexID(GLuint id);
 	void SetPos(float x, float y);
 	void SetAngle(float dir);
 	void SetSize(float w, float h);

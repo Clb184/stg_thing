@@ -1,3 +1,6 @@
 [submodule "deps/XPFW"]
 	path = deps/XPFW
 	url = https://github.com/Clb184/XPFW
+[submodule "deps/cpr"]
+	path = deps/cpr
+	url = https://github.com/libcpr/cpr

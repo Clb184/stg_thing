@@ -12,7 +12,7 @@ SceneGameMain::~SceneGameMain() {
 
 }
 
-bool SceneGameMain::Init(GameState* state, void* data) {
+bool SceneGameMain::Init(GameState* state, InputDevice* input) {
 	assert(nullptr != state);
 
 	LOG_INFO("Initializing GameMain");
