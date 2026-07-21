@@ -4,3 +4,9 @@
 [submodule "deps/cpr"]
 	path = deps/cpr
 	url = https://github.com/libcpr/cpr
+[submodule "deps/curl"]
+	path = deps/curl
+	url = https://github.com/curl/curl
+[submodule "deps/cpp-httplib"]
+	path = deps/cpp-httplib
+	url = https://github.com/yhirose/cpp-httplib

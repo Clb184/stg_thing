@@ -84,6 +84,10 @@ void GameState::ChangeWindowTitle(const char* title) {
 	m_pCore->SetWindowTitle(title);
 }
 
+std::string GameState::GetFetchURL() {
+	return m_pCore->GetConfigCtrl()->GetFetchURL();
+}
+
 void GameState::ChangeScene(SCENE_TYPE type) {
 	m_bOnSceneChange = true;
 	m_TargetSceneChange = type;

@@ -155,7 +155,7 @@ Retrieved from following JSON:
 
 -TaskBackground2D -> Object show as Surface background
 {
-	uint32 color
+	sprite sprite
 }
 
 -TaskBackground3D -> Object shown in 3D background
@@ -169,8 +169,7 @@ Retrieved from following JSON:
 -TaskCutIn -> Big Sprite
 {
 	vm task
-	float x, y
-	uint32 color
+	sprite_inf inf
 	float gr[4]
 }
 
@@ -186,8 +185,7 @@ Retrieved from following JSON:
 -TaskEffect -> Effects, that's it
 {
 	vm task
-	float x, y
-	uint32 color
+	sprite_batch_bit bit
 	float gr[4]
 }
 -TaskBoss
@@ -214,7 +212,7 @@ Retrieved from following JSON:
 	float spacing_incangle
 	float speed
 	float inc_speed
-	int Sprite
+	int sprite
 	float gr[4]
 	enemy* owner
 }

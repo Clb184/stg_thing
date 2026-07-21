@@ -20,7 +20,7 @@ GameCore::~GameCore() {
 
 bool GameCore::InitGame() {
 	// Create window
-	if(false == m_Window.CreateWindow(m_CFG)) return false;
+	if(false == m_Window.CreateGameWindow(m_CFG)) return false;
 
 	// Input Device
 	m_Input.Init(m_Window.GetWindowData()->window);
@@ -53,7 +53,7 @@ void GameCore::SetWindowTitle(const char* title) {
 	m_Window.SetGameTitle(title);
 }
 
-GLFWwindow* GameCore::GetWindowPtr() {
-	return m_Window.GetWindowData()->window;
+ConfigCtrl* GameCore::GetConfigCtrl() {
+	return &m_CFG;
 }
 

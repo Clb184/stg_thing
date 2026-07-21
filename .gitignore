@@ -1,6 +1,6 @@
 out/ 
 .vs/
-build/
+build*/
 *.exe 
 include/sal.h
 demo/*

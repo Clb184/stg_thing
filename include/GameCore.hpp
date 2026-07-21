@@ -20,7 +20,8 @@ public:
 	void Draw(float dt);
 	
 	void SetWindowTitle(const char* title);
-	GLFWwindow* GetWindowPtr();
+	ConfigCtrl* GetConfigCtrl();
+
 private:
 	ConfigCtrl m_CFG;
 	InputDevice m_Input;

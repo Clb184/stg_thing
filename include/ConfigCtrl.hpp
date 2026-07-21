@@ -29,6 +29,8 @@ public:
 	WINDOW_STATE GetWindowState() const;
 	int GetWindowResolution() const;
 
+	std::string GetFetchURL();
+
 	void SaveConfig();
 
 	void LoadDefaultConfig(); // 2 lives, 3 bombs, 80 vol for snd and BGM, 

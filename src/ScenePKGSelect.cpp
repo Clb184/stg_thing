@@ -28,7 +28,9 @@ bool ScenePKGSelect::Init(GameState* state, InputDevice* input) {
 
 	m_pState = state;
 	m_pInput = input;
-
+	
+	m_PKGMan.SetFetchURL(state->GetFetchURL());
+	m_PKGMan.Refresh();
 	m_TexMan.Init();
 	CreateShaders();
 	InitializeBackground();
@@ -126,8 +128,12 @@ void ScenePKGSelect::Draw() {
 			DrawString(&m_Font, 64.0f, 360.0f, "Refresh", active_color);
 			break;
 	}
+
+
 	
 	char buf[256] = "";
+	sprintf(buf, "Packages: %d", m_PKGMan.GetPkgCount());
+	DrawString(&m_Font, 60.0f, 60.0f, buf, 0xff00ffff);
 	sprintf(buf, "LeftOpt: %d", m_LeftOptIndex);
 	DrawString(&m_Font, 64.0f, 100.0f, buf, 0xff00ffff);
 	sprintf(buf, "XIndex: %d", m_XIndex);
@@ -197,7 +203,7 @@ void ScenePKGSelect::HandleOptions() {
 			m_pState->ChangeScene(SCENE_MAIN);
 			break;
 		case 1: // Refresh
-			//m_pState->Exit();
+			m_PKGMan.Refresh();
 			break;
 		}
 		break;

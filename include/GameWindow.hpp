@@ -9,7 +9,7 @@ public:
 	GameWindow();
 	~GameWindow();
 
-	bool CreateWindow(const ConfigCtrl& cfg);
+	bool CreateGameWindow(const ConfigCtrl& cfg);
 	void SetGameTitle(const char* title);
 	void SetWindowState(int state);
 	void DestroyWindow();

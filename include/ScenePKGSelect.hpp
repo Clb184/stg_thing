@@ -7,6 +7,8 @@
 #include "TextureManager.hpp"
 #include "InputDevice.hpp"
 
+#include "PkgManager.hpp"
+
 class ScenePKGSelect : public Scene {
 public:
 	ScenePKGSelect();
@@ -31,6 +33,8 @@ private:
 	GLuint m_3DShader;
 	Sprite m_BGSprite;
 	GameState* m_pState;
+	
+	PkgManager m_PKGMan;
 
 private:
 	FT_Library m_FTLib;

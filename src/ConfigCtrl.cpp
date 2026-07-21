@@ -93,6 +93,10 @@ int ConfigCtrl::GetWindowResolution() const {
 	return m_LoadedConfig.resolution;
 }
 
+std::string ConfigCtrl::GetFetchURL() {
+	return m_LoadedConfig.fetch_url;
+}
+
 void ConfigCtrl::SaveConfig() {
 	LOG_INFO("Saving configuration");
 	nlohmann::json save_cfg;
@@ -133,7 +137,7 @@ void ConfigCtrl::LoadDefaultConfig() {
 	m_LoadedConfig.bgm_enable = true;
 	m_LoadedConfig.win_state = WS_WINDOW;
 	m_LoadedConfig.resolution = 4; // Start at 1280x960
-	m_LoadedConfig.fetch_url = "localhost:184845";
+	m_LoadedConfig.fetch_url = "192.168.0.63:5000";
 }
 
 bool ConfigCtrl::ValidateJSON(const nlohmann::json& js) {

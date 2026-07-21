@@ -9,7 +9,7 @@ GameWindow::~GameWindow() {
 
 }
 
-bool GameWindow::CreateWindow(const ConfigCtrl& cfg) {
+bool GameWindow::CreateGameWindow(const ConfigCtrl& cfg) {
 	LOG_INFO("Creating Game Window");
 	int width = 800, height = 80; // Default resolution just in case
 	bool fullscreen = false;

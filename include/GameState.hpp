@@ -29,7 +29,8 @@ public:
 	void Draw();
 
 	void ChangeWindowTitle(const char* title);
-
+	
+	std::string GetFetchURL();
 	void ChangeScene(SCENE_TYPE type);
 	void Exit();
 
