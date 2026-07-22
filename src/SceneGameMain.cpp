@@ -38,6 +38,7 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input) {
 	m_TexMan.Init();
 	CreateShaders();
 	CreateBackground();
+	LoadPackResources();
 
 	// Set XASM2 seed
 	XASM2RandomInit(123);
@@ -194,6 +195,26 @@ void SceneGameMain::CreateBackground() {
 	BindConstantBuffer(m_CBs[0], 0);
 	BindConstantBuffer(m_CBs[1], 1);
 	BindConstantBuffer(m_CBs[2], 2);
+}
+
+void SceneGameMain::LoadPackResources() {
+	if(0 == PackFileOpen(&m_Pack, m_ResourceRoot.c_str())) {
+		LOG_INFO("Loading packed file...");
+		char* data;
+		size_t size;
+		if(0 == PackFileLoadEntry(&m_Pack, "level.json", (void**)&data, &size)) {
+			nlohmann::json jsn = nlohmann::json::parse(data);
+			if(jsn.find("binary") != jsn.end()) {
+				LOG_INFO("Loading binary file");
+			} else {
+				LOG_ERROR("File must have at least a binary entry");
+				PackFileClose(&m_Pack);
+			}
+		}
+
+	} else {
+		LOG_ERROR("File provided is not a valid Archive, skipping");
+	}
 }
 
 void SceneGameMain::Enter2DMode() {

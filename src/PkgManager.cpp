@@ -79,18 +79,20 @@ bool DownloadWindows(const char* url, const char* out) {
 
 bool PkgManager::Refresh() {
 	LOG_INFO("Refreshing list of available packages");
-	httplib::Client client(m_URL);
+	try {
+		httplib::Client client(m_URL);
 		
-	if(auto res = client.Get("/api/packages")) {
-		if(200 == res->status) {
-			std::cout << "OK, got packages:" << res->body << "\n";
-			m_Entries = nlohmann::json::parse(res->body);
+		if(auto res = client.Get("/api/packages")) {
+			if(200 == res->status) {
+				std::cout << "OK, got packages:" << res->body << "\n";
+				m_Entries = nlohmann::json::parse(res->body);
+				WritePackageCache();
+			}
+		} else {
+			LOG_ERROR("Couldn't comunicate with the server");
+			return false;
 		}
-	} else {
-		LOG_ERROR("Couldn't comunicate with the server");
-		return false;
-	}
-	WritePackageCache();
+	} catch(std::exception e) { std::cout << e.what() << "\""; }
 	return true;
 }
 

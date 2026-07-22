@@ -7,6 +7,7 @@
 #include "TextureManager.hpp"
 #include "Sprite.hpp"
 #include "cstdint"
+#include "string"
 #include "DirectXMath.h"
 
 #include "PackArchive/PackFile.h"
@@ -27,7 +28,7 @@ public:
 private:
 	void CreateShaders();
 	void CreateBackground();
-	void LoadPackResources(const char*);
+	void LoadPackResources();
 
 	void Enter2DMode();
 	void Enter3DMode();

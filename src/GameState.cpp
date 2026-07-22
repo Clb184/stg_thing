@@ -41,9 +41,9 @@ bool GameState::Init(InputDevice* input) {
 	m_CurrentSceneType = SCENE_MAIN;
 	
 	// For debug purpose
-	m_pCurrentScene = m_pGameMain;
-	m_CurrentSceneType = SCENE_GAMEMAIN;
-	m_pGameMain->SetResourceRoot("pkgs/test/");
+	//m_pCurrentScene = m_pGameMain;
+	//m_CurrentSceneType = SCENE_GAMEMAIN;
+	//m_pGameMain->SetResourceRoot("pkgs/test/");
 
 	m_pInput = input;
 
