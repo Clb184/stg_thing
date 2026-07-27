@@ -7,7 +7,7 @@ GameState::GameState(GameCore* core) {
 	m_pCurrentScene = nullptr;
 
 	m_pMain = new SceneMain();
-	m_pPKGSel = new ScenePKGSelect();
+//	m_pPKGSel = new ScenePKGSelect();
 	m_pTitle = new SceneTitle();
 	m_pGameMain = new SceneGameMain();
 	
@@ -41,8 +41,8 @@ bool GameState::Init(InputDevice* input) {
 	m_CurrentSceneType = SCENE_MAIN;
 	
 	// For debug purpose
-	//m_pCurrentScene = m_pGameMain;
-	//m_CurrentSceneType = SCENE_GAMEMAIN;
+	m_pCurrentScene = m_pGameMain;
+	m_CurrentSceneType = SCENE_GAMEMAIN;
 	//m_pGameMain->SetResourceRoot("pkgs/test/");
 
 	m_pInput = input;
@@ -64,7 +64,7 @@ void GameState::Move(float dt) {
 		switch(m_TargetSceneChange) {
 			default: m_TargetSceneChange = SCENE_MAIN;
 			case SCENE_MAIN: m_pCurrentScene = m_pMain;  break;
-			case SCENE_PKGSEL: m_pCurrentScene = m_pPKGSel; break;
+			//case SCENE_PKGSEL: m_pCurrentScene = m_pPKGSel; break;
 			case SCENE_TITLE: m_pCurrentScene = m_pTitle; break;
 			case SCENE_GAMEMAIN: m_pCurrentScene = m_pGameMain; break;
 		}
@@ -87,10 +87,6 @@ void GameState::Draw() {
 
 void GameState::ChangeWindowTitle(const char* title) {
 	m_pCore->SetWindowTitle(title);
-}
-
-std::string GameState::GetFetchURL() {
-	return m_pCore->GetConfigCtrl()->GetFetchURL();
 }
 
 void GameState::ChangeScene(SCENE_TYPE type) {

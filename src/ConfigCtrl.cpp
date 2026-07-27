@@ -25,7 +25,6 @@ ConfigCtrl::ConfigCtrl() {
 			m_LoadedConfig.bgm_enable = config["bgmen"];
 			m_LoadedConfig.win_state = (WINDOW_STATE)(int)config["window"];
 			m_LoadedConfig.resolution = config["resolution"];
-			m_LoadedConfig.fetch_url = config["fetch_url"];
 			return;
 		}
 	}
@@ -93,10 +92,6 @@ int ConfigCtrl::GetWindowResolution() const {
 	return m_LoadedConfig.resolution;
 }
 
-std::string ConfigCtrl::GetFetchURL() {
-	return m_LoadedConfig.fetch_url;
-}
-
 void ConfigCtrl::SaveConfig() {
 	LOG_INFO("Saving configuration");
 	nlohmann::json save_cfg;
@@ -109,7 +104,6 @@ void ConfigCtrl::SaveConfig() {
 	save_cfg["bgmen"] = m_LoadedConfig.bgm_enable;
 	save_cfg["window"] = (int)m_LoadedConfig.win_state;
 	save_cfg["resolution"] = m_LoadedConfig.resolution;
-	save_cfg["fetch_url"] = m_LoadedConfig.fetch_url;
 	save_cfg["0"] = "Any extra keys or incorrect values will reset the config, be careful";
 
 #ifdef NDEBUG
@@ -137,16 +131,14 @@ void ConfigCtrl::LoadDefaultConfig() {
 	m_LoadedConfig.bgm_enable = true;
 	m_LoadedConfig.win_state = WS_WINDOW;
 	m_LoadedConfig.resolution = 4; // Start at 1280x960
-	m_LoadedConfig.fetch_url = "192.168.0.63:5000";
 }
 
 bool ConfigCtrl::ValidateJSON(const nlohmann::json& js) {
 	LOG_INFO("Validating config JSON");
 	// Validate string:
-	if(js.find("playername") == js.end() || js.find("lives") == js.end() || js.find("bombs") == js.end() || js.find("sndvol") == js.end() || js.find("bgmvol") == js.end() || js.find("window") == js.end() || js.find("resolution") == js.end() || js.find("snden") == js.end() || js.find("bgmen") == js.end() || js.find("fetch_url") == js.end()) return false;
+	if(js.find("playername") == js.end() || js.find("lives") == js.end() || js.find("bombs") == js.end() || js.find("sndvol") == js.end() || js.find("bgmvol") == js.end() || js.find("window") == js.end() || js.find("resolution") == js.end() || js.find("snden") == js.end() || js.find("bgmen") == js.end()) return false;
 	try {
 		std::string str = js["playername"];
-		str = js["fetch_url"];
 		
 		int integer = 0;
 		integer = js["lives"];

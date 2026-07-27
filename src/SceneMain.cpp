@@ -30,7 +30,7 @@ bool SceneMain::Init(GameState* state, InputDevice* input) {
 	LoadFromJSON("DAT/main.json");
 	CreateShaders();
 	CreateBackground();
-	state->ChangeWindowTitle("Baretto | Build " __DATE__);
+	state->ChangeWindowTitle("Magius | Build " __DATE__);
 	return true;
 }
 
@@ -38,7 +38,7 @@ void SceneMain::Move(float dt) {
 	const float delay = 0.3;
 
 	if(m_OptionDelay <= 0.0f) {
-		
+		// Move over menu
 		if(m_pInput->GetKeyPress(GLFW_KEY_UP) || m_pInput->GetKeyPress(GLFW_KEY_RIGHT)/*Input up / right*/) {
 			m_OptionIndex++;
 			if(m_OptionIndex > 1) m_OptionIndex = 0;
@@ -51,8 +51,8 @@ void SceneMain::Move(float dt) {
 
 		if(m_pInput->GetKeyPress(GLFW_KEY_Z)) {
 			switch(m_OptionIndex) {
-				case 0: // Enter Package select
-					m_pState->ChangeScene(SCENE_PKGSEL);
+				case 0: // 
+					//m_pState->ChangeScene(SCENE_PKGSEL);
 					break;
 				case 1: // Exit
 					m_pState->Exit();
@@ -77,11 +77,11 @@ void SceneMain::Draw() {
 
 	switch(m_OptionIndex) {
 		case 0: 
-			DrawString(&m_Font, 64.0f, 320.0f, "Select Package", active_color);
+			DrawString(&m_Font, 64.0f, 320.0f, "Start Game", active_color);
 			DrawString(&m_Font, 64.0f, 360.0f, "Exit", inactive_color);
 			break;
 		case 1:
-			DrawString(&m_Font, 64.0f, 320.0f, "Select Package", inactive_color);
+			DrawString(&m_Font, 64.0f, 320.0f, "Start Game", inactive_color);
 			DrawString(&m_Font, 64.0f, 360.0f, "Exit", active_color);
 			break;
 	}
@@ -113,7 +113,7 @@ void SceneMain::CreateBackground() {
 	LOG_INFO("Creating Background objects");
 	char* data = nullptr;
 	size_t size = 0;
-	LoadDataFromFile("DAT/baretto_title.png", (void**)&data, &size);
+	LoadDataFromFile("DAT/title.png", (void**)&data, &size);
 	m_BGSprite.Init();
 	m_BGSprite.SetTexID(m_TexMan.LoadTexture(data, size));
 	m_BGSprite.SetPos(320.0f, 240.0f);

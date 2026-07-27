@@ -20,7 +20,6 @@ struct game_config_t {
 	bool bgm_enable;
 	WINDOW_STATE win_state;
 	int resolution;
-	std::string fetch_url;
 };
 
 #endif

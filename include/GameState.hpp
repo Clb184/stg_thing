@@ -3,14 +3,13 @@
 
 #include "Scene.hpp"
 #include "SceneMain.hpp"
-#include "ScenePKGSelect.hpp"
 #include "SceneTitle.hpp"
 #include "SceneGameMain.hpp"
 
 
 enum SCENE_TYPE : int {
 	SCENE_MAIN,
-	SCENE_PKGSEL,
+	//SCENE_PKGSEL,
 	SCENE_TITLE,
 	SCENE_GAMEMAIN,
 	SCENE_NULL = -1
@@ -30,7 +29,6 @@ public:
 
 	void ChangeWindowTitle(const char* title);
 	
-	std::string GetFetchURL();
 	void ChangeScene(SCENE_TYPE type);
 	void PrepareGameMain(const char* resource_root);
 	void Exit();
@@ -43,7 +41,7 @@ private:
 	int m_CurrentSceneType;
 
 	SceneMain* m_pMain;
-	ScenePKGSelect* m_pPKGSel;
+//	ScenePKGSelect* m_pPKGSel;
 	SceneTitle* m_pTitle;
 	SceneGameMain* m_pGameMain;
 

@@ -8,10 +8,7 @@ set(CMAKE_DEBUG_POSTFIX d)
 
 file(GLOB src src/*.cpp src/XASM2/*.cpp)
 add_executable(shooting ${src})
-add_subdirectory(deps/cpp-httplib)
-set(CURL_USE_LIBPSL OFF)
-add_subdirectory(deps/curl)
-target_link_libraries(shooting PUBLIC XPFW httplib libcurl)
+target_link_libraries(shooting PUBLIC XPFW)
 target_include_directories(shooting PUBLIC include/)
 set_target_properties(shooting PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
