@@ -9,6 +9,7 @@
 #include "cstdint"
 #include "string"
 #include "DirectXMath.h"
+#include "ScreenOutput.hpp"
 
 #include "PackArchive/PackFile.h"
 
@@ -51,8 +52,8 @@ private: // Text
 	font_t m_Font;
 	font_descriptor_t m_Desc;
 
+	ScreenOutput m_Out;
 	float m_DebugKeyWait;
-	//STGStage* m_pStages;
 	InputDevice* m_pInput;
 	GameState* m_pState;
 

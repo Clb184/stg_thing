@@ -10,6 +10,7 @@
 #include "iostream"
 #include "nlohmann/json.hpp"
 
+
 SceneGameMain::SceneGameMain() {
 	m_Score = 0;
 	m_ScoreMax = 0;
@@ -36,12 +37,12 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input) {
 	
 	m_pState = state;
 	m_pInput = input;
-
+	m_Out.Init(640.0f, 480.0f, 16.0f, 32.0f, 16.0f, 16.0f);
 	m_TexMan.Init();
 	CreateShaders();
 	CreateBackground();
 	LoadPackResources();
-
+	
 	// Set XASM2 seed
 	XASM2RandomInit(123);
 	
@@ -64,6 +65,8 @@ void SceneGameMain::Move(float dt) {
 		Init(m_pState, m_pInput);
 		m_DebugKeyWait = 1.0f;
 	}
+
+	m_Out.Move(dt);
 }
 
 void SceneGameMain::Draw() {
@@ -87,6 +90,8 @@ void SceneGameMain::Draw() {
 	DrawString(&m_Font, 640.0f - 200.0f, 64.0f, buf, 0xff44eeee);
 	sprintf(buf, "Max  : %010d", m_ScoreMax);
 	DrawString(&m_Font, 640.0f - 200.0f, 86.0f, buf, 0xff44eeee);
+
+	m_Out.Draw();
 }
 
 void SceneGameMain::CreateShaders() {
@@ -197,6 +202,7 @@ void SceneGameMain::CreateBackground() {
 	BindConstantBuffer(m_CBs[0], 0);
 	BindConstantBuffer(m_CBs[1], 1);
 	BindConstantBuffer(m_CBs[2], 2);
+
 }
 
 void SceneGameMain::LoadPackResources() {
@@ -207,15 +213,15 @@ void SceneGameMain::LoadPackResources() {
 		if(0 == PackFileLoadEntry(&m_Pack, "level.json", (void**)&data, &size)) {
 			nlohmann::json jsn = nlohmann::json::parse(data);
 			if(jsn.find("binary") != jsn.end()) {
-				LOG_INFO("Loading binary file");
+				m_Out.LogInfo("Loading binary file");
 			} else {
-				LOG_ERROR("File must have at least a binary entry");
+				m_Out.LogError("File must have at least a binary entry");
 				PackFileClose(&m_Pack);
 			}
 		}
 
 	} else {
-		LOG_ERROR("File provided is not a valid Archive, skipping");
+		m_Out.LogError("File provided is not a valid Archive, skipping");
 	}
 }
 
