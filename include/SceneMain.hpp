@@ -6,6 +6,7 @@
 #include "SpriteManager.hpp"
 #include "TextureManager.hpp"
 #include "OpenGL/Font.h"
+#include "ScreenOutput.hpp"
 #include "InputDevice.hpp"
 
 /*
@@ -41,6 +42,9 @@ private: // Text and related
 	FT_Library m_FTLib;
 	font_t m_Font;
 	font_descriptor_t m_Desc;
+
+	ScreenOutput m_Out;
+
 	int m_OptionIndex;
 	float m_OptionDelay;
 	InputDevice* m_pInput;

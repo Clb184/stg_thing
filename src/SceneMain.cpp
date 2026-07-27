@@ -30,7 +30,13 @@ bool SceneMain::Init(GameState* state, InputDevice* input) {
 	LoadFromJSON("DAT/main.json");
 	CreateShaders();
 	CreateBackground();
-	state->ChangeWindowTitle("Magius | Build " __DATE__);
+	state->ChangeWindowTitle("Magus | Build " __DATE__);
+	m_Out.Init(640, 480, 16.0f, 32.0f, 24.0f, 16.0f);
+	LOG_INFO("Logging text...");
+
+	m_Out.LogInfo("Test INFO");
+	m_Out.LogWarning("Test WARNING");
+	m_Out.LogError("Test ERROR");
 	return true;
 }
 
@@ -52,7 +58,7 @@ void SceneMain::Move(float dt) {
 		if(m_pInput->GetKeyPress(GLFW_KEY_Z)) {
 			switch(m_OptionIndex) {
 				case 0: // 
-					//m_pState->ChangeScene(SCENE_PKGSEL);
+					m_pState->ChangeScene(SCENE_GAMEMAIN);
 					break;
 				case 1: // Exit
 					m_pState->Exit();
@@ -60,10 +66,14 @@ void SceneMain::Move(float dt) {
 
 			}
 		}
+		if(m_pInput->GetKeyPress(GLFW_KEY_M)) {
+			m_Out.LogInfo("This is information");
+		}
 
 	} else {
 		m_OptionDelay -= dt;
 	}
+	m_Out.Move(dt);
 }
 
 void SceneMain::Draw() {
@@ -85,6 +95,7 @@ void SceneMain::Draw() {
 			DrawString(&m_Font, 64.0f, 360.0f, "Exit", active_color);
 			break;
 	}
+	m_Out.Draw();
 }
 
 bool SceneMain::LoadFromJSON(const char* source) {
