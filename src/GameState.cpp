@@ -5,11 +5,13 @@
 
 GameState::GameState(GameCore* core) {
 	m_pCurrentScene = nullptr;
-
+	
+	// Instance all scenes
 	m_pMain = new SceneMain();
 	m_pTitle = new SceneTitle();
 	m_pGameMain = new SceneGameMain();
 	
+	// Point to Core
 	m_pCore = core;
 
 	m_bOnSceneChange = false;
@@ -40,8 +42,8 @@ bool GameState::Init(InputDevice* input) {
 	m_CurrentSceneType = SCENE_MAIN;
 	
 	// For debug purpose
-	m_pCurrentScene = m_pGameMain;
-	m_CurrentSceneType = SCENE_GAMEMAIN;
+	//m_pCurrentScene = m_pGameMain;
+	//m_CurrentSceneType = SCENE_GAMEMAIN;
 
 	m_pInput = input;
 
@@ -56,8 +58,10 @@ bool GameState::Init(InputDevice* input) {
 void GameState::Move(float dt) {
 	assert(0 != m_pCurrentScene);
 
+	// Move Scene
 	m_pCurrentScene->Move(dt);
-
+	
+	// Change scene on notify
 	if(m_bOnSceneChange) {
 		switch(m_TargetSceneChange) {
 			default: m_TargetSceneChange = SCENE_MAIN;
@@ -71,13 +75,12 @@ void GameState::Move(float dt) {
 		m_CurrentSceneType = m_TargetSceneChange;
 		m_pCurrentScene->Init(this, m_pInput);
 	}
-
-
 }
 
 void GameState::Draw() {
 	assert(0 != m_pCurrentScene);
-
+	
+	// Draw scene
 	m_pCurrentScene->Draw();
 
 }

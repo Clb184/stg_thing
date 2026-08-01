@@ -9,3 +9,4 @@ CMakeSettings.json
 *.sw*
 server/
 res/packages/
+res/
