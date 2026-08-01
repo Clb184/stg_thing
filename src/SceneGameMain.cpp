@@ -37,7 +37,7 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input) {
 	
 	m_pState = state;
 	m_pInput = input;
-	m_Out.Init(640.0f, 480.0f, 16.0f, 32.0f, 16.0f, 16.0f);
+	m_Out.Init();
 	m_TexMan.Init();
 	CreateShaders();
 	CreateBackground();

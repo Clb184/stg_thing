@@ -28,7 +28,7 @@ public:
 	ScreenOutput();
 	~ScreenOutput();
 
-	bool Init(int width, int height, float size, float xbeg, float ybeg, float vert);
+	bool Init();
 	
 	void LogInfo(const char * msg);
 	void LogWarning(const char* msg);

@@ -46,6 +46,7 @@ private: // Text and related
 	ScreenOutput m_Out;
 
 	int m_OptionIndex;
+	int m_WeaponSelectIndex;
 	float m_OptionDelay;
 	InputDevice* m_pInput;
 };

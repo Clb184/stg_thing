@@ -16,14 +16,14 @@ ScreenOutput::~ScreenOutput() {
 	Cleanup();
 }
 
-bool ScreenOutput::Init(int width, int height, float size, float xbeg, float ybeg, float vert) {
+bool ScreenOutput::Init() {
 	LOG_INFO("Initializing Screen Output");
 	Cleanup();
-	m_Width = width;
-	m_Height = height;
-	m_XBegin = xbeg;
-	m_YBegin = ybeg;
-	m_VSpace = vert;
+	m_Width = 640;
+	m_Height = 480;
+	m_XBegin = 32.0f;
+	m_YBegin = 16.0f;
+	m_VSpace = 16.0f;
 
 	CreateShaders();
 	InitializeFreeType(&m_FTLib);

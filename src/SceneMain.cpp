@@ -24,15 +24,15 @@ bool SceneMain::Init(GameState* state, InputDevice* input) {
 	LOG_INFO("Initializing Main Scene");
 	m_pState = state;
 	m_pInput = input;
-	m_OptionDelay = 0.5f;
+	m_OptionIndex = 0;
+	m_WeaponSelectIndex = 0;
+	m_OptionDelay = 1.0f;
 
 	m_TexMan.Init();
-	LoadFromJSON("DAT/main.json");
 	CreateShaders();
 	CreateBackground();
 	state->ChangeWindowTitle("Magus | Build " __DATE__);
-	m_Out.Init(640, 480, 16.0f, 32.0f, 24.0f, 16.0f);
-	LOG_INFO("Logging text...");
+	m_Out.Init();
 
 	return true;
 }
@@ -42,22 +42,43 @@ void SceneMain::Move(float dt) {
 
 	if(m_OptionDelay <= 0.0f) {
 		// Move over menu
-		/*if(m_pInput->GetKeyPress(GLFW_KEY_UP) || m_pInput->GetKeyPress(GLFW_KEY_RIGHT)) {
-			m_OptionIndex++;
-			if(m_OptionIndex > 1) m_OptionIndex = 0;
-			m_OptionDelay = delay;
-		} else if(m_pInput->GetKeyPress(GLFW_KEY_DOWN) || m_pInput->GetKeyPress(GLFW_KEY_LEFT)) {
-			m_OptionIndex--;
-			if(m_OptionIndex < 0) m_OptionIndex = 1;
-			m_OptionDelay = delay;
-		}*/
-
+		if(m_OptionIndex == 1) {
+			if(m_pInput->GetKeyPress(GLFW_KEY_UP) || m_pInput->GetKeyPress(GLFW_KEY_LEFT)) {
+				m_WeaponSelectIndex--;
+				if(m_WeaponSelectIndex < 0) m_WeaponSelectIndex = 2;
+				m_OptionDelay = delay;
+			} else if(m_pInput->GetKeyPress(GLFW_KEY_DOWN) || m_pInput->GetKeyPress(GLFW_KEY_RIGHT)) {
+				m_WeaponSelectIndex++;
+				if(m_WeaponSelectIndex > 2) m_WeaponSelectIndex = 0;
+				m_OptionDelay = delay;
+			}
+		}
+		
+		// Press Z to start game
 		if(m_pInput->GetKeyPress(GLFW_KEY_Z)) {
-			m_pState->ChangeScene(SCENE_GAMEMAIN);
+			switch(m_OptionIndex) {
+			case 0:
+				m_OptionIndex = 1;
+				break;
+			case 1:
+				m_pState->ChangeScene(SCENE_GAMEMAIN);
+				break;
+			}
+			m_OptionDelay = delay;
 		}
+		// Press Escape to exit
 		else if(m_pInput->GetKeyPress(GLFW_KEY_ESCAPE)) {
-			m_pState->Exit();
+			switch(m_OptionIndex) {
+			case 0:
+				m_pState->Exit();
+				break;
+			case 1:
+				m_OptionIndex = 0;
+				break;
+			}
+			m_OptionDelay = delay;
 		}
+		// Debuggggg
 		if(m_pInput->GetKeyPress(GLFW_KEY_M)) {
 			m_Out.LogInfo("This is information");
 		}
@@ -75,9 +96,24 @@ void SceneMain::Draw() {
 
 	const uint32_t active_color = 0xffffffff;
 	const uint32_t inactive_color = 0x80ffffff;
-	
 
-	DrawString(&m_Font, 240.0f, 360.0f, "Press Z to start", active_color);
+	switch(m_OptionIndex) {
+	case 0:
+		DrawString(&m_Font, 240.0f, 360.0f, "Press Z to start", active_color);
+		break;
+	case 1:
+		uint32_t colors[3];
+		for(int i= 0; i < 3; i++) {
+			colors[i] = inactive_color;
+			if(i == m_WeaponSelectIndex)
+				colors[i] = active_color;
+		}
+
+		DrawString(&m_Font, 40.0f, 200.0f, "Misaka & Kuroko", colors[0] );
+		DrawString(&m_Font, 240.0f, 280.0f, "Misaka & Saten", colors[1] );
+		DrawString(&m_Font, 440.0f, 200.0f, "Misaka & Uiharu", colors[2] );
+		break;
+	}
 	m_Out.Draw();
 }
 
