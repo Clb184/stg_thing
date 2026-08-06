@@ -5,8 +5,8 @@
 
 Sprite::Sprite() {
 	m_bNeedUpdate = true;
-	m_VB = -1;
-	m_VA = -1;
+	m_VB = 0;
+	m_VA = 0;
 	//memset(&m_SpriteInf, 0, sizeof(sprite_inf_t));
 }
 
@@ -17,7 +17,9 @@ Sprite::~Sprite() {
 
 bool Sprite::Init() {
 	GLERR;
-	CreateTL2DVertexBuffer(4, nullptr, GL_MAP_WRITE_BIT, &m_VB, &m_VA);
+	if(0 == m_VA || 0 == m_VB) {
+		CreateTL2DVertexBuffer(4, nullptr, GL_MAP_WRITE_BIT, &m_VB, &m_VA);
+	}
 	GL_ERROR();
 	return true;
 }
