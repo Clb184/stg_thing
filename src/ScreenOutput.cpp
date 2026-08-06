@@ -21,8 +21,8 @@ bool ScreenOutput::Init() {
 	Cleanup();
 	m_Width = 640;
 	m_Height = 480;
-	m_XBegin = 32.0f;
-	m_YBegin = 16.0f;
+	m_XBegin = 0.0f;
+	m_YBegin = 0.0f;
 	m_VSpace = 16.0f;
 
 	CreateShaders();
@@ -42,13 +42,28 @@ void ScreenOutput::LogInfo(const char* msg) {
 	m_MsgQueue.emplace_back(MSG_INFO, INFO_COLOR, timeout_msg, msg);
 }
 
+void ScreenOutput::LogInfo(const std::string& msg) {
+	LOG_INFO(msg.c_str());
+	m_MsgQueue.emplace_back(MSG_INFO, INFO_COLOR, timeout_msg, msg);
+}
+
 void ScreenOutput::LogWarning(const char* msg) {
 	LOG_INFO(msg);
 	m_MsgQueue.emplace_back(MSG_WARN, WARN_COLOR, timeout_msg, msg);
 }
 
+void ScreenOutput::LogWarning(const std::string& msg) {
+	LOG_INFO(msg.c_str());
+	m_MsgQueue.emplace_back(MSG_WARN, WARN_COLOR, timeout_msg, msg);
+}
+
 void ScreenOutput::LogError(const char* msg) {
 	LOG_ERROR(msg);
+	m_MsgQueue.emplace_back(MSG_ERR, ERR_COLOR, timeout_msg, msg);
+}
+
+void ScreenOutput::LogError(const std::string& msg) {
+	LOG_ERROR(msg.c_str());
 	m_MsgQueue.emplace_back(MSG_ERR, ERR_COLOR, timeout_msg, msg);
 }
 
