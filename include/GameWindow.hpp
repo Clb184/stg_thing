@@ -4,6 +4,8 @@
 #include "XPFW.h"
 #include "ConfigCtrl.hpp"
 
+extern sound_control_t g_Sound;
+
 class GameWindow {
 public:
 	GameWindow();

@@ -8,20 +8,26 @@
 #include "DirectXMath.h"
 
 SceneMain::SceneMain() {
-	m_2DShader = -1;
-	m_3DShader = -1;
+	m_2DShader = 0;
+	m_3DShader = 0;
+
 	m_pState = nullptr;
 	m_OptionIndex = 0;
 	m_OptionDelay = 0.0f;
+	
+	m_Desc = nullptr;
+	memset(&m_Font, 0, sizeof(m_Font));
+	memset(&m_FTLib, 0, sizeof(m_FTLib));
 }
 
 SceneMain::~SceneMain() {
-
+	Cleanup();
 }
 
-bool SceneMain::Init(GameState* state, InputDevice* input) {
+bool SceneMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO) {
 	assert(nullptr != state);
 	LOG_INFO("Initializing Main Scene");
+	Cleanup();
 	m_pState = state;
 	m_pInput = input;
 	m_OptionIndex = 0;
@@ -31,15 +37,14 @@ bool SceneMain::Init(GameState* state, InputDevice* input) {
 	m_TexMan.Init();
 	CreateShaders();
 	CreateBackground();
-	state->ChangeWindowTitle("Magus | Build " __DATE__);
-	m_Out.Init();
+	m_Out = IO;
 
 	return true;
 }
 
 void SceneMain::Move(float dt) {
 	const float delay = 0.3;
-
+	
 	if(m_OptionDelay <= 0.0f) {
 		// Move over menu
 		if(m_OptionIndex == 1) {
@@ -55,7 +60,7 @@ void SceneMain::Move(float dt) {
 		}
 		
 		// Press Z to start game
-		if(m_pInput->GetKeyPress(GLFW_KEY_Z)) {
+		if(m_pInput->GetOK()) {
 			switch(m_OptionIndex) {
 			case 0:
 				m_OptionIndex = 1;
@@ -67,7 +72,7 @@ void SceneMain::Move(float dt) {
 			m_OptionDelay = delay;
 		}
 		// Press Escape to exit
-		else if(m_pInput->GetKeyPress(GLFW_KEY_ESCAPE)) {
+		else if(m_pInput->GetEscape()) {
 			switch(m_OptionIndex) {
 			case 0:
 				m_pState->Exit();
@@ -80,13 +85,12 @@ void SceneMain::Move(float dt) {
 		}
 		// Debuggggg
 		if(m_pInput->GetKeyPress(GLFW_KEY_M)) {
-			m_Out.LogInfo("This is information");
+			m_Out->LogInfo("This is information");
 		}
 
 	} else {
 		m_OptionDelay -= dt;
 	}
-	m_Out.Move(dt);
 }
 
 void SceneMain::Draw() {
@@ -114,7 +118,18 @@ void SceneMain::Draw() {
 		DrawString(&m_Font, 440.0f, 200.0f, "Misaka & Uiharu", colors[2] );
 		break;
 	}
-	m_Out.Draw();
+}
+
+void SceneMain::Cleanup() {
+	glDeleteProgram(m_2DShader);
+	m_2DShader = 0;
+	glDeleteProgram(m_3DShader);
+	m_3DShader = 0;
+	
+	DestroyFont(&m_Font);
+	UninitializeFreeType(m_FTLib);
+	m_TexMan.Cleanup();
+	m_SpriteMan.Cleanup();
 }
 
 bool SceneMain::LoadFromJSON(const char* source) {

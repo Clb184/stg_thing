@@ -22,14 +22,13 @@ public:
 	~GameState();
 
 	// Inherited
-	bool Init(InputDevice* input);
+	bool Init(InputDevice* input, ScreenOutput* IO);
 	void Move(float dt);
 	void Draw();
 
 	void ChangeWindowTitle(const char* title);
 	
 	void ChangeScene(SCENE_TYPE type);
-	void PrepareGameMain(const char* resource_root);
 	void Exit();
 
 private:
@@ -40,12 +39,10 @@ private:
 	int m_CurrentSceneType;
 
 	SceneMain* m_pMain;
-//	ScenePKGSelect* m_pPKGSel;
-	SceneTitle* m_pTitle;
 	SceneGameMain* m_pGameMain;
-
+	
 	InputDevice* m_pInput;
-
+	ScreenOutput* m_pIO;
 	GameCore* m_pCore;
 };
 

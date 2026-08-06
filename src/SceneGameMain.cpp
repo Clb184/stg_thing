@@ -9,39 +9,50 @@
 #include "Misc/Primitives.h"
 #include "iostream"
 #include "nlohmann/json.hpp"
-
+#include "GameWindow.hpp"
 
 SceneGameMain::SceneGameMain() {
 	m_Score = 0;
 	m_ScoreMax = 0;
-	m_2DShader = -1;
-	m_3DShader = -1;
+
+	m_2DShader = 0;
+	m_3DShader = 0;
+	m_Plane = 0;
+	m_VA3D = 0;
+	m_CBs[0] = 0;
+	m_CBs[1] = 0;
+	m_CBs[2] = 0;
+
 	m_DebugKeyWait = 0.5f;
 	m_pInput = nullptr;
 	m_pState = nullptr;
+
+	m_Desc = nullptr;
+	memset(&m_3DBGTex, 0, sizeof(render_texture_t));
+	memset(&m_GameAreaTex, 0, sizeof(render_texture_t));
+	memset(&m_Font, 0, sizeof(m_Font));
+	memset(&m_FTLib, 0, sizeof(m_FTLib));
 }
 
 SceneGameMain::~SceneGameMain() {
-
+	Cleanup();
 }
 
-void SceneGameMain::SetResourceRoot(const char* resource_root) {
-	std::cout << "Setting resource root for GameMain: " << resource_root << "\n";
-	m_ResourceRoot = resource_root;
-}
-
-bool SceneGameMain::Init(GameState* state, InputDevice* input) {
+bool SceneGameMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO) {
 	assert(nullptr != state);
 
 	LOG_INFO("Initializing GameMain");
-	
+	Cleanup();
+	m_DebugKeyWait = 1.0f;
+
 	m_pState = state;
 	m_pInput = input;
-	m_Out.Init();
+	m_Out = IO;
+
 	m_TexMan.Init();
 	CreateShaders();
 	CreateBackground();
-	LoadPackResources();
+	LoadFirstPackResources();
 	
 	// Set XASM2 seed
 	XASM2RandomInit(123);
@@ -57,41 +68,60 @@ void SceneGameMain::Move(float dt) {
 	}
 
 	if(m_pInput->GetKeyPress(GLFW_KEY_ESCAPE)) {
+		MusicStop(&g_Sound);
 		m_pState->ChangeScene(SCENE_MAIN);
 		return;
 	}
 	// Debug restart
 	if(m_pInput->GetKeyPress(GLFW_KEY_R)) {
-		Init(m_pState, m_pInput);
-		m_DebugKeyWait = 1.0f;
+		Init(m_pState, m_pInput, m_Out);
 	}
 
-	m_Out.Move(dt);
 }
 
 void SceneGameMain::Draw() {
 	// Draw background
 	Enter3DMode();
-	glBindFramebuffer(GL_FRAMEBUFFER, m_FBBG3D);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_3DBGTex.framebuffer);
+
+	GLint viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
 	glViewport(0, 0, 400, 480);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(m_VA3D);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, 1280, 960);
+
 
 	// Draw UI and others
 	Enter2DMode();
+	glBindFramebuffer(GL_FRAMEBUFFER, m_GameAreaTex.framebuffer);
+	DirectX::XMMATRIX proj = DirectX::XMMatrixOrthographicOffCenterLH(0.0f, 400.0f, 480.0f, 0.0f, 1.0f, -1.0f);
+	glUniformMatrix4fv(0, 1, GL_FALSE, (float*)&proj);
+	m_PPBG.SetTexID(m_3DBGTex.texture);
+	m_PPBG.SetPos(200.0f, 240.0f);
 	m_PPBG.Draw();
+
+	glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	proj = DirectX::XMMatrixOrthographicOffCenterLH(0.0f, 640.0f, 480.0f, 0.0f, 1.0f, -1.0f);
+	glUniformMatrix4fv(0, 1, GL_FALSE, (float*)&proj);
+
+	// Game Area
+	m_PPBG.SetTexID(m_GameAreaTex.texture);
+	m_PPBG.SetPos(16.0f + 200.0f, 240.0f);
+	m_PPBG.Draw();
+
+	// UI
 	m_LeftUI.Draw();
 	m_RightUI.Draw();
+
 	char buf[128];
 	sprintf(buf, "Score: %010d", m_Score);
 	DrawString(&m_Font, 640.0f - 200.0f, 64.0f, buf, 0xff44eeee);
 	sprintf(buf, "Max  : %010d", m_ScoreMax);
 	DrawString(&m_Font, 640.0f - 200.0f, 86.0f, buf, 0xff44eeee);
 
-	m_Out.Draw();
 }
 
 void SceneGameMain::CreateShaders() {
@@ -100,14 +130,14 @@ void SceneGameMain::CreateShaders() {
 	LoadShaderFromFile("DAT/T&L2D.vert", &vs, GL_VERTEX_SHADER);
 	LoadShaderFromFile("DAT/T&L2D.frag", &fs, GL_FRAGMENT_SHADER);
 	if(false == CreateShaderProgram(vs, fs, &prog)) {
-		LOG_ERROR("Failed creating 2D Shader");
+		m_Out->LogError("Failed creating 2D Shader");
 	}
 	m_2DShader = prog;
 
 	LoadShaderFromFile("DAT/Transform3D.vert", &vs, GL_VERTEX_SHADER);
 	LoadShaderFromFile("DAT/Transform3D.frag", &fs, GL_FRAGMENT_SHADER);
 	if(false == CreateShaderProgram(vs, fs, &prog)){
-		LOG_ERROR("Failed creating 3D Shader");
+		m_Out->LogError("Failed creating 3D Shader");
 	}
 	m_3DShader = prog;
 }
@@ -133,10 +163,9 @@ void SceneGameMain::CreateBackground() {
 	m_RightUI.SetUV(metric.texelw * 16.0f, 0.0f, metric.texelw * (16.0f + 224.0f), 1.0f);
 
 	// 3D background
-	CreateRenderTexture(&m_BG3D, &m_FBBG3D, 400, 480);
+	CreateRenderTextureA(&m_3DBGTex, 400, 480, RTFLAG_DEPTH);
+	CreateRenderTextureA(&m_GameAreaTex, 400, 480, 0);
 	m_PPBG.Init();
-	m_PPBG.SetTexID(m_BG3D);
-	m_PPBG.SetPos(16.0f + 200.0f, 240.0f);
 	m_PPBG.SetSize(400.0f, 480.0f);
 	m_PPBG.SetUV(0.0f, 1.0f, 1.0f, 0.0f);
 	
@@ -205,35 +234,86 @@ void SceneGameMain::CreateBackground() {
 
 }
 
-void SceneGameMain::LoadPackResources() {
-	if(0 == PackFileOpen(&m_Pack, m_ResourceRoot.c_str())) {
-		LOG_INFO("Loading packed file...");
+bool SceneGameMain::LoadFirstPackResources() {
+	char buf[512];
+	pack_file_t pack;
+	if(0 == PackFileOpen(&pack, "STG.DAT")) {
+		LOG_INFO("Loading STG.DAT...");
 		char* data;
 		size_t size;
-		if(0 == PackFileLoadEntry(&m_Pack, "level.json", (void**)&data, &size)) {
+		// test level
+		if(0 == PackFileLoadEntry(&pack, "game.json", (void**)&data, &size)) {
 			nlohmann::json jsn = nlohmann::json::parse(data);
-			if(jsn.find("binary") != jsn.end()) {
-				m_Out.LogInfo("Loading binary file");
+			if(jsn.find("test_level") != jsn.end()) {
+				std::string level = jsn["test_level"];
+				m_Out->LogInfo("Loading demo level \"" + level + "\"");
 			} else {
-				m_Out.LogError("File must have at least a binary entry");
-				PackFileClose(&m_Pack);
+				m_Out->LogError("Demo level not found");
+				return false;
 			}
+			free(data);
+		}
+		else {
+			m_Out->LogError("Failed to load level list");
+			PackFileClose(&pack);
+			return false;
 		}
 
+		// BGM
+		if(0 == PackFileLoadEntry(&pack, "BGM/smml_demo_01.ogg", (void**)&data, &size)) {
+			m_Out->LogInfo("Loading BGM");
+			if(0 != LoadMusicFromMemory(&g_Sound, (char*)data, size)) {
+				m_Out->LogError("Couldn't load BGM");
+			} else {
+				MusicSetLoop(&g_Sound, 852960, 852960 + 2116128);
+				MusicEnableLoop(&g_Sound, 1);
+				MusicPlay(&g_Sound);
+			}
+			free(data);
+		} else {
+			m_Out->LogError("BGM not found");
+		}
+
+		PackFileClose(&pack);
 	} else {
-		m_Out.LogError("File provided is not a valid Archive, skipping");
+		m_Out->LogError("File provided is not a valid Archive, skipping");
 	}
+}
+
+void SceneGameMain::LoadPackResources(const char* level) {
+
 }
 
 void SceneGameMain::Enter2DMode() {
 	glUseProgram(m_2DShader);	
 	glDisable(GL_DEPTH_TEST);
-	DirectX::XMMATRIX proj = DirectX::XMMatrixOrthographicOffCenterLH(0.0f, 640.0f, 480.0f, 0.0f, 1.0f, -1.0f);
-	glUniformMatrix4fv(0, 1, GL_FALSE, (float*)&proj);
 
 }
 
 void SceneGameMain::Enter3DMode() {
 	glUseProgram(m_3DShader);
 	glEnable(GL_DEPTH_TEST);
+}
+
+void SceneGameMain::Cleanup() {
+	glDeleteProgram(m_2DShader);
+	glDeleteProgram(m_3DShader);
+	glDeleteBuffers(1, &m_Plane);
+	glDeleteVertexArrays(1, &m_VA3D);
+	glDeleteBuffers(3, m_CBs);
+
+	m_2DShader = 0;
+	m_3DShader = 0;
+	m_Plane = 0;
+	m_VA3D = 0;
+
+	m_CBs[0] = 0;
+	m_CBs[1] = 0;
+	m_CBs[2] = 0;
+	
+	DestroyRenderTexture(&m_3DBGTex);
+	DestroyRenderTexture(&m_GameAreaTex);
+	DestroyFont(&m_Font);
+	UninitializeFreeType(m_FTLib);
+	m_TexMan.Cleanup();
 }

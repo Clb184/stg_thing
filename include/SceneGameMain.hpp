@@ -21,18 +21,25 @@ public:
 	~SceneGameMain();
 
 	// Inherited
-	void SetResourceRoot(const char* resource_root);
-	bool Init(GameState* state, InputDevice* input);
+	bool Init(GameState* state, InputDevice* input, ScreenOutput* IO);
 	void Move(float dt);
 	void Draw();
 
 private:
+		// Load Shaders
 	void CreateShaders();
 	void CreateBackground();
-	void LoadPackResources();
 
+	// Load packed resources
+	bool LoadFirstPackResources();
+	void LoadPackResources(const char* script);
+
+	// Jump between draw modes
 	void Enter2DMode();
 	void Enter3DMode();
+
+	void Cleanup();
+
 private: // Relevant shaders and sprites
 	GLuint m_2DShader;
 	GLuint m_3DShader;
@@ -40,7 +47,7 @@ private: // Relevant shaders and sprites
 	TextureManager m_TexMan;
 	Sprite m_LeftUI;
 	Sprite m_RightUI;
-	Sprite m_PPBG;
+	Sprite m_PPBG; // Post Processed BackGround
 
 private: // Score
 	int64_t m_Score;
@@ -52,7 +59,7 @@ private: // Text
 	font_t m_Font;
 	font_descriptor_t m_Desc;
 
-	ScreenOutput m_Out;
+	ScreenOutput* m_Out;
 	float m_DebugKeyWait;
 	InputDevice* m_pInput;
 	GameState* m_pState;
@@ -61,13 +68,14 @@ private: // Plane and related
 	DirectX::XMMATRIX m_CameraMatrix;
 	GLuint m_Plane;
 	GLuint m_VA3D;
-	GLuint m_BG3D;
-	GLuint m_FBBG3D;
+
+	render_texture_t m_3DBGTex;
+	render_texture_t m_GameAreaTex;
 
 	GLuint m_CBs[3];
 	
 	std::string m_ResourceRoot;
-	pack_file_t m_Pack;
+
 };
 
 #endif

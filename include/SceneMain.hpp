@@ -19,9 +19,12 @@ public:
 	~SceneMain();
 
 	// Inherited
-	bool Init(GameState* state, InputDevice* data);
+	bool Init(GameState* state, InputDevice* data, ScreenOutput* IO);
 	void Move(float dt);
 	void Draw();
+
+	void Cleanup();
+
 private:
 	bool LoadFromJSON(const char* source);
 	void CreateShaders();
@@ -43,7 +46,7 @@ private: // Text and related
 	font_t m_Font;
 	font_descriptor_t m_Desc;
 
-	ScreenOutput m_Out;
+	ScreenOutput* m_Out;
 
 	int m_OptionIndex;
 	int m_WeaponSelectIndex;

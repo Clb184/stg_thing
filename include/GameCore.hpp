@@ -1,12 +1,11 @@
 #ifndef GAMECORE_INCLUDED
 #define GAMECORE_INCLUDED
 
-#include "XPFW.h"
-#include "XASM2/VM.hpp"
 #include "ConfigCtrl.hpp"
 #include "GameWindow.hpp"
 #include "GameState.hpp"
 #include "InputDevice.hpp"
+#include "ScreenOutput.hpp"
 
 class GameCore {
 public:
@@ -23,8 +22,12 @@ public:
 	ConfigCtrl* GetConfigCtrl();
 
 private:
+	void LoadGameDescriptor();
+
+private:
 	ConfigCtrl m_CFG;
 	InputDevice m_Input;
+	ScreenOutput m_IO;
 	GameWindow m_Window;
 	GameState m_State;
 };

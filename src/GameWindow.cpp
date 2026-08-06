@@ -1,6 +1,8 @@
 #include "GameWindow.hpp"
 #include "Output.h"
 
+sound_control_t g_Sound;
+
 GameWindow::GameWindow() {
 	m_WindowData = { };
 }
@@ -20,7 +22,9 @@ bool GameWindow::CreateGameWindow(const ConfigCtrl& cfg) {
 	int baseval = 160 + 40 * resolution;
 	height = baseval * 3;
 	width = baseval * 4;
-	fprintf(stdout, "Resolution: %d, Width: %d, Height: %d\n", resolution, width, height);
+	char buf[128] = "";
+	sprintf(buf, "Resolution: %d, Width: %d, Height: %d\n", resolution, width, height);
+	LOG_INFO(buf);
 
 	if(cfg.GetWindowState() == WS_FULLSCREEN) fullscreen = true;
 
@@ -35,7 +39,9 @@ bool GameWindow::CreateGameWindow(const ConfigCtrl& cfg) {
 }
 
 void GameWindow::SetGameTitle(const char* title) {
-	glfwSetWindowTitle(m_WindowData.window, title);
+	char buf[512] = "";
+	sprintf(buf, "%s | Build %s", title, __DATE__);
+	glfwSetWindowTitle(m_WindowData.window, buf);
 }
 
 void GameWindow::SetWindowState(int state) {
