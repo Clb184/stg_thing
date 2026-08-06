@@ -1,6 +1,7 @@
 #include "InputDevice.hpp"
 #include "cstdlib"
 #include "cstdio"
+#include "cstring"
 
 struct text_input_t {
 	char* buffer;
@@ -36,20 +37,20 @@ bool InputDevice::GetKeyPress(int code) {
 void InputDevice::Update() {
 	memcpy(m_PastKeyBuffer, m_KeyBuffer, sizeof(m_PastKeyBuffer));
 
-	m_KeyBuffer[IDKP_Z] == glfwGetKey(m_pWindow, GLFW_KEY_Z);
-	m_KeyBuffer[IDKP_X] == glfwGetKey(m_pWindow, GLFW_KEY_X);
-	m_KeyBuffer[IDKP_C] == glfwGetKey(m_pWindow, GLFW_KEY_C);
-	m_KeyBuffer[IDKP_SHIFT] == glfwGetKey(m_pWindow, GLFW_KEY_SHIFT);
+	m_KeyBuffer[IDKP_Z] = glfwGetKey(m_pWindow, GLFW_KEY_Z);
+	m_KeyBuffer[IDKP_X] = glfwGetKey(m_pWindow, GLFW_KEY_X);
+	m_KeyBuffer[IDKP_C] = glfwGetKey(m_pWindow, GLFW_KEY_C);
+	m_KeyBuffer[IDKP_SHIFT] = glfwGetKey(m_pWindow, GLFW_KEY_LEFT_SHIFT);
 
-	m_KeyBuffer[IDKP_UP] == glfwGetKey(m_pWindow, GLFW_KEY_UP);
-	m_KeyBuffer[IDKP_DOWN] == glfwGetKey(m_pWindow, GLFW_KEY_DOWN);
-	m_KeyBuffer[IDKP_LEFT] == glfwGetKey(m_pWindow, GLFW_KEY_LEFR);
-	m_KeyBuffer[IDKP_RIGHT] == glfwGetKey(m_pWindow, GLFW_KEY_RIGHT);
+	m_KeyBuffer[IDKP_UP] = glfwGetKey(m_pWindow, GLFW_KEY_UP);
+	m_KeyBuffer[IDKP_DOWN] = glfwGetKey(m_pWindow, GLFW_KEY_DOWN);
+	m_KeyBuffer[IDKP_LEFT] = glfwGetKey(m_pWindow, GLFW_KEY_LEFT);
+	m_KeyBuffer[IDKP_RIGHT] = glfwGetKey(m_pWindow, GLFW_KEY_RIGHT);
 
-	m_KeyBuffer[IDKP_ESCAPE] == glfwGetKey(m_pWindow, GLFW_KEY_ESCAPE);
-	m_KeyBuffer[IDKP_ENTER] == glfwGetKey(m_pWindow, GLFW_KEY_ENTER);
-	m_KeyBuffer[IDKP_BACKSPACE] == glfwGetKey(m_pWindow, GLFW_KEY_BACKSPACE);
-	m_KeyBuffer[IDKP_SCREENSHOT] == glfwGetKey(m_pWindow, GLFW_KEY_F2);
+	m_KeyBuffer[IDKP_ESCAPE] = glfwGetKey(m_pWindow, GLFW_KEY_ESCAPE);
+	m_KeyBuffer[IDKP_ENTER] = glfwGetKey(m_pWindow, GLFW_KEY_ENTER);
+	m_KeyBuffer[IDKP_BACKSPACE] = glfwGetKey(m_pWindow, GLFW_KEY_BACKSPACE);
+	m_KeyBuffer[IDKP_SCREENSHOT] = glfwGetKey(m_pWindow, GLFW_KEY_F2);
 }
 
 bool InputDevice::GetOK() {
@@ -69,7 +70,7 @@ uint8_t InputDevice::GetMoveStatus() {
 	;
 }
 
-uint32_t InputDevice::GetControlStatus() {
+uint8_t InputDevice::GetControlStatus() {
 	return
 		(GLFW_PRESS == m_KeyBuffer[IDKP_Z]) |
 		(GetSinglePress(IDKP_X) << 1) |
@@ -82,12 +83,16 @@ bool InputDevice::GetEscape() {
 	return GetSinglePress(IDKP_ESCAPE);
 }
 
+bool InputDevice::GetScreenshot() {
+	return GetSinglePress(IDKP_SCREENSHOT);
+}
+
 void InputDevice::BeginTextInput(char* buffer, size_t size) {
 
 	glfwSetCharCallback(m_pWindow, TextInput);
 }
 
-bool InputDevice::GetSinglePress(ID_KEYPRESS id, int key_id) {
-	return m_PastKeyBuffer[id] == GLFW_PRESS && glfwGetKey(m_pWindow, key_id);
+bool InputDevice::GetSinglePress(ID_KEYPRESS id) {
+	return GLFW_PRESS != m_PastKeyBuffer[id] && GLFW_PRESS == m_KeyBuffer[id];
 }
 

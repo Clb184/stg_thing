@@ -32,9 +32,9 @@ public:
 
 	enum CONTROL_KEY {
 		CK_Z = 1,
-		CK_X = 2;
-		CK_C = 4;
-		CK_SHIFT = 8;
+		CK_X = 2,
+		CK_C = 4,
+		CK_SHIFT = 8,
 	};
 
 public:
@@ -52,11 +52,12 @@ public:
 	uint8_t GetMoveStatus(); // <- v ^ ->
 	uint8_t GetControlStatus(); // Z, X, C, Shift
 	bool GetEscape(); // Escape
+	bool GetScreenshot(); // F2
 
 
 	void BeginTextInput(char* buffer, size_t size);
 private:
-	bool GetSinglePress(ID_KEYPRESS id, int key_id);
+	bool GetSinglePress(ID_KEYPRESS id);
 
 private:
 	GLFWwindow* m_pWindow;
