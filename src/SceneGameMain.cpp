@@ -38,6 +38,17 @@ SceneGameMain::~SceneGameMain() {
 	Cleanup();
 }
 
+struct CameraData {
+	DirectX::XMMATRIX cam;
+	DirectX::XMMATRIX vw;
+	DirectX::XMMATRIX proj;
+	DirectX::XMFLOAT4 fog = {100.0f, 150.0f, 0.0f, 0.0f};
+	DirectX::XMFLOAT4 _extra[2] = { {1.0f, 1.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.0f, 0.0f}};
+} camera_data;
+
+float x = 0.0f;
+float y = -300.0f;
+float z = 300.0f;
 bool SceneGameMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO) {
 	assert(nullptr != state);
 
@@ -58,6 +69,7 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO)
 	XASM2RandomInit(123);
 	
 
+
 	return true;
 }
 
@@ -72,6 +84,18 @@ void SceneGameMain::Move(float dt) {
 		m_pState->ChangeScene(SCENE_MAIN);
 		return;
 	}
+	if(m_pInput->GetKeyPress(GLFW_KEY_LEFT)) {
+		x += 20.0f * dt;
+	}
+	else if(m_pInput->GetKeyPress(GLFW_KEY_RIGHT)) {
+		x -= 20.0f * dt;
+	}
+	if(m_pInput->GetKeyPress(GLFW_KEY_UP)) {
+		y += 20.0f * dt;
+	}
+	else if(m_pInput->GetKeyPress(GLFW_KEY_DOWN)) {
+		y -= 20.0f * dt;
+	}
 	// Debug restart
 	if(m_pInput->GetKeyPress(GLFW_KEY_R)) {
 		Init(m_pState, m_pInput, m_Out);
@@ -81,7 +105,21 @@ void SceneGameMain::Move(float dt) {
 
 void SceneGameMain::Draw() {
 	// Draw background
+	glDisable(GL_CULL_FACE);
+	CameraData* cm = (CameraData*)glMapNamedBuffer(m_CBs[0], GL_WRITE_ONLY);
+	DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveFovLH(3.14159f * 0.25f, 400.0f / 480.0f, 0.1f, 1000.0f);
+	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(_mm_set_ps(0.0, z, y, x), _mm_set_ps(0.0f, 140.0f, 0.0f, 0.0f), _mm_set_ps(0.0, 0.0, 1.0, 0.0));
+	camera_data.cam = view * projection;
+	camera_data.vw = view;
+	camera_data.proj = projection;
+	memcpy(cm, &camera_data, sizeof(CameraData));
+	glUnmapNamedBuffer(m_CBs[0]);
+
 	Enter3DMode();
+	BindConstantBuffer(m_CBs[0], 0);
+	BindConstantBuffer(m_CBs[1], 1);
+	BindConstantBuffer(m_CBs[2], 2);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, m_3DBGTex.framebuffer);
 
 	GLint viewport[4];
@@ -121,6 +159,20 @@ void SceneGameMain::Draw() {
 	DrawString(&m_Font, 640.0f - 200.0f, 64.0f, buf, 0xff44eeee);
 	sprintf(buf, "Max  : %010d", m_ScoreMax);
 	DrawString(&m_Font, 640.0f - 200.0f, 86.0f, buf, 0xff44eeee);
+	sprintf(buf, "x : %05.3f", x);
+	DrawString(&m_Font, 640.0f - 200.0f, 108.0f, buf, 0xff44eeee);
+	sprintf(buf, "y : %05.3f", y);
+	DrawString(&m_Font, 640.0f - 200.0f, 128.0f, buf, 0xff44eeee);
+
+	float* mm = (float*)&view;
+	sprintf(buf, "%.2f, %.2f, %.2f, %.2f", mm[0], mm[1], mm[2], mm[3]);
+	DrawString(&m_Font, 640.0f - 200.0f, 150.0f, buf, 0xff44eeee);
+	sprintf(buf, "%.2f, %.2f, %.2f, %.2f", mm[4], mm[5], mm[6], mm[7]);
+	DrawString(&m_Font, 640.0f - 200.0f, 170.0f, buf, 0xff44eeee);
+	sprintf(buf, "%.2f, %.2f, %.2f, %.2f", mm[8], mm[9], mm[10], mm[11]);
+	DrawString(&m_Font, 640.0f - 200.0f, 190.0f, buf, 0xff44eeee);
+	sprintf(buf, "%.2f, %.2f, %.2f, %.2f", mm[12], mm[13], mm[14], mm[15]);
+	DrawString(&m_Font, 640.0f - 200.0f, 210.0f, buf, 0xff44eeee);
 
 }
 
@@ -134,8 +186,8 @@ void SceneGameMain::CreateShaders() {
 	}
 	m_2DShader = prog;
 
-	LoadShaderFromFile("DAT/Transform3D.vert", &vs, GL_VERTEX_SHADER);
-	LoadShaderFromFile("DAT/Transform3D.frag", &fs, GL_FRAGMENT_SHADER);
+	LoadShaderFromFile("DAT/T&L3D.vert", &vs, GL_VERTEX_SHADER);
+	LoadShaderFromFile("DAT/T&L3D.frag", &fs, GL_FRAGMENT_SHADER);
 	if(false == CreateShaderProgram(vs, fs, &prog)){
 		m_Out->LogError("Failed creating 3D Shader");
 	}
@@ -181,18 +233,12 @@ void SceneGameMain::CreateBackground() {
 		{-128.0f, 128.0f, 0.0f, 0xffff00ff, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
 	};
 	CreateTL3DVertexBuffer(4, verts, GL_MAP_WRITE_BIT, &m_Plane, &m_VA3D);
-
+	
+	glUseProgram(m_3DShader);
 	// Camera
 	DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveFovLH(3.14159f * 0.25f, 480.0f / 400.0f, 0.1f, 1000.0f);
-	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(_mm_set_ps(0.0, 300.0, -300.0f, 0.0f), _mm_set_ps(0.0f, 140.0f, 0.0f, 0.0f), _mm_set_ps(0.0, 0.0, 1.0, 0.0));
+	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(_mm_set_ps(0.0, z, y, x), _mm_set_ps(0.0f, 140.0f, 0.0f, 0.0f), _mm_set_ps(0.0, 0.0, 1.0, 0.0));
 	
-	struct CameraData {
-		DirectX::XMMATRIX cam;
-		DirectX::XMMATRIX vw;
-		DirectX::XMMATRIX proj;
-		DirectX::XMFLOAT4 fog = {100.0f, 150.0f, 0.0f, 0.0f};
-		DirectX::XMFLOAT4 _extra[2];
-	} camera_data;
 	camera_data.cam = view * projection;
 	camera_data.vw = view;
 	camera_data.proj = projection;
@@ -205,10 +251,10 @@ void SceneGameMain::CreateBackground() {
 		0.0, 0.0, 1.0f, 0.0,
 		0.0, 0.0, 0.0, 1.0f,
 		};
-		float Normals[9] = {
-		1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f
+		float Normals[9 + 3] = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
 		};
 	} normals;
 
@@ -223,9 +269,9 @@ void SceneGameMain::CreateBackground() {
 
 
 	buffer_descriptor_t buf_desc[3] = {
-		{sizeof(camera_data.cam), &camera_data.cam, GL_DYNAMIC_DRAW},
-		{sizeof(normals.Model), normals.Model, GL_DYNAMIC_DRAW},
-		{sizeof(world_light.ambient), world_light.ambient, GL_DYNAMIC_DRAW}
+		{sizeof(camera_data), &camera_data, GL_DYNAMIC_DRAW},
+		{sizeof(normals), &normals, GL_DYNAMIC_DRAW},
+		{sizeof(world_light), &world_light, GL_DYNAMIC_DRAW}
 	};
 	CreateBuffers(buf_desc, m_CBs, 3);
 	BindConstantBuffer(m_CBs[0], 0);
