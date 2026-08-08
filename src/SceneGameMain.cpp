@@ -47,8 +47,13 @@ struct CameraData {
 } camera_data;
 
 float x = 0.0f;
-float y = -300.0f;
-float z = 300.0f;
+float y = 0.0f;
+float z = 0.0f;
+
+float pitch = 0.0f;
+float yaw = 0.0f;
+float roll = 0.0f;
+
 bool SceneGameMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO) {
 	assert(nullptr != state);
 
@@ -63,6 +68,7 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO)
 	m_TexMan.Init();
 	CreateShaders();
 	CreateBackground();
+	InitializeCamera();
 	LoadFirstPackResources();
 	
 	// Set XASM2 seed
@@ -84,17 +90,43 @@ void SceneGameMain::Move(float dt) {
 		m_pState->ChangeScene(SCENE_MAIN);
 		return;
 	}
-	if(m_pInput->GetKeyPress(GLFW_KEY_LEFT)) {
+	if(m_pInput->GetKeyPress(GLFW_KEY_D)) {
 		x += 20.0f * dt;
 	}
-	else if(m_pInput->GetKeyPress(GLFW_KEY_RIGHT)) {
+	else if(m_pInput->GetKeyPress(GLFW_KEY_A)) {
 		x -= 20.0f * dt;
 	}
-	if(m_pInput->GetKeyPress(GLFW_KEY_UP)) {
+	if(m_pInput->GetKeyPress(GLFW_KEY_W)) {
 		y += 20.0f * dt;
 	}
-	else if(m_pInput->GetKeyPress(GLFW_KEY_DOWN)) {
+	else if(m_pInput->GetKeyPress(GLFW_KEY_S)) {
 		y -= 20.0f * dt;
+	}
+	if(m_pInput->GetKeyPress(GLFW_KEY_SPACE)) {
+		z += 20.0f * dt;
+	}
+	else if(m_pInput->GetKeyPress(GLFW_KEY_RIGHT_CONTROL)) {
+		z -= 20.0f * dt;
+	}
+	
+
+	if(m_pInput->GetKeyPress(GLFW_KEY_LEFT_SHIFT)) {
+		yaw -= 0.314159f * dt;
+	}
+	else if(m_pInput->GetKeyPress(GLFW_KEY_RIGHT_SHIFT)) {
+		yaw += 0.314159f * dt;
+	}
+	if(m_pInput->GetKeyPress(GLFW_KEY_UP)) {
+		roll += 0.314159f * dt;
+	}
+	else if(m_pInput->GetKeyPress(GLFW_KEY_DOWN)) {
+		roll -= 0.314159f * dt;
+	}
+	if(m_pInput->GetKeyPress(GLFW_KEY_LEFT)) {
+		pitch -= 0.314159f * dt;
+	}
+	else if(m_pInput->GetKeyPress(GLFW_KEY_RIGHT)) {
+		pitch += 0.314159f * dt;
 	}
 	// Debug restart
 	if(m_pInput->GetKeyPress(GLFW_KEY_R)) {
@@ -106,17 +138,12 @@ void SceneGameMain::Move(float dt) {
 void SceneGameMain::Draw() {
 	// Draw background
 	glDisable(GL_CULL_FACE);
-	CameraData* cm = (CameraData*)glMapNamedBuffer(m_CBs[0], GL_WRITE_ONLY);
-	DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveFovLH(3.14159f * 0.25f, 400.0f / 480.0f, 0.1f, 1000.0f);
-	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(_mm_set_ps(0.0, z, y, x), _mm_set_ps(0.0f, 140.0f, 0.0f, 0.0f), _mm_set_ps(0.0, 0.0, 1.0, 0.0));
-	camera_data.cam = view * projection;
-	camera_data.vw = view;
-	camera_data.proj = projection;
-	memcpy(cm, &camera_data, sizeof(CameraData));
-	glUnmapNamedBuffer(m_CBs[0]);
 
 	Enter3DMode();
-	BindConstantBuffer(m_CBs[0], 0);
+	m_Camera.SetPos(x, y, z);
+	m_Camera.SetRot(pitch, yaw, roll);
+	m_Camera.Update();
+	m_Camera.SetBinding(0);
 	BindConstantBuffer(m_CBs[1], 1);
 	BindConstantBuffer(m_CBs[2], 2);
 
@@ -159,20 +186,11 @@ void SceneGameMain::Draw() {
 	DrawString(&m_Font, 640.0f - 200.0f, 64.0f, buf, 0xff44eeee);
 	sprintf(buf, "Max  : %010d", m_ScoreMax);
 	DrawString(&m_Font, 640.0f - 200.0f, 86.0f, buf, 0xff44eeee);
-	sprintf(buf, "x : %05.3f", x);
-	DrawString(&m_Font, 640.0f - 200.0f, 108.0f, buf, 0xff44eeee);
-	sprintf(buf, "y : %05.3f", y);
-	DrawString(&m_Font, 640.0f - 200.0f, 128.0f, buf, 0xff44eeee);
 
-	float* mm = (float*)&view;
-	sprintf(buf, "%.2f, %.2f, %.2f, %.2f", mm[0], mm[1], mm[2], mm[3]);
-	DrawString(&m_Font, 640.0f - 200.0f, 150.0f, buf, 0xff44eeee);
-	sprintf(buf, "%.2f, %.2f, %.2f, %.2f", mm[4], mm[5], mm[6], mm[7]);
-	DrawString(&m_Font, 640.0f - 200.0f, 170.0f, buf, 0xff44eeee);
-	sprintf(buf, "%.2f, %.2f, %.2f, %.2f", mm[8], mm[9], mm[10], mm[11]);
-	DrawString(&m_Font, 640.0f - 200.0f, 190.0f, buf, 0xff44eeee);
-	sprintf(buf, "%.2f, %.2f, %.2f, %.2f", mm[12], mm[13], mm[14], mm[15]);
-	DrawString(&m_Font, 640.0f - 200.0f, 210.0f, buf, 0xff44eeee);
+	sprintf(buf, "cpos : %5.3f, %5.3f, %5.3f", x, y, z);
+	DrawString(&m_Font, 640.0f - 240.0f, 108.0f, buf, 0xff44eeee);
+	sprintf(buf, "crot : %5.3f, %5.3f, %5.3f", pitch, yaw, roll);
+	DrawString(&m_Font, 640.0f - 240.0f, 128.0f, buf, 0xff44eeee);
 
 }
 
@@ -245,21 +263,15 @@ void SceneGameMain::CreateBackground() {
 
 	// Normal data
 	struct {
-		float Model[16] = {
-		DirectX::XMScalarCos(3.14159f * 0.25f),-DirectX::XMScalarSin(3.14159f * 0.25f), 0.0, 0.0,
-		DirectX::XMScalarSin(3.14159f * 0.25f), DirectX::XMScalarCos(3.14159f * 0.25f), 0.0, 0.0,
-		0.0, 0.0, 1.0f, 0.0,
-		0.0, 0.0, 0.0, 1.0f,
-		};
-		float Normals[9 + 3] = {
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		};
+		DirectX::XMMATRIX model_mat;
+		DirectX::XMMATRIX normal_mat;
 	} normals;
+	normals.model_mat = DirectX::XMMatrixIdentity();
+	//normals.model_mat = DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorSet(DirectX::XMScalarSin(3.14159f * 0.25f * 0.5f), 0.0f, 0.0f, DirectX::XMScalarCos(3.14159f * 0.25f * 0.5f)));
+	normals.normal_mat = DirectX::XMMatrixInverse(nullptr, normals.model_mat);
 
 	struct {
-		float global_light[4] = {0.0f, 0.25f, 0.1f, 1.0f};
+		float global_light[4] = {0.0f, 0.5f, 1.5f, 1.0f};
 		float ambient[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		float fog_color[4] = {0.5f, 0.8f, 0.7f, 1.0f};
 		float light_color[4] = {1.0f, 0.8f, 0.8f, 0.0f};
@@ -274,10 +286,21 @@ void SceneGameMain::CreateBackground() {
 		{sizeof(world_light), &world_light, GL_DYNAMIC_DRAW}
 	};
 	CreateBuffers(buf_desc, m_CBs, 3);
-	BindConstantBuffer(m_CBs[0], 0);
+	//BindConstantBuffer(m_CBs[0], 0);
 	BindConstantBuffer(m_CBs[1], 1);
 	BindConstantBuffer(m_CBs[2], 2);
 
+}
+
+void SceneGameMain::InitializeCamera() {
+	glUseProgram(m_3DShader);
+	m_Camera.Init();
+	m_Camera.SetBinding(0);
+	m_Camera.SetAspectRatio(400.0f, 480.0f);
+	m_Camera.SetFOV(3.14159 * 0.25f);
+	m_Camera.SetPos(x, y, z);
+	m_Camera.SetRot(0.0f, 0.0f, 0.0f);
+	m_Camera.Update();
 }
 
 bool SceneGameMain::LoadFirstPackResources() {
@@ -313,7 +336,7 @@ bool SceneGameMain::LoadFirstPackResources() {
 			} else {
 				MusicSetLoop(&g_Sound, 852960, 852960 + 2116128);
 				MusicEnableLoop(&g_Sound, 1);
-				MusicPlay(&g_Sound);
+				//MusicPlay(&g_Sound);
 			}
 			free(data);
 		} else {

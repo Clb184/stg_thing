@@ -10,6 +10,7 @@
 #include "string"
 #include "DirectXMath.h"
 #include "ScreenOutput.hpp"
+#include "Camera.hpp"
 
 #include "PackArchive/PackFile.h"
 
@@ -29,6 +30,7 @@ private:
 		// Load Shaders
 	void CreateShaders();
 	void CreateBackground();
+	void InitializeCamera();
 
 	// Load packed resources
 	bool LoadFirstPackResources();
@@ -66,6 +68,7 @@ private: // Text
 
 private: // Plane and related
 	DirectX::XMMATRIX m_CameraMatrix;
+	Camera m_Camera;
 	GLuint m_Plane;
 	GLuint m_VA3D;
 
