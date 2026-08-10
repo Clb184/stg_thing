@@ -38,6 +38,17 @@ SceneGameMain::~SceneGameMain() {
 	Cleanup();
 }
 
+float x = 0.0f;
+float y = -450.0f;
+float z = 150.0f;
+
+float pitch = 0.0f;
+float yaw = 0.0f;
+float roll = 0.0f;
+
+float farf = 25.0f;
+float nearf = 10.0f;
+
 struct CameraData {
 	DirectX::XMMATRIX cam;
 	DirectX::XMMATRIX vw;
@@ -46,13 +57,14 @@ struct CameraData {
 	DirectX::XMFLOAT4 _extra[2] = { {1.0f, 1.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.0f, 0.0f}};
 } camera_data;
 
-float x = 0.0f;
-float y = 0.0f;
-float z = 0.0f;
-
-float pitch = 0.0f;
-float yaw = 0.0f;
-float roll = 0.0f;
+struct WorldLight {
+	float global_light[4] = {0.0f, 0.5f, 1.5f, 1.0f};
+	float ambient[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float fog_color[4] = {0.5f, 0.8f, 0.7f, 1.0f};
+	float light_color[4] = {0.0f, 0.0f, 0.8f, 0.0f};
+	float specular_power[4] = {0.5f, 0.0f, 0.0f, 0.0f};
+	float cam_pos[4] = {x, y, z, 1.0f};
+} world_light;
 
 bool SceneGameMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO) {
 	assert(nullptr != state);
@@ -108,6 +120,18 @@ void SceneGameMain::Move(float dt) {
 	else if(m_pInput->GetKeyPress(GLFW_KEY_RIGHT_CONTROL)) {
 		z -= 20.0f * dt;
 	}
+	if(m_pInput->GetKeyPress(GLFW_KEY_Q)) {
+		nearf += 20.0f * dt;
+	}
+	else if(m_pInput->GetKeyPress(GLFW_KEY_E)) {
+		nearf -= 20.0f * dt;
+	}
+	if(m_pInput->GetKeyPress(GLFW_KEY_T)) {
+		farf += 20.0f * dt;
+	}
+	else if(m_pInput->GetKeyPress(GLFW_KEY_Y)) {
+		farf -= 20.0f * dt;
+	}
 	
 
 	if(m_pInput->GetKeyPress(GLFW_KEY_LEFT_SHIFT)) {
@@ -141,10 +165,22 @@ void SceneGameMain::Draw() {
 
 	Enter3DMode();
 	m_Camera.SetPos(x, y, z);
-	m_Camera.SetRot(pitch, yaw, roll);
+	m_Camera.SetFog(10.0f, 20.0f);
+	m_Camera.SetRot(0.0f, 0.0f, -0.323);
+	m_Camera.SetFog(nearf, farf);
 	m_Camera.Update();
 	m_Camera.SetBinding(0);
 	BindConstantBuffer(m_CBs[1], 1);
+
+	WorldLight* wl = (WorldLight*)glMapNamedBuffer(m_CBs[2], GL_WRITE_ONLY);
+	world_light.global_light[0] = yaw;
+	world_light.global_light[1] = pitch;
+	world_light.global_light[2] = roll;
+	world_light.cam_pos[0] = x;
+	world_light.cam_pos[1] = y;
+	world_light.cam_pos[2] = z;
+	memcpy(wl, &world_light, sizeof(WorldLight));
+	glUnmapNamedBuffer(m_CBs[2]);
 	BindConstantBuffer(m_CBs[2], 2);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_3DBGTex.framebuffer);
@@ -155,7 +191,7 @@ void SceneGameMain::Draw() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(m_VA3D);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glDrawArrays(GL_TRIANGLES, 0, 8 * 8 * 6);
 
 
 	// Draw UI and others
@@ -187,10 +223,13 @@ void SceneGameMain::Draw() {
 	sprintf(buf, "Max  : %010d", m_ScoreMax);
 	DrawString(&m_Font, 640.0f - 200.0f, 86.0f, buf, 0xff44eeee);
 
+	auto ToDeg = [](float radian) {  return radian * 180.0f / 3.14159f; };
 	sprintf(buf, "cpos : %5.3f, %5.3f, %5.3f", x, y, z);
 	DrawString(&m_Font, 640.0f - 240.0f, 108.0f, buf, 0xff44eeee);
-	sprintf(buf, "crot : %5.3f, %5.3f, %5.3f", pitch, yaw, roll);
+	sprintf(buf, "crot : %5.3f, %5.3f, %5.3f", ToDeg(pitch), ToDeg(yaw), ToDeg(roll));
 	DrawString(&m_Font, 640.0f - 240.0f, 128.0f, buf, 0xff44eeee);
+	sprintf(buf, "near : %5.3f, far : %5.3f", nearf, farf);
+	DrawString(&m_Font, 640.0f - 240.0f, 148.0f, buf, 0xff44eeee);
 
 }
 
@@ -244,13 +283,32 @@ void SceneGameMain::CreateBackground() {
 	LoadFontFromFile(m_FTLib, &m_Desc, "DAT/PermanentMarker.ttf");
 	CreateFontWithAtlas(m_Desc, &m_Font, 20);
 	
-	TLVertex3D verts[4] = {
+	const float grow = 16.0f;
+	float mx = -64.0f, my = -64.0f;
+	TLVertex3D* verts = new TLVertex3D[8 * 8 * 6];
+	int mi = 0;
+	for(int yi = 0; yi < 8; yi++) {
+		mx = -64.0f;
+		for(int xi = 0; xi < 8; xi++) {
+			verts[mi * 6] = {mx + grow, my, 0.0f, 0xffffffff, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+			verts[mi * 6 + 1] = {mx, my, 0.0f, 0xffffffff, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+			verts[mi * 6 + 2] = {mx + grow, my + grow, 0.0f, 0xffffffff, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+			verts[mi * 6 + 3] = {mx, my, 0.0f, 0xffffffff, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+			verts[mi * 6 + 4] = {mx + grow, my + grow, 0.0f, 0xffffffff, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+			verts[mi * 6 + 5] = {mx, my + grow, 0.0f, 0xffffffff, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+			mx += grow;
+			mi++;
+		}
+		my += grow;
+	}
+	/*TLVertex3D verts[4] = {
 		{128.0f, -128.0f, 0.0f, 0xff0000ff, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
 		{-128.0f, -128.0f, 0.0f, 0xff00ff00, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
 		{128.0f, 128.0f, 0.0f, 0xffff0000, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f},
 		{-128.0f, 128.0f, 0.0f, 0xffff00ff, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
-	};
-	CreateTL3DVertexBuffer(4, verts, GL_MAP_WRITE_BIT, &m_Plane, &m_VA3D);
+	};*/
+	CreateTL3DVertexBuffer(8 * 8 * 6, verts, GL_MAP_WRITE_BIT, &m_Plane, &m_VA3D);
+	delete[] verts;
 	
 	glUseProgram(m_3DShader);
 	// Camera
@@ -270,14 +328,6 @@ void SceneGameMain::CreateBackground() {
 	//normals.model_mat = DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorSet(DirectX::XMScalarSin(3.14159f * 0.25f * 0.5f), 0.0f, 0.0f, DirectX::XMScalarCos(3.14159f * 0.25f * 0.5f)));
 	normals.normal_mat = DirectX::XMMatrixInverse(nullptr, normals.model_mat);
 
-	struct {
-		float global_light[4] = {0.0f, 0.5f, 1.5f, 1.0f};
-		float ambient[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		float fog_color[4] = {0.5f, 0.8f, 0.7f, 1.0f};
-		float light_color[4] = {1.0f, 0.8f, 0.8f, 0.0f};
-		float specular_power[4] = {0.5f, 0.0f, 0.0f, 0.0f};
-		float cam_pos[4] = {50.0f, 50.0f, 50.0f, 0.0f};
-	} world_light;
 
 
 	buffer_descriptor_t buf_desc[3] = {
