@@ -27,7 +27,8 @@ private:
 		DirectX::XMMATRIX view;
 		DirectX::XMMATRIX proj;
 		DirectX::XMFLOAT4 fog = {100.0f, 150.0f, 0.0f, 0.0f};
-		DirectX::XMFLOAT4 _extra[2] = { {1.0f, 1.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.0f, 0.0f}};
+		DirectX::XMFLOAT4 camera_pos = {0.5f, 0.0f, 0.0f, 0.0f};
+		DirectX::XMFLOAT4 extra = {0.0f, 0.0f, 0.0f, 0.0f};
 	};
 
 	// In the strange case I ever decide to loot at a fixed point with the camera (?

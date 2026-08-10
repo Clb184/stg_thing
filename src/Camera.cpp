@@ -47,11 +47,14 @@ void Camera::Update() {
 	CameraData cam;
 	cam.fog.x = m_FogPos.x;
 	cam.fog.y = m_FogPos.y;
+	cam.camera_pos.x = m_CamPos.x;
+	cam.camera_pos.y = m_CamPos.y;
+	cam.camera_pos.z = m_CamPos.z;
 
 	// Rotate using quaternions
-	__m128 rot = DirectX::XMVectorMultiply(DirectX::XMLoadFloat3(&m_CamRot), _mm_set_ps1(0.5f)); // Load and get the half already to use it with quaternions
-	__m128 sins = DirectX::XMVectorSin(rot);// = _mm_sin_ps(rot); //Calculate sin of all axis
-	__m128 coss = DirectX::XMVectorCos(rot);// = _mm_cos_ps(rot); //Same for cos
+	DirectX::XMVECTOR rot = DirectX::XMVectorMultiply(DirectX::XMLoadFloat3(&m_CamRot), _mm_set_ps1(0.5f)); // Load and get the half already to use it with quaternions
+	DirectX::XMVECTOR sins = DirectX::XMVectorSin(rot);// = _mm_sin_ps(rot); //Calculate sin of all axis
+	DirectX::XMVECTOR coss = DirectX::XMVectorCos(rot);// = _mm_cos_ps(rot); //Same for cos
 	
 	DirectX::XMFLOAT3 rts, rtc; //Sine and cosine Obtained
 	DirectX::XMStoreFloat3(&rts, sins);
