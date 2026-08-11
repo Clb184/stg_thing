@@ -44,8 +44,9 @@ float pitch = 0.0f;
 float yaw = 0.0f;
 float roll = 0.0f;
 
-float farf = 25.0f;
-float nearf = 10.0f;
+float nearf = 400.0f;
+float farf = 500.0f;
+int colorf = 0xffaa0000;
 
 struct CameraData {
 	DirectX::XMMATRIX cam;
@@ -83,14 +84,14 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO)
 	
 	// Set XASM2 seed
 	XASM2RandomInit(123);
-	
+	m_Timer = 0.0f;
 
 
 	return true;
 }
 
 void SceneGameMain::Move(float dt) {
-
+	m_Timer += dt;
 	if(m_DebugKeyWait > 0.0f) {
 		m_DebugKeyWait -= dt;
 	}
@@ -176,6 +177,9 @@ void SceneGameMain::Draw() {
 	world_light.cam_pos[0] = x;
 	world_light.cam_pos[1] = y;
 	world_light.cam_pos[2] = z;
+	world_light.fog_color[0] = float(colorf & 0x000000ff) / 255.0f;
+	world_light.fog_color[1] = float((colorf & 0x0000ff00) >> 8) / 255.0f;
+	world_light.fog_color[2] = float((colorf & 0x00ff0000) >> 16) / 255.0f;
 	memcpy(wl, &world_light, sizeof(WorldLight));
 	glUnmapNamedBuffer(m_CBs[2]);
 	BindConstantBuffer(m_CBs[2], 2);
@@ -187,6 +191,8 @@ void SceneGameMain::Draw() {
 	glViewport(0, 0, 400, 480);
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	m_Plane.GetTransform().SetRot(m_Timer * 0.2f, 3.14159f * 0.5f , 0.0f);
+	m_Plane.GetTransform().Update();
 	m_Plane.Draw();
 
 	// Draw UI and others
@@ -218,13 +224,20 @@ void SceneGameMain::Draw() {
 	sprintf(buf, "Max  : %010d", m_ScoreMax);
 	DrawString(&m_Font, 640.0f - 200.0f, 86.0f, buf, 0xff44eeee);
 
+	DrawCameraProps();
+}
+
+void SceneGameMain::DrawCameraProps() {
+	const float xp = 100.0f, yp = 300.0f;
+	char buf[256];
 	auto ToDeg = [](float radian) {  return radian * 180.0f / 3.14159f; };
-	sprintf(buf, "cpos : %5.3f, %5.3f, %5.3f", x, y, z);
-	DrawString(&m_Font, 640.0f - 240.0f, 108.0f, buf, 0xff44eeee);
-	sprintf(buf, "crot : %5.3f, %5.3f, %5.3f", ToDeg(pitch), ToDeg(yaw), ToDeg(roll));
-	DrawString(&m_Font, 640.0f - 240.0f, 128.0f, buf, 0xff44eeee);
-	sprintf(buf, "near : %5.3f, far : %5.3f", nearf, farf);
-	DrawString(&m_Font, 640.0f - 240.0f, 148.0f, buf, 0xff44eeee);
+	DrawString(&m_Font, xp, yp, "Camera:", 0xff44eeee);
+	sprintf(buf, "pos : %5.3f, %5.3f, %5.3f", x, y, z);
+	DrawString(&m_Font, xp, yp + 20.0f, buf, 0xff44eeee);
+	sprintf(buf, "rot : %5.3f, %5.3f, %5.3f", ToDeg(pitch), ToDeg(yaw), ToDeg(roll));
+	DrawString(&m_Font, xp, yp + 40.0f, buf, 0xff44eeee);
+	sprintf(buf, "near : %5.3f, far : %5.3f, color: %0000006X", nearf, farf, colorf);
+	DrawString(&m_Font, xp, yp + 60.0f, buf, 0xff44eeee);
 
 }
 
@@ -278,7 +291,7 @@ void SceneGameMain::CreateBackground() {
 	LoadFontFromFile(m_FTLib, &m_Desc, "DAT/PermanentMarker.ttf");
 	CreateFontWithAtlas(m_Desc, &m_Font, 20);
 	
-	m_Plane.Init(8, 8);
+	m_Plane.Init(16, 16);
 	const float grow = 16.0f;
 	float mx = -64.0f, my = -64.0f;
 	TLVertex3D* verts = new TLVertex3D[8 * 8 * 6];

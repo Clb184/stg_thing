@@ -2,6 +2,7 @@
 #define MESH_INCLUDED
 
 #include "OpenGL/Buffer.h"
+#include "Misc/Primitives.h"
 #include "Transform3D.hpp"
 
 // 3D Mesh base class
@@ -16,6 +17,7 @@ public:
 private:
 	friend class Plane3D;
 	void CreateIndirectDraw(int vertcnt);
+	void CreateVertexBuffer(int cnt, TLVertex3D* verts);
 	
 private:
 	int m_DrawType;

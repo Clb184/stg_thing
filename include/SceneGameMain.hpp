@@ -43,6 +43,9 @@ private:
 
 	void Cleanup();
 
+private: // Debug
+	void DrawCameraProps();
+
 private: // Relevant shaders and sprites
 	GLuint m_2DShader;
 	GLuint m_3DShader;
@@ -55,6 +58,7 @@ private: // Relevant shaders and sprites
 private: // Score
 	int64_t m_Score;
 	int64_t m_ScoreMax;
+	float m_Timer;
 
 private: // Text
 	

@@ -8,7 +8,8 @@ class Transform3D {
 public:
 	Transform3D();
 	~Transform3D();
-
+	
+	void Init();
 	void Update();
 	void Bind(int slot);
 	void SetPos(float x, float y, float z);

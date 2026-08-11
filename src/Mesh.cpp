@@ -44,5 +44,9 @@ void Mesh::CreateIndirectDraw(int vertcnt) {
 	desc.data = &draw_cmd;
 	desc.type = GL_STATIC_DRAW;
 	CreateBuffer(desc, &m_DrawCmd);
-	m_VertCount = vertcnt;
+}
+
+void Mesh::CreateVertexBuffer(int cnt, TLVertex3D* verts) {
+	CreateTL3DVertexBuffer(cnt, verts, 0, &m_Buffer, &m_VArray);
+	m_VertCount = cnt;
 }
