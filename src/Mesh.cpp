@@ -17,6 +17,7 @@ void Mesh::Draw() {
 	GLERR;
 	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_DrawCmd);
 	GL_ERROR();
+	m_Transform.Bind(1);
 	glBindVertexArray(m_VArray);
 	GL_ERROR();
 	glDrawArraysIndirect(m_DrawType, 0);
@@ -30,6 +31,10 @@ void Mesh::Cleanup() {
 	m_DrawCmd = 0;
 	glDeleteVertexArrays(1, &m_VArray);
 	m_VArray = 0;
+}
+
+void Mesh::GetTransform() {
+	return m_Transform;
 }
 
 void Mesh::CreateIndirectDraw(int vertcnt) {

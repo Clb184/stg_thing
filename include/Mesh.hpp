@@ -12,7 +12,7 @@ public:
 
 	void Draw();
 	void Cleanup();
-
+	Tranform3D& GetTransform();
 private:
 	void CreateIndirectDraw(int vertcnt);
 

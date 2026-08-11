@@ -161,17 +161,16 @@ void SceneGameMain::Move(float dt) {
 
 void SceneGameMain::Draw() {
 	// Draw background
-	glDisable(GL_CULL_FACE);
-
 	Enter3DMode();
+
+	// Setup camera
 	m_Camera.SetPos(x, y, z);
-	m_Camera.SetFog(10.0f, 20.0f);
 	m_Camera.SetRot(0.0f, 0.0f, -0.323);
 	m_Camera.SetFog(nearf, farf);
 	m_Camera.Update();
 	m_Camera.SetBinding(0);
-	BindConstantBuffer(m_CBs[1], 1);
 
+	// Update World light
 	WorldLight* wl = (WorldLight*)glMapNamedBuffer(m_CBs[2], GL_WRITE_ONLY);
 	world_light.global_light[0] = yaw;
 	world_light.global_light[1] = pitch;
@@ -183,16 +182,14 @@ void SceneGameMain::Draw() {
 	glUnmapNamedBuffer(m_CBs[2]);
 	BindConstantBuffer(m_CBs[2], 2);
 
+	// Setup viewport and 3D
 	glBindFramebuffer(GL_FRAMEBUFFER, m_3DBGTex.framebuffer);
-
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
 	glViewport(0, 0, 400, 480);
-
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glBindVertexArray(m_VA3D);
-	glDrawArrays(GL_TRIANGLES, 0, 8 * 8 * 6);
-
+	m_Plane.Draw();
 
 	// Draw UI and others
 	Enter2DMode();
@@ -283,6 +280,7 @@ void SceneGameMain::CreateBackground() {
 	LoadFontFromFile(m_FTLib, &m_Desc, "DAT/PermanentMarker.ttf");
 	CreateFontWithAtlas(m_Desc, &m_Font, 20);
 	
+	m_Plane.Init(8, 8);
 	const float grow = 16.0f;
 	float mx = -64.0f, my = -64.0f;
 	TLVertex3D* verts = new TLVertex3D[8 * 8 * 6];
