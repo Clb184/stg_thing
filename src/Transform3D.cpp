@@ -14,8 +14,26 @@ Transform3D::~Transform3D() {
 	m_Buffer = 0;
 }
 
-Transform3D::Update() {
-	DirectX::XMMATRIX model = DirectX::XMMatrixTranslation(m_Pos.x, m_Pos.y, m_Pos.z) * DirectX::XMMatrixRotationPitchYawFromVector(DirectX::XMLoadFloat3(&m_Rot)) * DirectX::XMMatrixScalingFromVector(DirectX::XMLoadFloat3(&m_Scale));
+void Transform3D::Update() {
+	DirectX::XMMATRIX model = DirectX::XMMatrixTranslation(m_Pos.x, m_Pos.y, m_Pos.z) * DirectX::XMMatrixScalingFromVector(DirectX::XMLoadFloat3(&m_Scale)) * DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMLoadFloat3(&m_Rot));
+
+	DirectX::XMMATRIX* buf = (DirectX::XMMATRIX*)glMapNamedBuffer(m_Buffer, GL_WRITE_ONLY);
+	*buf = model;
+	glUnmapNamedBuffer(m_Buffer);
 }
 
+void Transform3D::Bind(int slot) {
+	BindConstantBuffer(m_Buffer, slot);
+}
 
+void Transform3D::SetPos(float x, float y, float z) {
+	m_Pos = {x, y, z};
+}
+
+void Transform3D::SetRot(float pitch, float yaw, float roll) {
+	m_Rot = {pitch, yaw, roll};
+}
+
+void Transform3D::SetScale(float x, float y, float z) {
+	m_Scale = { x, y, z };
+}

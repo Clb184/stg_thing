@@ -1,4 +1,5 @@
 #include "Mesh.hpp"
+#include "Output.h"
 
 Mesh::Mesh() {
 	m_DrawType = GL_TRIANGLES;
@@ -29,4 +30,14 @@ void Mesh::Cleanup() {
 	m_DrawCmd = 0;
 	glDeleteVertexArrays(1, &m_VArray);
 	m_VArray = 0;
+}
+
+void Mesh::CreateIndirectDraw(int vertcnt) {
+	indirect_draw_t draw_cmd = CreateIndirectDrawCmd(vertcnt, 1, 0, 0);
+	buffer_descriptor_t desc;
+	desc.size = sizeof(indirect_draw_t);
+	desc.data = &draw_cmd;
+	desc.type = GL_STATIC_DRAW;
+	CreateBuffer(desc, &m_DrawCmd);
+	m_VertCount = vertcnt;
 }

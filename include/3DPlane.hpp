@@ -1,5 +1,5 @@
-#ifndef 3DPLANE_INCLUDED
-#define 3DPLANE_INCLUDED
+#ifndef PLANE3D_INCLUDED
+#define PLANE3D_INCLUDED
 
 #include "Mesh.hpp"
 
