@@ -11,7 +11,7 @@
 #include "DirectXMath.h"
 #include "ScreenOutput.hpp"
 #include "Camera.hpp"
-#include "Plane.hpp"
+#include "3DPlane.hpp"
 
 #include "PackArchive/PackFile.h"
 

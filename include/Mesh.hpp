@@ -12,10 +12,11 @@ public:
 
 	void Draw();
 	void Cleanup();
-	Tranform3D& GetTransform();
+	Transform3D& GetTransform();
 private:
+	friend class Plane3D;
 	void CreateIndirectDraw(int vertcnt);
-
+	
 private:
 	int m_DrawType;
 	int m_VertCount;

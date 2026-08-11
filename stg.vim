@@ -1962,12 +1962,12 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 310 - ((41 * winheight(0) + 25) / 51)
+let s:l = 306 - ((23 * winheight(0) + 25) / 51)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 310
-normal! 017|
+keepjumps 306
+normal! 09|
 wincmd w
 argglobal
 if bufexists(fnamemodify("include\SceneGameMain.hpp", ":p")) | buffer include\SceneGameMain.hpp | else | edit include\SceneGameMain.hpp | endif
@@ -2106,12 +2106,12 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 55 - ((6 * winheight(0) + 25) / 51)
+let s:l = 44 - ((43 * winheight(0) + 25) / 51)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 55
-normal! 017|
+keepjumps 44
+normal! 014|
 wincmd w
 exe 'vert 1resize ' . ((&columns * 116 + 104) / 209)
 exe 'vert 2resize ' . ((&columns * 92 + 104) / 209)
@@ -2271,12 +2271,12 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 42 - ((41 * winheight(0) + 25) / 51)
+let s:l = 36 - ((35 * winheight(0) + 25) / 51)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 42
-normal! 030|
+keepjumps 36
+normal! 012|
 wincmd w
 argglobal
 if bufexists(fnamemodify("include\Mesh.hpp", ":p")) | buffer include\Mesh.hpp | else | edit include\Mesh.hpp | endif
@@ -2415,12 +2415,12 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 17 - ((16 * winheight(0) + 25) / 51)
+let s:l = 16 - ((15 * winheight(0) + 25) / 51)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 17
-normal! 043|
+keepjumps 16
+normal! 08|
 wincmd w
 exe 'vert 1resize ' . ((&columns * 103 + 104) / 209)
 exe 'vert 2resize ' . ((&columns * 105 + 104) / 209)
@@ -2889,12 +2889,12 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 28 - ((27 * winheight(0) + 25) / 51)
+let s:l = 11 - ((10 * winheight(0) + 25) / 51)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 28
-normal! 091|
+keepjumps 11
+normal! 061|
 wincmd w
 argglobal
 if bufexists(fnamemodify("include\3DPlane.hpp", ":p")) | buffer include\3DPlane.hpp | else | edit include\3DPlane.hpp | endif
@@ -4422,7 +4422,7 @@ normal! 01|
 wincmd w
 exe 'vert 1resize ' . ((&columns * 120 + 104) / 209)
 exe 'vert 2resize ' . ((&columns * 88 + 104) / 209)
-tabnext 11
+tabnext 8
 set stal=1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0
   silent exe 'bwipe ' . s:wipebuf

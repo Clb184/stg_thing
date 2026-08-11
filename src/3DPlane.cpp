@@ -1,4 +1,5 @@
 #include "3DPlane.hpp"
+#include "Misc/Primitives.h"
 
 void Plane3D::Init(int w16, int h16) {
 	// In any case the funny happens
@@ -7,7 +8,7 @@ void Plane3D::Init(int w16, int h16) {
 
 	const float unit = 16.0f;
 	float mx = float(w16 * unit) * 0.5f, my = float(h16 * unit) * 0.5f;
-	float gtx = 1.0f / float(w16), gty = 1.0f / float();
+	float gtx = 1.0f / float(w16), gty = 1.0f / float(h16);
 	float tx = 0.0f, ty = 0.0f;
 	TLVertex3D* verts = new TLVertex3D[8 * 8 * 6];
 	int mi = 0;
@@ -27,5 +28,6 @@ void Plane3D::Init(int w16, int h16) {
 	}
 	CreateTL3DVertexBuffer(w16 * h16 * 6, verts, GL_MAP_WRITE_BIT, &m_Buffer, &m_VArray);
 	CreateIndirectDraw(w16 * h16 * 6);
+	m_DrawType = GL_TRIANGLES;
 	delete[] verts;
 }

@@ -33,7 +33,7 @@ void Mesh::Cleanup() {
 	m_VArray = 0;
 }
 
-void Mesh::GetTransform() {
+Transform3D& Mesh::GetTransform() {
 	return m_Transform;
 }
 

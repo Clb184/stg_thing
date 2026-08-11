@@ -17,8 +17,6 @@ SceneGameMain::SceneGameMain() {
 
 	m_2DShader = 0;
 	m_3DShader = 0;
-	m_Plane = 0;
-	m_VA3D = 0;
 	m_CBs[0] = 0;
 	m_CBs[1] = 0;
 	m_CBs[2] = 0;
@@ -305,7 +303,6 @@ void SceneGameMain::CreateBackground() {
 		{128.0f, 128.0f, 0.0f, 0xffff0000, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f},
 		{-128.0f, 128.0f, 0.0f, 0xffff00ff, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
 	};*/
-	CreateTL3DVertexBuffer(8 * 8 * 6, verts, GL_MAP_WRITE_BIT, &m_Plane, &m_VA3D);
 	delete[] verts;
 	
 	glUseProgram(m_3DShader);
@@ -415,14 +412,10 @@ void SceneGameMain::Enter3DMode() {
 void SceneGameMain::Cleanup() {
 	glDeleteProgram(m_2DShader);
 	glDeleteProgram(m_3DShader);
-	glDeleteBuffers(1, &m_Plane);
-	glDeleteVertexArrays(1, &m_VA3D);
 	glDeleteBuffers(3, m_CBs);
 
 	m_2DShader = 0;
 	m_3DShader = 0;
-	m_Plane = 0;
-	m_VA3D = 0;
 
 	m_CBs[0] = 0;
 	m_CBs[1] = 0;
