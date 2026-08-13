@@ -77,6 +77,7 @@ void ScreenOutput::Move(float dt) {
 			m_MsgQueue[i].time -= dt;
 		}
 	}
+	m_FPS = 1.0f / dt;
 }
 
 void ScreenOutput::Draw() {
@@ -87,6 +88,11 @@ void ScreenOutput::Draw() {
 		DrawString(&m_Font, m_XBegin, begin, msg.msg.c_str(), msg.color);
 		begin += m_VSpace;
 	}
+
+	// Draw FPS, gonna try to get length
+	char buf[64];
+	sprintf(buf, "%.2f", m_FPS);
+	DrawString(&m_Font, 580.0f, 460.0f, buf, 0xff22eeee);
 }
 
 void ScreenOutput::CreateShaders() {

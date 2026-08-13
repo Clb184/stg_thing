@@ -46,6 +46,7 @@ private:
 
 private:
 	GLuint m_Program;
+	float m_FPS;
 	int m_Width;
 	int m_Height;
 	float m_XBegin;
