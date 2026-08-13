@@ -36,7 +36,7 @@ void main() {
     VS_OUT.position = Projection * View * VS_OUT.pos2;           
     VS_OUT.texcoord = TEXCOORD;                                          
     VS_OUT.color = COLOR;                                                
-    VS_OUT.normals = normalize(mat3(inverse(model)) * NORMAL);
+    VS_OUT.normals = normalize(mat3(model) * NORMAL);
     VS_OUT.texcoord.y = 1.0f - VS_OUT.texcoord.y;
 
     // Get fog rate based on vertex distance to the camera

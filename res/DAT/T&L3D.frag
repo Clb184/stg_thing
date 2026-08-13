@@ -26,7 +26,7 @@ layout(std140, binding = 2) uniform WorldLight {
 };                                                                                
                                                                                              
 void main() {
-    vec4 finalcolor = vec4(1.0); //texture2D(g_Texture, VS_OUT.texcoord);   
+    vec4 finalcolor = texture2D(g_Texture, VS_OUT.texcoord);   
     vec3 norm = normalize(VS_OUT.normals);                   
     vec4 factor = vec4(vec3(max(dot(norm, normalize(-GlobalLightRot.xyz)), 0.0f)),1.0f);  
     //float specval = pow(max(0.0, dot(normalize(camera_pos - VS_OUT.pos2.xyz), normalize(reflect(-GlobalLightRot.xyz, norm)))), SpecularPower);
