@@ -8,6 +8,8 @@ ScreenOutput::ScreenOutput() {
 	m_Width = 0;
 	m_Height = 0;
 	m_MsgQueue = {};
+	m_FPSAcum = 0.0f;
+	m_FPScnt = 0;
 
 	m_FTLib = nullptr;	
 }
@@ -24,6 +26,8 @@ bool ScreenOutput::Init() {
 	m_XBegin = 0.0f;
 	m_YBegin = 0.0f;
 	m_VSpace = 16.0f;
+	m_FPSAcum = 0.0f;
+	m_FPScnt = 0;
 
 	CreateShaders();
 	InitializeFreeType(&m_FTLib);
@@ -68,6 +72,7 @@ void ScreenOutput::LogError(const std::string& msg) {
 }
 
 void ScreenOutput::Move(float dt) {
+	m_FPSTimer.Move(dt);
 	for(int i = 0; i < m_MsgQueue.size(); i++) {
 		if(m_MsgQueue[i].time <= 0.0) {
 			m_MsgQueue.erase(m_MsgQueue.begin() + i);
@@ -77,7 +82,14 @@ void ScreenOutput::Move(float dt) {
 			m_MsgQueue[i].time -= dt;
 		}
 	}
-	m_FPS = 1.0f / dt;
+	m_FPScnt++;
+	m_FPSAcum += 1.0 / dt;
+	if(m_FPSTimer.Finished()) {
+		m_FPS = m_FPSAcum / m_FPScnt;
+		m_FPSAcum = 0.0;
+		m_FPScnt = 0;
+		m_FPSTimer.Set(0.5f);
+	}
 }
 
 void ScreenOutput::Draw() {
@@ -113,6 +125,8 @@ void ScreenOutput::CreateShaders() {
 void ScreenOutput::Cleanup() {
 	m_Width = 0;
 	m_Height = 0;
+	m_FPSAcum = 0.0f;
+	m_FPScnt = 0;
 	//glDeleteProgram(m_Program);
 
 	UninitializeFreeType(m_FTLib);

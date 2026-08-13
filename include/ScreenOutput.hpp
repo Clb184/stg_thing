@@ -2,6 +2,7 @@
 #define SCREENOUTPUT_INCLUDED
 
 #include "OpenGL/Font.h"
+#include "Timer.hpp"
 #include "vector"
 #include "string"
 
@@ -46,7 +47,9 @@ private:
 
 private:
 	GLuint m_Program;
-	float m_FPS;
+	double m_FPS;
+	double m_FPSAcum;
+	int m_FPScnt;
 	int m_Width;
 	int m_Height;
 	float m_XBegin;
@@ -58,7 +61,7 @@ private:
 	FT_Library m_FTLib;
 	font_t m_Font;
 	font_descriptor_t m_Desc;
-
+	Timer m_FPSTimer;
 };
 
 #endif
