@@ -249,12 +249,14 @@ void SceneGameMain::DrawCameraProps() {
 	DrawString(&m_Font, xp, yp + 20.0f, buf, 0xff44eeee);
 	sprintf(buf, "rot : %5.3f, %5.3f, %5.3f", ToDeg(pitch), ToDeg(yaw), ToDeg(roll));
 	DrawString(&m_Font, xp, yp + 40.0f, buf, 0xff44eeee);
-	sprintf(buf, "near : %5.3f, far : %5.3f, color: %0000006X", nearf, farf, colorf);
-	DrawString(&m_Font, xp, yp + 60.0f, buf, 0xff44eeee);
 
-	DrawString(&m_Font, xp, yp + 80.0f, "Global Light:", 0xff44eeee);
+	DrawString(&m_Font, xp, yp + 60.0f, "Fog:", 0xff44eeee);
+	sprintf(buf, "near : %5.3f, far : %5.3f, color: %0000006X", nearf, farf, colorf);
+	DrawString(&m_Font, xp, yp + 80.0f, buf, 0xff44eeee);
+
+	DrawString(&m_Font, xp, yp + 100.0f, "Global Light:", 0xff44eeee);
 	sprintf(buf, "Rotation : %5.3f, %5.3f, %5.3f color: %0000006X", ToDeg(light_rot.x), ToDeg(light_rot.y), ToDeg(light_rot.z), colorf);
-	DrawString(&m_Font, xp, yp + 100.0f, buf, 0xff44eeee);
+	DrawString(&m_Font, xp, yp + 120.0f, buf, 0xff44eeee);
 }
 
 void SceneGameMain::CreateShaders() {
