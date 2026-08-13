@@ -84,7 +84,7 @@ void Camera::SetBinding(int idx) {
 }
 
 void Camera::SetPos(float x, float y, float z) {
-	m_CamPos = {x, -y, z };
+	m_CamPos = {x, y, z };
 }
 
 void Camera::SetRot(float pitch, float yaw, float roll) {

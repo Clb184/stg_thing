@@ -36,16 +36,20 @@ SceneGameMain::~SceneGameMain() {
 	Cleanup();
 }
 
-float x = 0.0f;
-float y = -450.0f;
-float z = 150.0f;
+auto ToRad = [](float deg) { return deg * 3.14159f / 180.0f; };
 
-float pitch = 0.0f;
-float yaw = 0.0f;
-float roll = 0.0f;
+float x = 0.0f;
+float y = -150.0f;
+float z = 260.0f;
+
+float pitch = ToRad(-185.0f);
+float yaw = ToRad(-11.0f);
+float roll = ToRad(-55.0f);
+
+DirectX::XMFLOAT3 light_rot = {0.0f, 0.0f, ToRad(-45.0f)}; // 64.0f, -35.0f, 120.0f
 
 float nearf = 400.0f;
-float farf = 500.0f;
+float farf = 550.0f;
 int colorf = 0xffaa0000;
 
 struct CameraData {
@@ -58,7 +62,7 @@ struct CameraData {
 
 struct WorldLight {
 	float global_light[4] = {0.0f, 0.5f, 1.5f, 1.0f};
-	float ambient[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float ambient[4] = { 0.1f, 0.1f, 0.1f, 0.0f };
 	float fog_color[4] = {0.5f, 0.8f, 0.7f, 1.0f};
 	float light_color[4] = {0.0f, 0.0f, 0.8f, 0.0f};
 	float specular_power[4] = {0.5f, 0.0f, 0.0f, 0.0f};
@@ -76,7 +80,7 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO)
 	m_pInput = input;
 	m_Out = IO;
 
-	m_TexMan.Init();
+	m_TexMan.Init(IO);
 	CreateShaders();
 	CreateBackground();
 	InitializeCamera();
@@ -116,7 +120,7 @@ void SceneGameMain::Move(float dt) {
 	if(m_pInput->GetKeyPress(GLFW_KEY_SPACE)) {
 		z += 20.0f * dt;
 	}
-	else if(m_pInput->GetKeyPress(GLFW_KEY_RIGHT_CONTROL)) {
+	else if(m_pInput->GetKeyPress(GLFW_KEY_LEFT_CONTROL)) {
 		z -= 20.0f * dt;
 	}
 	if(m_pInput->GetKeyPress(GLFW_KEY_Q)) {
@@ -164,16 +168,16 @@ void SceneGameMain::Draw() {
 
 	// Setup camera
 	m_Camera.SetPos(x, y, z);
-	m_Camera.SetRot(0.0f, 0.0f, -0.323);
+	m_Camera.SetRot(pitch, yaw, roll);
 	m_Camera.SetFog(nearf, farf);
 	m_Camera.Update();
 	m_Camera.SetBinding(0);
 
 	// Update World light
 	WorldLight* wl = (WorldLight*)glMapNamedBuffer(m_CBs[2], GL_WRITE_ONLY);
-	world_light.global_light[0] = yaw;
-	world_light.global_light[1] = pitch;
-	world_light.global_light[2] = roll;
+	world_light.global_light[0] = light_rot.x;
+	world_light.global_light[1] = light_rot.y;
+	world_light.global_light[2] = light_rot.z;
 	world_light.cam_pos[0] = x;
 	world_light.cam_pos[1] = y;
 	world_light.cam_pos[2] = z;
@@ -191,9 +195,18 @@ void SceneGameMain::Draw() {
 	glViewport(0, 0, 400, 480);
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	m_Plane.GetTransform().SetRot(m_Timer * 0.2f, 3.14159f * 0.5f , 0.0f);
-	m_Plane.GetTransform().Update();
-	m_Plane.Draw();
+	//m_Plane.GetTransform().SetRot(m_Timer * 0.0f, 0.0 * 3.14159f * 0.5f , m_Timer * 0.2f);
+	for(int i = 0; i < 3; i++) {
+		m_Plane.GetTransform().SetPos(-256.0f, i * 256.0f, 0.0f);
+		m_Plane.GetTransform().Update();
+		m_Plane.Draw();
+		m_Plane.GetTransform().SetPos(0.0f, i * 256.0f, 0.0f);
+		m_Plane.GetTransform().Update();
+		m_Plane.Draw();
+		m_Plane.GetTransform().SetPos(256.0f, i * 256.0f, 0.0f);
+		m_Plane.GetTransform().Update();
+		m_Plane.Draw();
+	}
 
 	// Draw UI and others
 	Enter2DMode();
@@ -228,7 +241,7 @@ void SceneGameMain::Draw() {
 }
 
 void SceneGameMain::DrawCameraProps() {
-	const float xp = 100.0f, yp = 300.0f;
+	const float xp = 60.0f, yp = 300.0f;
 	char buf[256];
 	auto ToDeg = [](float radian) {  return radian * 180.0f / 3.14159f; };
 	DrawString(&m_Font, xp, yp, "Camera:", 0xff44eeee);
@@ -239,6 +252,9 @@ void SceneGameMain::DrawCameraProps() {
 	sprintf(buf, "near : %5.3f, far : %5.3f, color: %0000006X", nearf, farf, colorf);
 	DrawString(&m_Font, xp, yp + 60.0f, buf, 0xff44eeee);
 
+	DrawString(&m_Font, xp, yp + 80.0f, "Global Light:", 0xff44eeee);
+	sprintf(buf, "Rotation : %5.3f, %5.3f, %5.3f color: %0000006X", ToDeg(light_rot.x), ToDeg(light_rot.y), ToDeg(light_rot.z), colorf);
+	DrawString(&m_Font, xp, yp + 100.0f, buf, 0xff44eeee);
 }
 
 void SceneGameMain::CreateShaders() {
@@ -260,12 +276,9 @@ void SceneGameMain::CreateShaders() {
 }
 
 void SceneGameMain::CreateBackground() {
-	char* data;
-	size_t size;
 
-	LoadDataFromFile("DAT/ui.png", (void**)&data, &size);
 
-	GLuint tex = m_TexMan.LoadTexture(data, size);
+	GLuint tex = m_TexMan.Load("GRP/ui.png");
 	texture_metric_t metric = m_TexMan.GetTextureMetrics(0);
 	m_LeftUI.Init();
 	m_LeftUI.SetTexID(tex);
@@ -292,6 +305,7 @@ void SceneGameMain::CreateBackground() {
 	CreateFontWithAtlas(m_Desc, &m_Font, 20);
 	
 	m_Plane.Init(16, 16);
+	m_Plane.SetTexture(m_TexMan.Load("GRP/grass.png"));
 	const float grow = 16.0f;
 	float mx = -64.0f, my = -64.0f;
 	TLVertex3D* verts = new TLVertex3D[8 * 8 * 6];

@@ -34,7 +34,7 @@ bool SceneMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO) {
 	m_WeaponSelectIndex = 0;
 	m_OptionDelay = 1.0f;
 
-	m_TexMan.Init();
+	m_TexMan.Init(IO);
 	CreateShaders();
 	CreateBackground();
 	m_Out = IO;
@@ -156,15 +156,11 @@ void SceneMain::CreateShaders() {
 
 void SceneMain::CreateBackground() {
 	LOG_INFO("Creating Background objects");
-	char* data = nullptr;
-	size_t size = 0;
-	LoadDataFromFile("DAT/title.png", (void**)&data, &size);
 	m_BGSprite.Init();
-	m_BGSprite.SetTexID(m_TexMan.LoadTexture(data, size));
+	m_BGSprite.SetTexID(m_TexMan.Load("GRP/title.png"));
 	m_BGSprite.SetPos(320.0f, 240.0f);
 	m_BGSprite.SetSize(640.0f, 480.0f);
 	m_BGSprite.SetUV(0.0f, 0.0f, 1.0f, 1.0f);
-	free(data);
 	
 	InitializeFreeType(&m_FTLib);
 	LoadFontFromFile(m_FTLib, &m_Desc, "DAT/PermanentMarker.ttf");

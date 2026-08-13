@@ -1,5 +1,6 @@
 #include "Mesh.hpp"
 #include "Output.h"
+#include "OpenGL/Texture.h"
 
 Mesh::Mesh() {
 	m_DrawType = GL_TRIANGLES;
@@ -7,6 +8,9 @@ Mesh::Mesh() {
 	m_Buffer = 0;
 	m_VArray = 0;
 	m_DrawCmd = 0;
+
+	m_Texture = 0;
+	m_BlankTex = 0;
 }
 
 Mesh::~Mesh() {
@@ -20,6 +24,8 @@ void Mesh::Draw() {
 	m_Transform.Bind(1);
 	glBindVertexArray(m_VArray);
 	GL_ERROR();
+	glBindTextureUnit(0, m_Texture);
+	GL_ERROR();
 	glDrawArraysIndirect(m_DrawType, 0);
 	GL_ERROR();
 }
@@ -31,6 +37,16 @@ void Mesh::Cleanup() {
 	m_DrawCmd = 0;
 	glDeleteVertexArrays(1, &m_VArray);
 	m_VArray = 0;
+	glDeleteTextures(1, &m_BlankTex);
+	m_BlankTex = 0;
+}
+
+void Mesh::SetTexture(GLuint id) {
+	if(0 == id) {
+		m_Texture = m_BlankTex;
+	} else {
+		m_Texture = id;
+	}
 }
 
 Transform3D& Mesh::GetTransform() {
@@ -49,4 +65,8 @@ void Mesh::CreateIndirectDraw(int vertcnt) {
 void Mesh::CreateVertexBuffer(int cnt, TLVertex3D* verts) {
 	CreateTL3DVertexBuffer(cnt, verts, 0, &m_Buffer, &m_VArray);
 	m_VertCount = cnt;
+}
+
+void Mesh::CreateBlankTexture() {
+	CreateEmptyTexture(&m_BlankTex, 0xffffffff);
 }

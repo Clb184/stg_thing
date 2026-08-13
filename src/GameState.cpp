@@ -51,8 +51,8 @@ bool GameState::Init(InputDevice* input, ScreenOutput* IO) {
 	m_CurrentSceneType = SCENE_MAIN;
 	
 	// For debug purpose
-	//m_pCurrentScene = m_pGameMain;
-	//m_CurrentSceneType = SCENE_GAMEMAIN;
+	m_pCurrentScene = m_pGameMain;
+	m_CurrentSceneType = SCENE_GAMEMAIN;
 	
 
 	m_pInput = input;

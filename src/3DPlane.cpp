@@ -12,6 +12,7 @@ void Plane3D::Init(int w16, int h16) {
 	float tx = 0.0f, ty = 0.0f;
 	TLVertex3D* verts = new TLVertex3D[w16 * h16 * 8 * 6];
 	int mi = 0;
+	printf("gtx: %.2f, gty: %.2f\n", gtx, gty);
 	for(int yi = 0; yi < h16; yi++) {
 		mx = float(w16 * unit) * -0.5f;
 		for(int xi = 0; xi < w16; xi++) {
@@ -23,7 +24,9 @@ void Plane3D::Init(int w16, int h16) {
 			verts[mi * 6 + 5] = {mx       , my + unit, 0.0f, 0xffffffff, tx      , ty + gty, 0.0f, 0.0f, 1.0f};
 			mx += unit;
 			mi++;
+			tx += gtx;
 		}
+		ty += gty;
 		my += unit;
 	}
 	CreateVertexBuffer(w16 * h16 * 6, verts);
