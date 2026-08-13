@@ -41,6 +41,8 @@ struct xasm2_vm_t {
 	uint8_t* cmd = nullptr;
 	int* member_reg = nullptr;
 	int* global_reg = nullptr;
+	int member_regs = 0;
+	int global_regs = 0;
 	uint32_t flags = 0;
 	uint32_t interrupt = 0;
 	float wait_time = 0.0f;
@@ -57,6 +59,12 @@ struct xasm2_vm_t {
 typedef int(*xasm2_vm_ext)(uint8_t, xasm2_vm_t*, void*);
 
 void XASM2RandomInit(uint64_t seed);
+
+void XASM2VMInit(xasm2_vm_t* vm, uint8_t* offset);
+
+void XASM2VMSetMembers(xasm2_vm_t* vm, int num, int* member);
+
+void XASM2VMSetGlobals(xasm2_vm_t* vm, int num, int* global);
 
 int XASM2Move(xasm2_vm_t* vm, float dt, xasm2_vm_ext extension, void* data);
 

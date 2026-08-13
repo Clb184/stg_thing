@@ -18,6 +18,38 @@ void XASM2RandomInit(uint64_t seed) {
 	g_RandomDevice.seed(seed);
 }
 
+void XASM2VMInit(xasm2_vm_t* vm, uint8_t* offset) {
+	assert(nullptr != vm);
+	vm->src_cmd = offset;
+	vm->cmd = offset;
+	vm->member_reg = 0;
+	vm->member_regs = 0;
+	vm->global_reg = 0;
+	vm->global_regs = 0;
+	vm->flags = 0;
+	vm->interrupt = 0;
+	vm->wait_time = 0.0f;
+	vm->life_time = 0.0f;
+	vm->r1 = 0;
+	vm->r2 = 0;
+	vm->r3 = 0;
+	vm->r4 = 0;
+	vm->frame_ptr = 0;
+	vm->stack_ptr = 0;
+}
+
+void XASM2VMSetMembers(xasm2_vm_t* vm, int num, int* member) {
+	assert(nullptr != vm);
+	vm->member_reg = member;
+	vm->member_regs = num;
+}
+
+void XASM2VMSetGlobals(xasm2_vm_t* vm, int num, int* global) {
+	assert(nullptr != vm);
+	vm->global_reg = global;
+	vm->global_regs = num;
+}
+
 int XASM2Move(xasm2_vm_t* vm, float dt, xasm2_vm_ext extension, void* data) {
 	assert(nullptr != vm);
 	assert(nullptr != vm->src_cmd);
@@ -78,6 +110,7 @@ start:
 	case XASM2_LOADM:
 		assert(nullptr != vm->member_reg);
 		vm->cmd++;
+		assert(((int*)(vm->cmd + 1)) < vm->member_regs);
 		switch(*vm->cmd) {
 			case 0: vm->r1 = (xasm2_num_t)vm->member_reg[*(int*)(vm->cmd + 1)]; break;
 			case 1: vm->r2 = (xasm2_num_t)vm->member_reg[*(int*)(vm->cmd + 1)]; break;
@@ -89,6 +122,7 @@ start:
 	case XASM2_LOADG:
 		assert(nullptr != vm->global_reg);
 		vm->cmd++;
+		assert(((int*)(vm->cmd + 1)) < vm->global_regs);
 		switch(*vm->cmd) {
 			case 0: vm->r1 = (xasm2_num_t)vm->global_reg[*(int*)(vm->cmd + 1)]; break;
 			case 1: vm->r2 = (xasm2_num_t)vm->global_reg[*(int*)(vm->cmd + 1)]; break;
@@ -101,6 +135,7 @@ start:
 	case XASM2_STOREM:
 		assert(nullptr != vm->member_reg);
 		vm->cmd++;
+		assert(((int*)vm->cmd) < vm->member_regs);
 		vm->member_reg[*(int*)vm->cmd] = vm->r1;
 		vm->cmd += sizeof(int);
 		goto start;
@@ -108,6 +143,7 @@ start:
 	case XASM2_STOREG:
 		assert(nullptr != vm->global_reg);
 		vm->cmd++;
+		assert(((int*)vm->cmd) < vm->global_regs);
 		vm->global_reg[*(int*)vm->cmd] = vm->r1;
 		vm->cmd += sizeof(int);
 		goto start;
