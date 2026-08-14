@@ -2,30 +2,28 @@
 #define BACKGROUNDCTRL_INCLUDED
 
 #include "TaskCamera.hpp"
+#include "InputDevice.hpp"
 
 class BackgroundCtrl {
 private:
-	struct WorldLight {
-		float global_light[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-		float ambient[4] = { 0.1f, 0.1f, 0.1f, 0.0f };
-		float fog_color[4] = {0.5f, 0.8f, 0.7f, 1.0f};
-		float light_color[4] = {0.0f, 0.0f, 0.8f, 0.0f};
-		float specular_power[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-		float cam_pos[4] = {0.0f, 0.0f, 0.0f, 1.0f};
-	};
 public:
 	BackgroundCtrl();
 	~BackgroundCtrl();
+	
+	void SetDebugControl(InputDevice* input);
 
 	void Init();
+	void SetupTask(uint8_t* script);
 	void Move(float dt);
 	void Draw();
 
 	TaskCamera& GetCameraTask();
 private:
-	DirectX::XMFLOAT2 m_FogPos;
-	
+	void MoveInput(float dt);
+private:
 	TaskCamera m_Camera;
+
+	InputDevice* m_pInput;
 };
 
 #endif

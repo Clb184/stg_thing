@@ -12,6 +12,7 @@
 #include "ScreenOutput.hpp"
 #include "Camera.hpp"
 #include "3DPlane.hpp"
+#include "BackgroundCtrl.hpp"
 
 #include "PackArchive/PackFile.h"
 
@@ -74,7 +75,9 @@ private: // Text
 private: // Plane and related
 	DirectX::XMMATRIX m_CameraMatrix;
 	Camera m_Camera;
+	BackgroundCtrl m_BGCtrl;
 	Plane3D m_Plane;
+	char* data;
 
 	render_texture_t m_3DBGTex;
 	render_texture_t m_GameAreaTex;

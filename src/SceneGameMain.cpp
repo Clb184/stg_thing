@@ -60,14 +60,14 @@ struct CameraData {
 	DirectX::XMFLOAT4 _extra[2] = { {1.0f, 1.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.0f, 0.0f}};
 } camera_data;
 
-struct WorldLight {
+/*struct WorldLight {
 	float global_light[4] = {0.0f, 0.5f, 1.5f, 1.0f};
 	float ambient[4] = { 0.1f, 0.1f, 0.1f, 0.0f };
 	float fog_color[4] = {0.5f, 0.8f, 0.7f, 1.0f};
 	float light_color[4] = {0.0f, 0.0f, 0.8f, 0.0f};
 	float specular_power[4] = {0.5f, 0.0f, 0.0f, 0.0f};
 	float cam_pos[4] = {x, y, z, 1.0f};
-} world_light;
+} world_light;*/
 
 bool SceneGameMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO) {
 	assert(nullptr != state);
@@ -81,6 +81,8 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO)
 	m_Out = IO;
 
 	m_TexMan.Init(IO);
+	m_BGCtrl.Init();
+	m_BGCtrl.SetDebugControl(input);
 	CreateShaders();
 	CreateBackground();
 	InitializeCamera();
@@ -105,7 +107,7 @@ void SceneGameMain::Move(float dt) {
 		m_pState->ChangeScene(SCENE_MAIN);
 		return;
 	}
-	if(m_pInput->GetKeyPress(GLFW_KEY_D)) {
+	/*if(m_pInput->GetKeyPress(GLFW_KEY_D)) {
 		x += 20.0f * dt;
 	}
 	else if(m_pInput->GetKeyPress(GLFW_KEY_A)) {
@@ -154,12 +156,13 @@ void SceneGameMain::Move(float dt) {
 	}
 	else if(m_pInput->GetKeyPress(GLFW_KEY_RIGHT)) {
 		pitch += 0.314159f * dt;
-	}
+	}*/
 	// Debug restart
 	if(m_pInput->GetKeyPress(GLFW_KEY_R)) {
 		Init(m_pState, m_pInput, m_Out);
 	}
-
+	
+	m_BGCtrl.Move(dt);
 }
 
 void SceneGameMain::Draw() {
@@ -167,6 +170,8 @@ void SceneGameMain::Draw() {
 	Enter3DMode();
 
 	// Setup camera
+	m_BGCtrl.Draw();
+	/*
 	m_Camera.SetPos(x, y, z);
 	m_Camera.SetRot(pitch, yaw, roll);
 	m_Camera.SetFog(nearf, farf);
@@ -186,7 +191,7 @@ void SceneGameMain::Draw() {
 	world_light.fog_color[2] = float((colorf & 0x00ff0000) >> 16) / 255.0f;
 	memcpy(wl, &world_light, sizeof(WorldLight));
 	glUnmapNamedBuffer(m_CBs[2]);
-	BindConstantBuffer(m_CBs[2], 2);
+	BindConstantBuffer(m_CBs[2], 2);*/
 
 	// Setup viewport and 3D
 	glBindFramebuffer(GL_FRAMEBUFFER, m_3DBGTex.framebuffer);
@@ -244,10 +249,12 @@ void SceneGameMain::DrawCameraProps() {
 	const float xp = 60.0f, yp = 300.0f;
 	char buf[256];
 	auto ToDeg = [](float radian) {  return radian * 180.0f / 3.14159f; };
+	DirectX::XMFLOAT4 pos = m_BGCtrl.GetCameraTask().light.cam_pos;
+	DirectX::XMFLOAT4 rot = m_BGCtrl.GetCameraTask().rot;
 	DrawString(&m_Font, xp, yp, "Camera:", 0xff44eeee);
-	sprintf(buf, "pos : %5.3f, %5.3f, %5.3f", x, y, z);
+	sprintf(buf, "pos : %5.3f, %5.3f, %5.3f", pos.x, pos.y, pos.z);
 	DrawString(&m_Font, xp, yp + 20.0f, buf, 0xff44eeee);
-	sprintf(buf, "rot : %5.3f, %5.3f, %5.3f", ToDeg(pitch), ToDeg(yaw), ToDeg(roll));
+	sprintf(buf, "rot : %5.3f, %5.3f, %5.3f", ToDeg(rot.x), ToDeg(rot.y), ToDeg(rot.z));
 	DrawString(&m_Font, xp, yp + 40.0f, buf, 0xff44eeee);
 
 	DrawString(&m_Font, xp, yp + 60.0f, "Fog:", 0xff44eeee);
@@ -308,61 +315,12 @@ void SceneGameMain::CreateBackground() {
 	
 	m_Plane.Init(16, 16);
 	m_Plane.SetTexture(m_TexMan.Load("GRP/grass.png"));
-	const float grow = 16.0f;
-	float mx = -64.0f, my = -64.0f;
-	TLVertex3D* verts = new TLVertex3D[8 * 8 * 6];
-	int mi = 0;
-	for(int yi = 0; yi < 8; yi++) {
-		mx = -64.0f;
-		for(int xi = 0; xi < 8; xi++) {
-			verts[mi * 6] = {mx + grow, my, 0.0f, 0xffffffff, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
-			verts[mi * 6 + 1] = {mx, my, 0.0f, 0xffffffff, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
-			verts[mi * 6 + 2] = {mx + grow, my + grow, 0.0f, 0xffffffff, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
-			verts[mi * 6 + 3] = {mx, my, 0.0f, 0xffffffff, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
-			verts[mi * 6 + 4] = {mx + grow, my + grow, 0.0f, 0xffffffff, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
-			verts[mi * 6 + 5] = {mx, my + grow, 0.0f, 0xffffffff, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
-			mx += grow;
-			mi++;
-		}
-		my += grow;
-	}
-	/*TLVertex3D verts[4] = {
-		{128.0f, -128.0f, 0.0f, 0xff0000ff, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-		{-128.0f, -128.0f, 0.0f, 0xff00ff00, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-		{128.0f, 128.0f, 0.0f, 0xffff0000, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f},
-		{-128.0f, 128.0f, 0.0f, 0xffff00ff, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
-	};*/
-	delete[] verts;
 	
 	glUseProgram(m_3DShader);
-	// Camera
-	DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveFovLH(3.14159f * 0.25f, 480.0f / 400.0f, 0.1f, 1000.0f);
-	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(_mm_set_ps(0.0, z, y, x), _mm_set_ps(0.0f, 140.0f, 0.0f, 0.0f), _mm_set_ps(0.0, 0.0, 1.0, 0.0));
-	
-	camera_data.cam = view * projection;
-	camera_data.vw = view;
-	camera_data.proj = projection;
 
-	// Normal data
-	struct {
-		DirectX::XMMATRIX model_mat;
-		DirectX::XMMATRIX normal_mat;
-	} normals;
-	normals.model_mat = DirectX::XMMatrixIdentity();
-	//normals.model_mat = DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorSet(DirectX::XMScalarSin(3.14159f * 0.25f * 0.5f), 0.0f, 0.0f, DirectX::XMScalarCos(3.14159f * 0.25f * 0.5f)));
-	normals.normal_mat = DirectX::XMMatrixInverse(nullptr, normals.model_mat);
-
-
-
-	buffer_descriptor_t buf_desc[3] = {
-		{sizeof(camera_data), &camera_data, GL_DYNAMIC_DRAW},
-		{sizeof(normals), &normals, GL_DYNAMIC_DRAW},
-		{sizeof(world_light), &world_light, GL_DYNAMIC_DRAW}
-	};
-	CreateBuffers(buf_desc, m_CBs, 3);
-	//BindConstantBuffer(m_CBs[0], 0);
-	BindConstantBuffer(m_CBs[1], 1);
-	BindConstantBuffer(m_CBs[2], 2);
+	size_t size = 0;
+	LoadDataFromFile("camera.dat", (void**)&data, &size);
+	m_BGCtrl.SetupTask((uint8_t*)data + 8);
 
 }
 

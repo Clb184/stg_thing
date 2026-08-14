@@ -56,7 +56,7 @@ struct xasm2_vm_t {
 	xasm2_num_t stack[XASM2_STACK_SIZE];
 };
 
-typedef int(*xasm2_vm_ext)(uint8_t, xasm2_vm_t*, void*);
+typedef int(*xasm2_vm_ext)(uint8_t, xasm2_vm_t*, float, void*);
 
 void XASM2RandomInit(uint64_t seed);
 
