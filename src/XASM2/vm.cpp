@@ -18,10 +18,10 @@ void XASM2RandomInit(uint64_t seed) {
 	g_RandomDevice.seed(seed);
 }
 
-void XASM2VMInit(xasm2_vm_t* vm, uint8_t* offset) {
+void XASM2VMInit(xasm2_vm_t* vm, uint8_t* script, uint32_t offset) {
 	assert(nullptr != vm);
-	vm->src_cmd = offset;
-	vm->cmd = offset;
+	vm->src_cmd = script;
+	vm->cmd = script + offset;
 	vm->member_reg = 0;
 	vm->member_regs = 0;
 	vm->global_reg = 0;

@@ -1,9 +1,14 @@
 #include "TaskCamera.hpp"
 #include "cstring"
+#include "cstdlib"
+#include "cstdio"
+
 
 TaskCamera::TaskCamera() {
 	//pos = {0.0f, 0.0f, 0.0f};
 	rot = {0.0f, 0.0f, 0.0f, 0.0f};
+	fog = {400.0f, 550.0f};
+	fov = 3.14159f * 0.25f;
 }
 
 TaskCamera::~TaskCamera() {
@@ -41,13 +46,13 @@ int XASM2CameraTask(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
 }
 
 bool TaskCamera::Setup(uint8_t* script) {
-	XASM2VMInit(&task, script);
+	XASM2VMInit(&task, script, 12);
 	XASM2VMSetMembers(&task, 31, (int*)&light);
 	return true;
 }
 
 void TaskCamera::Move(float dt) {
-	XASM2Move(&task, dt, XASM2CameraTask, nullptr);
+	XASM2Move(&task, dt, XASM2CameraTask, this);
 	camera.SetPos(light.cam_pos.x, light.cam_pos.y, light.cam_pos.z);
 	camera.SetRot(rot.x, rot.y, rot.z);
 	camera.SetFog(fog.x, fog.y);

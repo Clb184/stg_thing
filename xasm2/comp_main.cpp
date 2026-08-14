@@ -367,11 +367,11 @@ void LoadCommandArgsFromJson(const char* name) {
 					for(const std::string& argt : cmd["args"]) {
 						printf("ARG: %s\n", argt.c_str());
 						ARG_TYPE argtype = ARG_UNKNOWN;
-						if(argt == "register") argtype == ARG_REGISTER;
-						else if(argt == "number") argtype == ARG_NUMBER;
-						else if(argt == "integer") argtype == ARG_INTEGER;
-						else if(argt == "float") argtype == ARG_FLOAT;
-						else if(argt == "address") argtype == ARG_ADDRESS;
+						if(argt == "register") argtype = ARG_REGISTER;
+						else if(argt == "number") argtype = ARG_NUMBER;
+						else if(argt == "integer") argtype = ARG_INTEGER;
+						else if(argt == "float") argtype = ARG_FLOAT;
+						else if(argt == "address") argtype = ARG_ADDRESS;
 						else continue;
 						g_ExtraCmdArgs[cmd_idx].push_back(argtype);
 					}

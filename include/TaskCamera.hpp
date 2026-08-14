@@ -6,9 +6,9 @@
 #include "Camera.hpp"
 
 struct WorldLight {
-	DirectX::XMFLOAT4 global_light = {0.0f, 0.0f, 0.0f, 0.0f};
-	DirectX::XMFLOAT4 ambient = { 0.1f, 0.1f, 0.1f, 0.0f };
-	DirectX::XMFLOAT4 fog_color = {0.5f, 0.8f, 0.7f, 1.0f};
+	DirectX::XMFLOAT4 global_light = {0.0f, 0.0f, -0.78539f, 0.0f};
+	DirectX::XMFLOAT4 ambient = { 0.04f, 0.04f, 0.04f, 0.0f };
+	DirectX::XMFLOAT4 fog_color = {0.0f, 0.0f, 0.7f, 1.0f};
 	DirectX::XMFLOAT4 light_color = {0.0f, 0.0f, 0.8f, 0.0f};
 	float specular_power[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 	DirectX::XMFLOAT4 cam_pos = {0.0f, 0.0f, 0.0f, 1.0f};

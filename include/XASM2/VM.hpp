@@ -60,7 +60,7 @@ typedef int(*xasm2_vm_ext)(uint8_t, xasm2_vm_t*, float, void*);
 
 void XASM2RandomInit(uint64_t seed);
 
-void XASM2VMInit(xasm2_vm_t* vm, uint8_t* offset);
+void XASM2VMInit(xasm2_vm_t* vm, uint8_t* script, uint32_t offset);
 
 void XASM2VMSetMembers(xasm2_vm_t* vm, int num, int* member);
 

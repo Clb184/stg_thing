@@ -251,6 +251,10 @@ void SceneGameMain::DrawCameraProps() {
 	auto ToDeg = [](float radian) {  return radian * 180.0f / 3.14159f; };
 	DirectX::XMFLOAT4 pos = m_BGCtrl.GetCameraTask().light.cam_pos;
 	DirectX::XMFLOAT4 rot = m_BGCtrl.GetCameraTask().rot;
+	DirectX::XMFLOAT2 fog = m_BGCtrl.GetCameraTask().fog;
+	DirectX::XMFLOAT4 fcolor = m_BGCtrl.GetCameraTask().light.fog_color;
+	DirectX::XMFLOAT4 wlr = m_BGCtrl.GetCameraTask().light.global_light;
+
 	DrawString(&m_Font, xp, yp, "Camera:", 0xff44eeee);
 	sprintf(buf, "pos : %5.3f, %5.3f, %5.3f", pos.x, pos.y, pos.z);
 	DrawString(&m_Font, xp, yp + 20.0f, buf, 0xff44eeee);
@@ -258,12 +262,14 @@ void SceneGameMain::DrawCameraProps() {
 	DrawString(&m_Font, xp, yp + 40.0f, buf, 0xff44eeee);
 
 	DrawString(&m_Font, xp, yp + 60.0f, "Fog:", 0xff44eeee);
-	sprintf(buf, "near : %5.3f, far : %5.3f, color: %0000006X", nearf, farf, colorf);
+	sprintf(buf, "near : %5.3f, far : %5.3f", fog.x, fog.y);
 	DrawString(&m_Font, xp, yp + 80.0f, buf, 0xff44eeee);
+	sprintf(buf, "color : %5.3f, %5.3f, %5.3f", fcolor.x, fcolor.y, fcolor.z);
+	DrawString(&m_Font, xp, yp + 100.0f, buf, 0xff44eeee);
 
-	DrawString(&m_Font, xp, yp + 100.0f, "Global Light:", 0xff44eeee);
-	sprintf(buf, "Rotation : %5.3f, %5.3f, %5.3f color: %0000006X", ToDeg(light_rot.x), ToDeg(light_rot.y), ToDeg(light_rot.z), colorf);
-	DrawString(&m_Font, xp, yp + 120.0f, buf, 0xff44eeee);
+	DrawString(&m_Font, xp, yp + 120.0f, "Global Light:", 0xff44eeee);
+	sprintf(buf, "Rotation : %5.3f, %5.3f, %5.3f", ToDeg(wlr.x), ToDeg(wlr.y), ToDeg(wlr.z));
+	DrawString(&m_Font, xp, yp + 140.0f, buf, 0xff44eeee);
 }
 
 void SceneGameMain::CreateShaders() {
@@ -319,8 +325,10 @@ void SceneGameMain::CreateBackground() {
 	glUseProgram(m_3DShader);
 
 	size_t size = 0;
-	LoadDataFromFile("camera.dat", (void**)&data, &size);
-	m_BGCtrl.SetupTask((uint8_t*)data + 8);
+	uint8_t* dat = 0;
+	LoadDataFromFile("camera.dat", (void**)&dat, &size);
+	m_BGCtrl.SetupTask(dat);
+	data = (char*)dat;
 
 }
 
