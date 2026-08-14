@@ -66,7 +66,7 @@ int Tokenize(char* text, const char* source_name, size_t size) {
 		else if((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) { // identifier or keyword
 			std::string s = "";
 			toktype t = TYPE_IDENTIFIER;
-			auto IsIdentifierC = [](char c) { return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'); };
+			auto IsIdentifierC = [](char c) { return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_'; };
 
 			auto IsKeyword = [] (const std::string& s) {
 				return s == "const";
@@ -180,13 +180,14 @@ error:
 						cmd = (uint8_t)cmd2byteEx.at(cmd_name);
 					}
 					buffer[index] = cmd;
-					//printf("COMMAND: %s\n", std::get<0>(t).c_str());
+					printf("COMMAND: %s\n", std::get<0>(t).c_str());
 					index++;
 					i++;
 					const std::map<uint8_t, std::vector<ARG_TYPE>>* arg_map = nullptr;
 					if(g_Args.find(cmd) != g_Args.end()) {
 						arg_map = &g_Args;
 					} else if(g_ExtraCmdArgs.find(cmd) != g_ExtraCmdArgs.end()) {
+						printf("Using Extension map\n");
 						arg_map = &g_ExtraCmdArgs;
 					} else {
 						i--;
@@ -346,6 +347,7 @@ void LoadCommandArgsFromJson(const char* name) {
 	uint16_t cmd_idx = 0x80;
 	printf("Loading command args from json\n");
 	if(0 == OpenReadFile(name, &size, &text)) {
+		g_ExtraCmdArgs.clear();
 		try {
 			json = nlohmann::json::parse(text);
 			printf("Parsing \"%s\"\n", name);
@@ -382,7 +384,6 @@ void LoadCommandArgsFromJson(const char* name) {
 			return;
 		}
 		
-		g_ExtraCmdArgs.clear();
 	}
 
 }
