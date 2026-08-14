@@ -1,0 +1,29 @@
+@main:
+	loadc r1, 0.0
+	storem 20
+	loadc r1, -150.0
+	storem 21
+	loadc r1, 260.0
+	storem 22
+
+	loadc r1, -3.2288
+	storem 24
+	loadc r1, -0.1919
+	storem 25
+	loadc r1, -0.9599
+	storem 26
+	call loop
+	halt
+
+loop:
+	loadm r1, 21
+	greatfc 106.0
+	jmpt redo
+	addpos 0.0, 40.0, 0.0
+	nop
+	jmp loop
+redo:
+	loadm r1, 21
+	subfc 256.0
+	storem 21
+	jmp loop
