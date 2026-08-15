@@ -5,7 +5,9 @@ BackgroundCtrl::BackgroundCtrl() {
 }
 
 BackgroundCtrl::~BackgroundCtrl() {
-
+	if(1 == CheckRenderTexture(&m_PPBG)) {
+		DestroyRenderTexture(&m_PPBG);
+	}
 }
 
 void BackgroundCtrl::SetDebugControl(InputDevice* input) {
@@ -14,6 +16,9 @@ void BackgroundCtrl::SetDebugControl(InputDevice* input) {
 
 void BackgroundCtrl::Init() {
 	m_Camera.Init();
+	if(1 != CheckRenderTexture(&m_PPBG)) {
+		CreateRenderTextureA(&m_PPBG, 400, 480, RTFLAG_DEPTH);
+	}
 }
 
 void BackgroundCtrl::SetupTask(uint8_t* script) {
@@ -26,6 +31,8 @@ void BackgroundCtrl::Move(float dt) {
 }
 
 void BackgroundCtrl::Draw() {
+	glBindFramebuffer(GL_FRAMEBUFFER, m_PPBG.framebuffer);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	m_Camera.Use();
 }
 

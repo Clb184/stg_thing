@@ -3,6 +3,7 @@
 
 #include "TaskCamera.hpp"
 #include "InputDevice.hpp"
+#include "OpenGL/Texture.h"
 
 class BackgroundCtrl {
 private:
@@ -22,6 +23,7 @@ private:
 	void MoveInput(float dt);
 private:
 	TaskCamera m_Camera;
+	render_texture_t m_PPBG;
 
 	InputDevice* m_pInput;
 };

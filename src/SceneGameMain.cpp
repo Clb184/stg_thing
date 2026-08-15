@@ -169,37 +169,15 @@ void SceneGameMain::Draw() {
 	// Draw background
 	Enter3DMode();
 
-	// Setup camera
-	m_BGCtrl.Draw();
-	/*
-	m_Camera.SetPos(x, y, z);
-	m_Camera.SetRot(pitch, yaw, roll);
-	m_Camera.SetFog(nearf, farf);
-	m_Camera.Update();
-	m_Camera.SetBinding(0);
-
-	// Update World light
-	WorldLight* wl = (WorldLight*)glMapNamedBuffer(m_CBs[2], GL_WRITE_ONLY);
-	world_light.global_light[0] = light_rot.x;
-	world_light.global_light[1] = light_rot.y;
-	world_light.global_light[2] = light_rot.z;
-	world_light.cam_pos[0] = x;
-	world_light.cam_pos[1] = y;
-	world_light.cam_pos[2] = z;
-	world_light.fog_color[0] = float(colorf & 0x000000ff) / 255.0f;
-	world_light.fog_color[1] = float((colorf & 0x0000ff00) >> 8) / 255.0f;
-	world_light.fog_color[2] = float((colorf & 0x00ff0000) >> 16) / 255.0f;
-	memcpy(wl, &world_light, sizeof(WorldLight));
-	glUnmapNamedBuffer(m_CBs[2]);
-	BindConstantBuffer(m_CBs[2], 2);*/
 
 	// Setup viewport and 3D
-	glBindFramebuffer(GL_FRAMEBUFFER, m_3DBGTex.framebuffer);
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
 	glViewport(0, 0, 400, 480);
 	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Setup camera and world light
+	m_BGCtrl.Draw();
+
 	//m_Plane.GetTransform().SetRot(m_Timer * 0.0f, 0.0 * 3.14159f * 0.5f , m_Timer * 0.2f);
 	for(int i = 0; i < 3; i++) {
 		m_Plane.GetTransform().SetPos(-256.0f, i * 256.0f, 0.0f);
@@ -246,7 +224,7 @@ void SceneGameMain::Draw() {
 }
 
 void SceneGameMain::DrawCameraProps() {
-	const float xp = 60.0f, yp = 300.0f;
+	const float xp = 32.0f, yp = 300.0f;
 	char buf[256];
 	auto ToDeg = [](float radian) {  return radian * 180.0f / 3.14159f; };
 	DirectX::XMFLOAT4 pos = m_BGCtrl.GetCameraTask().light.cam_pos;
