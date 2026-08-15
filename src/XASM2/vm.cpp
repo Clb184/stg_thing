@@ -153,7 +153,21 @@ start:
 		vm->stack[vm->frame_ptr + *(int*)vm->cmd] = *(xasm2_num_t*)(vm->cmd + sizeof(int));
 		vm->cmd += sizeof(int) + sizeof(xasm2_num_t);
 		goto start;
-	
+
+	case XASM2_SETM:
+		vm->cmd++;
+		assert(nullptr != vm->member_reg);
+		vm->member_reg[*(int*)vm->cmd] = *(int*)(vm->cmd + sizeof(int));
+		vm->cmd += sizeof(int) + sizeof(xasm2_num_t);
+		goto start;
+
+	case XASM2_SETG:
+		vm->cmd++;
+		assert(nullptr != vm->global_reg);
+		vm->global_reg[*(int*)vm->cmd] = *(int*)(vm->cmd + sizeof(int));
+		vm->cmd += sizeof(int) + sizeof(xasm2_num_t);
+		goto start;
+
 	case XASM2_MOV:
 		vm->cmd++;
 		vm->stack[vm->frame_ptr + *(int*)vm->cmd] = vm->stack[vm->frame_ptr + *(int*)(vm->cmd + sizeof(int))];

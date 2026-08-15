@@ -44,6 +44,8 @@ inline const std::unordered_map<std::string, uint8_t> cmd2byte = { // Table with
 	{"storem", XASM2_STOREM},
 	{"storeg", XASM2_STOREG},
  	{"set", XASM2_SET},
+ 	{"setm", XASM2_SETM},
+ 	{"setg", XASM2_SETG},
 	{"mov", XASM2_MOV},
 	{"push", XASM2_PUSH},
 	{"pop", XASM2_POP},
@@ -168,6 +170,8 @@ inline const std::map<uint8_t, std::vector<ARG_TYPE>> g_Args = { // Default base
 	{XASM2_STOREM, {ARG_INTEGER}},
 	{XASM2_STOREG, {ARG_INTEGER}},
 	{XASM2_SET, {ARG_INTEGER, ARG_NUMBER}},
+	{XASM2_SETM, {ARG_INTEGER, ARG_NUMBER}},
+	{XASM2_SETG, {ARG_INTEGER, ARG_NUMBER}},
 	{XASM2_MOV, {ARG_INTEGER, ARG_INTEGER}},
 	{XASM2_POP, {ARG_REGISTER}},
 

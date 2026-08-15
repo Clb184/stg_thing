@@ -1,0 +1,9 @@
+{
+	"title" : "STG",
+	"test_level" : "DAT/TEST.DAT",
+	"main_levels" : ["DAT/LVL00.DAT"],
+	"extra_levels" : [""],
+	"players" : ["DAT/PL00.DAT"],
+	"bgm" : "BGM/bsr_00.ogg",
+	"sounds" : []
+}

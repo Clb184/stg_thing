@@ -346,6 +346,8 @@ void SceneGameMain::InitializeCamera() {
 bool SceneGameMain::LoadFirstPackResources() {
 	char buf[512];
 	pack_file_t pack;
+	std::string level = "";
+	std::string bgm = "";
 	if(0 == PackFileOpen(&pack, "STG.DAT")) {
 		LOG_INFO("Loading STG.DAT...");
 		char* data;
@@ -354,12 +356,19 @@ bool SceneGameMain::LoadFirstPackResources() {
 		if(0 == PackFileLoadEntry(&pack, "game.json", (void**)&data, &size)) {
 			nlohmann::json jsn = nlohmann::json::parse(data);
 			if(jsn.find("test_level") != jsn.end()) {
-				std::string level = jsn["test_level"];
+				level = jsn["test_level"];
 				m_Out->LogInfo("Loading demo level \"" + level + "\"");
 			} else {
 				m_Out->LogError("Demo level not found");
 				return false;
 			}
+
+			if(jsn.find("bgm") != jsn.end()) {
+				bgm = jsn["bgm"];
+			} else {
+				m_Out->LogError("BGM not found");
+			}
+
 			free(data);
 		}
 		else {
@@ -369,14 +378,14 @@ bool SceneGameMain::LoadFirstPackResources() {
 		}
 
 		// BGM
-		if(0 == PackFileLoadEntry(&pack, "BGM/smml_demo_01.ogg", (void**)&data, &size)) {
-			m_Out->LogInfo("Loading BGM");
+		if(0 == PackFileLoadEntry(&pack, bgm.c_str(), (void**)&data, &size)) {
+			m_Out->LogInfo("Loading BGM \"" + bgm + "\"");
 			if(0 != LoadMusicFromMemory(&g_Sound, (char*)data, size)) {
 				m_Out->LogError("Couldn't load BGM");
 			} else {
-				MusicSetLoop(&g_Sound, 852960, 852960 + 2116128);
-				MusicEnableLoop(&g_Sound, 1);
-				//MusicPlay(&g_Sound);
+				//MusicEnableLoop(&g_Sound, 1);
+				//MusicSetLoop(&g_Sound, 0, 0);
+				MusicPlay(&g_Sound);
 			}
 			free(data);
 		} else {
