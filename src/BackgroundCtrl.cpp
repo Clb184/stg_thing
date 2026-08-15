@@ -14,11 +14,20 @@ void BackgroundCtrl::SetDebugControl(InputDevice* input) {
 	m_pInput = input;
 }
 
-void BackgroundCtrl::Init() {
+void BackgroundCtrl::Init(TextureManager* texman) {
 	m_Camera.Init();
 	if(1 != CheckRenderTexture(&m_PPBG)) {
 		CreateRenderTextureA(&m_PPBG, 400, 480, RTFLAG_DEPTH);
 	}
+
+	m_pTexMan = texman;
+
+	m_Plane.Init(16, 16);
+	m_Plane.SetTexture(m_pTexMan->Load("GRP/grass.png"));
+}
+
+GLuint BackgroundCtrl::GetTexture() const {
+	return m_PPBG.texture;
 }
 
 void BackgroundCtrl::SetupTask(uint8_t* script) {
@@ -34,6 +43,19 @@ void BackgroundCtrl::Draw() {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_PPBG.framebuffer);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	m_Camera.Use();
+
+	//m_Plane.GetTransform().SetRot(m_Timer * 0.0f, 0.0 * 3.14159f * 0.5f , m_Timer * 0.2f);
+	for(int i = 0; i < 3; i++) {
+		m_Plane.GetTransform().SetPos(-256.0f, i * 256.0f, 0.0f);
+		m_Plane.GetTransform().Update();
+		m_Plane.Draw();
+		m_Plane.GetTransform().SetPos(0.0f, i * 256.0f, 0.0f);
+		m_Plane.GetTransform().Update();
+		m_Plane.Draw();
+		m_Plane.GetTransform().SetPos(256.0f, i * 256.0f, 0.0f);
+		m_Plane.GetTransform().Update();
+		m_Plane.Draw();
+	}
 }
 
 TaskCamera& BackgroundCtrl::GetCameraTask() {

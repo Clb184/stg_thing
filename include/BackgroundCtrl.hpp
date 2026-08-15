@@ -4,6 +4,8 @@
 #include "TaskCamera.hpp"
 #include "InputDevice.hpp"
 #include "OpenGL/Texture.h"
+#include "TextureManager.hpp"
+#include "3DPlane.hpp"
 
 class BackgroundCtrl {
 private:
@@ -13,7 +15,8 @@ public:
 	
 	void SetDebugControl(InputDevice* input);
 
-	void Init();
+	void Init(TextureManager* texman);
+	GLuint GetTexture() const;
 	void SetupTask(uint8_t* script);
 	void Move(float dt);
 	void Draw();
@@ -22,9 +25,11 @@ public:
 private:
 	void MoveInput(float dt);
 private:
-	TaskCamera m_Camera;
 	render_texture_t m_PPBG;
+	TaskCamera m_Camera;
+	Plane3D m_Plane;
 
+	TextureManager* m_pTexMan;
 	InputDevice* m_pInput;
 };
 

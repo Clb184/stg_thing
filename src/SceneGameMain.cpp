@@ -17,16 +17,12 @@ SceneGameMain::SceneGameMain() {
 
 	m_2DShader = 0;
 	m_3DShader = 0;
-	m_CBs[0] = 0;
-	m_CBs[1] = 0;
-	m_CBs[2] = 0;
 
 	m_DebugKeyWait = 0.5f;
 	m_pInput = nullptr;
 	m_pState = nullptr;
 
 	m_Desc = nullptr;
-	memset(&m_3DBGTex, 0, sizeof(render_texture_t));
 	memset(&m_GameAreaTex, 0, sizeof(render_texture_t));
 	memset(&m_Font, 0, sizeof(m_Font));
 	memset(&m_FTLib, 0, sizeof(m_FTLib));
@@ -37,37 +33,6 @@ SceneGameMain::~SceneGameMain() {
 }
 
 auto ToRad = [](float deg) { return deg * 3.14159f / 180.0f; };
-
-float x = 0.0f;
-float y = -150.0f;
-float z = 260.0f;
-
-float pitch = ToRad(-185.0f);
-float yaw = ToRad(-11.0f);
-float roll = ToRad(-55.0f);
-
-DirectX::XMFLOAT3 light_rot = {0.0f, 0.0f, ToRad(-45.0f)}; // 64.0f, -35.0f, 120.0f
-
-float nearf = 400.0f;
-float farf = 550.0f;
-int colorf = 0xffaa0000;
-
-struct CameraData {
-	DirectX::XMMATRIX cam;
-	DirectX::XMMATRIX vw;
-	DirectX::XMMATRIX proj;
-	DirectX::XMFLOAT4 fog = {100.0f, 150.0f, 0.0f, 0.0f};
-	DirectX::XMFLOAT4 _extra[2] = { {1.0f, 1.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.0f, 0.0f}};
-} camera_data;
-
-/*struct WorldLight {
-	float global_light[4] = {0.0f, 0.5f, 1.5f, 1.0f};
-	float ambient[4] = { 0.1f, 0.1f, 0.1f, 0.0f };
-	float fog_color[4] = {0.5f, 0.8f, 0.7f, 1.0f};
-	float light_color[4] = {0.0f, 0.0f, 0.8f, 0.0f};
-	float specular_power[4] = {0.5f, 0.0f, 0.0f, 0.0f};
-	float cam_pos[4] = {x, y, z, 1.0f};
-} world_light;*/
 
 bool SceneGameMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO) {
 	assert(nullptr != state);
@@ -81,11 +46,10 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO)
 	m_Out = IO;
 
 	m_TexMan.Init(IO);
-	m_BGCtrl.Init();
-	m_BGCtrl.SetDebugControl(input);
 	CreateShaders();
 	CreateBackground();
-	InitializeCamera();
+	m_BGCtrl.Init(&m_TexMan);
+	m_BGCtrl.SetDebugControl(input);
 	LoadFirstPackResources();
 	
 	// Set XASM2 seed
@@ -107,56 +71,7 @@ void SceneGameMain::Move(float dt) {
 		m_pState->ChangeScene(SCENE_MAIN);
 		return;
 	}
-	/*if(m_pInput->GetKeyPress(GLFW_KEY_D)) {
-		x += 20.0f * dt;
-	}
-	else if(m_pInput->GetKeyPress(GLFW_KEY_A)) {
-		x -= 20.0f * dt;
-	}
-	if(m_pInput->GetKeyPress(GLFW_KEY_W)) {
-		y += 20.0f * dt;
-	}
-	else if(m_pInput->GetKeyPress(GLFW_KEY_S)) {
-		y -= 20.0f * dt;
-	}
-	if(m_pInput->GetKeyPress(GLFW_KEY_SPACE)) {
-		z += 20.0f * dt;
-	}
-	else if(m_pInput->GetKeyPress(GLFW_KEY_LEFT_CONTROL)) {
-		z -= 20.0f * dt;
-	}
-	if(m_pInput->GetKeyPress(GLFW_KEY_Q)) {
-		nearf += 20.0f * dt;
-	}
-	else if(m_pInput->GetKeyPress(GLFW_KEY_E)) {
-		nearf -= 20.0f * dt;
-	}
-	if(m_pInput->GetKeyPress(GLFW_KEY_T)) {
-		farf += 20.0f * dt;
-	}
-	else if(m_pInput->GetKeyPress(GLFW_KEY_Y)) {
-		farf -= 20.0f * dt;
-	}
-	
 
-	if(m_pInput->GetKeyPress(GLFW_KEY_LEFT_SHIFT)) {
-		yaw -= 0.314159f * dt;
-	}
-	else if(m_pInput->GetKeyPress(GLFW_KEY_RIGHT_SHIFT)) {
-		yaw += 0.314159f * dt;
-	}
-	if(m_pInput->GetKeyPress(GLFW_KEY_UP)) {
-		roll += 0.314159f * dt;
-	}
-	else if(m_pInput->GetKeyPress(GLFW_KEY_DOWN)) {
-		roll -= 0.314159f * dt;
-	}
-	if(m_pInput->GetKeyPress(GLFW_KEY_LEFT)) {
-		pitch -= 0.314159f * dt;
-	}
-	else if(m_pInput->GetKeyPress(GLFW_KEY_RIGHT)) {
-		pitch += 0.314159f * dt;
-	}*/
 	// Debug restart
 	if(m_pInput->GetKeyPress(GLFW_KEY_R)) {
 		Init(m_pState, m_pInput, m_Out);
@@ -178,25 +93,13 @@ void SceneGameMain::Draw() {
 	// Setup camera and world light
 	m_BGCtrl.Draw();
 
-	//m_Plane.GetTransform().SetRot(m_Timer * 0.0f, 0.0 * 3.14159f * 0.5f , m_Timer * 0.2f);
-	for(int i = 0; i < 3; i++) {
-		m_Plane.GetTransform().SetPos(-256.0f, i * 256.0f, 0.0f);
-		m_Plane.GetTransform().Update();
-		m_Plane.Draw();
-		m_Plane.GetTransform().SetPos(0.0f, i * 256.0f, 0.0f);
-		m_Plane.GetTransform().Update();
-		m_Plane.Draw();
-		m_Plane.GetTransform().SetPos(256.0f, i * 256.0f, 0.0f);
-		m_Plane.GetTransform().Update();
-		m_Plane.Draw();
-	}
 
 	// Draw UI and others
 	Enter2DMode();
 	glBindFramebuffer(GL_FRAMEBUFFER, m_GameAreaTex.framebuffer);
 	DirectX::XMMATRIX proj = DirectX::XMMatrixOrthographicOffCenterLH(0.0f, 400.0f, 480.0f, 0.0f, 1.0f, -1.0f);
 	glUniformMatrix4fv(0, 1, GL_FALSE, (float*)&proj);
-	m_PPBG.SetTexID(m_3DBGTex.texture);
+	m_PPBG.SetTexID(m_BGCtrl.GetTexture());
 	m_PPBG.SetPos(200.0f, 240.0f);
 	m_PPBG.Draw();
 
@@ -286,39 +189,22 @@ void SceneGameMain::CreateBackground() {
 	m_RightUI.SetUV(metric.texelw * 16.0f, 0.0f, metric.texelw * (16.0f + 224.0f), 1.0f);
 
 	// 3D background
-	CreateRenderTextureA(&m_3DBGTex, 400, 480, RTFLAG_DEPTH);
 	CreateRenderTextureA(&m_GameAreaTex, 400, 480, 0);
 	m_PPBG.Init();
 	m_PPBG.SetSize(400.0f, 480.0f);
 	m_PPBG.SetUV(0.0f, 1.0f, 1.0f, 0.0f);
-	
 
 	InitializeFreeType(&m_FTLib);
 	LoadFontFromFile(m_FTLib, &m_Desc, "DAT/PermanentMarker.ttf");
 	CreateFontWithAtlas(m_Desc, &m_Font, 20);
 	
-	m_Plane.Init(16, 16);
-	m_Plane.SetTexture(m_TexMan.Load("GRP/grass.png"));
-	
-	glUseProgram(m_3DShader);
-
+	// Load script data
 	size_t size = 0;
 	uint8_t* dat = 0;
 	LoadDataFromFile("camera.dat", (void**)&dat, &size);
 	m_BGCtrl.SetupTask(dat);
 	data = (char*)dat;
 
-}
-
-void SceneGameMain::InitializeCamera() {
-	glUseProgram(m_3DShader);
-	m_Camera.Init();
-	m_Camera.SetBinding(0);
-	m_Camera.SetAspectRatio(400.0f, 480.0f);
-	m_Camera.SetFOV(3.14159 * 0.25f);
-	m_Camera.SetPos(x, y, z);
-	m_Camera.SetRot(0.0f, 0.0f, 0.0f);
-	m_Camera.Update();
 }
 
 bool SceneGameMain::LoadFirstPackResources() {
@@ -394,16 +280,10 @@ void SceneGameMain::Enter3DMode() {
 void SceneGameMain::Cleanup() {
 	glDeleteProgram(m_2DShader);
 	glDeleteProgram(m_3DShader);
-	glDeleteBuffers(3, m_CBs);
 
 	m_2DShader = 0;
 	m_3DShader = 0;
 
-	m_CBs[0] = 0;
-	m_CBs[1] = 0;
-	m_CBs[2] = 0;
-	
-	DestroyRenderTexture(&m_3DBGTex);
 	DestroyRenderTexture(&m_GameAreaTex);
 	DestroyFont(&m_Font);
 	UninitializeFreeType(m_FTLib);
