@@ -29,8 +29,22 @@
 *			"float",
 *			"address"
 *		]
+*	     },
+*	     {
 *	     }
 *    ]
+* "set" : [
+* 		{            <--- Replaces a set of constant names, doesn't get cleared
+*			    when changing maps
+*		     "name" : "set_name", after using a #, use the set name, if no set name is found, nothing happens
+*		     "values" : [
+*				"const0" : value,
+*	     			"const1" : value,
+*	     			...
+*	     			"constn" : value
+*	     		]
+*		 }
+*	]
 */
 
 inline std::unordered_map<std::string, uint8_t> cmd2byteEx = {}; // Table to be filled with extra commands

@@ -73,7 +73,6 @@ private: // Text
 	GameState* m_pState;
 
 private: // Plane and related
-	DirectX::XMMATRIX m_CameraMatrix;
 	BackgroundCtrl m_BGCtrl;
 	char* data;
 
