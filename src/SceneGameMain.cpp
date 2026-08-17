@@ -9,7 +9,7 @@
 #include "Misc/Primitives.h"
 #include "iostream"
 #include "nlohmann/json.hpp"
-#include "GameWindow.hpp"
+#include "GameCore.hpp"
 
 SceneGameMain::SceneGameMain() {
 	m_Score = 0;
@@ -68,7 +68,7 @@ void SceneGameMain::Move(float dt) {
 	}
 
 	if(m_pInput->GetKeyPress(GLFW_KEY_ESCAPE)) {
-		MusicStop(&g_Sound);
+		g_Sound.MusicStop();
 		m_pState->ChangeScene(SCENE_MAIN);
 		return;
 	}
@@ -202,6 +202,10 @@ void SceneGameMain::CreateBackground() {
 	// Load script data
 	size_t size = 0;
 	uint8_t* dat = 0;
+
+	g_Sound.MusicLoad(0);
+	g_Sound.MusicPlay();
+
 	LoadDataFromFile("camera.dat", (void**)&dat, &size);
 	m_BGCtrl.SetupTask(dat);
 	data = (char*)dat;

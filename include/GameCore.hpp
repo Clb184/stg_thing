@@ -6,7 +6,10 @@
 #include "GameState.hpp"
 #include "InputDevice.hpp"
 #include "ScreenOutput.hpp"
+#include "SoundCtrl.hpp"
 #include "GameInfo.hpp"
+
+extern SoundCtrl g_Sound;
 
 class GameCore {
 public:

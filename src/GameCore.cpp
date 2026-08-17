@@ -1,6 +1,8 @@
 #include "GameCore.hpp"
 #include "Output.h"
 
+SoundCtrl g_Sound;
+
 void GameCoreMove(window_t* window, float dt, void* gamecore) {
 	GameCore* core = (GameCore*)gamecore;
 	core->Move(dt);
@@ -77,10 +79,9 @@ void GameCore::LoadGameInfo() {
 			
 	// Start with the properties
 	m_Window.SetTitle(m_Info.GetTitle().c_str()); // Title
-	if(false == InitializeSoundControl(&g_Sound, m_Info.GetSoundEntries().size())) { // Sounds
-		m_IO.LogError("Failed loading sounds");
+	if(false == g_Sound.Init(&m_Info, &m_CFG, &m_IO)) { // Sounds
+		m_IO.LogError("Failed Initializing SoundControl");
 	} else {
 		m_IO.LogInfo("SoundControl initialized");
-		//m_IO.LogInfo("Loaded " + std::to_string(sounds.size()) + " sounds");
 	}
 }

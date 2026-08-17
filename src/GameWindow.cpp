@@ -1,8 +1,6 @@
 #include "GameWindow.hpp"
 #include "Output.h"
 
-sound_control_t g_Sound;
-
 GameWindow::GameWindow() {
 	m_WindowData = { };
 }
