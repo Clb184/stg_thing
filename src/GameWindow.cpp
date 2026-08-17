@@ -38,7 +38,7 @@ bool GameWindow::CreateGameWindow(const ConfigCtrl& cfg) {
 	return true;
 }
 
-void GameWindow::SetGameTitle(const char* title) {
+void GameWindow::SetTitle(const char* title) {
 	char buf[512] = "";
 	sprintf(buf, "%s | Build %s", title, __DATE__);
 	glfwSetWindowTitle(m_WindowData.window, buf);
