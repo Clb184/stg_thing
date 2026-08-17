@@ -2,6 +2,7 @@
 #include "cassert"
 #include "Output.h"
 #include "IO.h"
+#include "GameInfo.hpp"
 #include "GameState.hpp"
 #include "nlohmann/json.hpp"
 #include "OpenGL/Shader.h"
@@ -24,7 +25,7 @@ SceneMain::~SceneMain() {
 	Cleanup();
 }
 
-bool SceneMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO) {
+bool SceneMain::Init(GameState* state, InputDevice* input, GameInfo* info, ScreenOutput* IO) {
 	assert(nullptr != state);
 	LOG_INFO("Initializing Main Scene");
 	Cleanup();

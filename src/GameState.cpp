@@ -35,7 +35,7 @@ GameState::~GameState() {
 	}
 }
 
-bool GameState::Init(InputDevice* input, ScreenOutput* IO) {
+bool GameState::Init(InputDevice* input, GameInfo* info, ScreenOutput* IO) {
 	LOG_INFO("Initializing GameState");
 	char buf[512] = "";
 	// Check if all scenes are initialized
@@ -57,8 +57,9 @@ bool GameState::Init(InputDevice* input, ScreenOutput* IO) {
 
 	m_pInput = input;
 	m_pIO = IO;
+	m_pInfo = info;
 
-	if(false == m_pCurrentScene->Init(this, input, IO)) {
+	if(false == m_pCurrentScene->Init(this, input, info, IO)) {
 		LOG_ERROR("Failed initializing default scene");
 		return false;
 	}
@@ -83,7 +84,7 @@ void GameState::Move(float dt) {
 		m_bOnSceneChange = false;
 
 		m_CurrentSceneType = m_TargetSceneChange;
-		m_pCurrentScene->Init(this, m_pInput, m_pIO);
+		m_pCurrentScene->Init(this, m_pInput, m_pInfo, m_pIO);
 	}
 }
 

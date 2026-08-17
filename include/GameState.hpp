@@ -22,7 +22,7 @@ public:
 	~GameState();
 
 	// Inherited
-	bool Init(InputDevice* input, ScreenOutput* IO);
+	bool Init(InputDevice* input, GameInfo* info, ScreenOutput* IO);
 	void Move(float dt);
 	void Draw();
 
@@ -44,6 +44,7 @@ private:
 	InputDevice* m_pInput;
 	ScreenOutput* m_pIO;
 	GameCore* m_pCore;
+	GameInfo* m_pInfo;
 };
 
 #endif

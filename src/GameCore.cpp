@@ -28,11 +28,16 @@ bool GameCore::InitGame() {
 	m_IO.Init();
 
 	// Load game's descriptor
-	LoadGameDescriptor();
+	if(false == m_Info.Init()) {
+		LOG_ERROR("Failed initializing GameInfo");
+		return false;
+	}
+	LoadGameInfo();
 
 	// Initialize GameState, else it will fail
-	if(false == m_State.Init(&m_Input, &m_IO)) {
+	if(false == m_State.Init(&m_Input, &m_Info, &m_IO)) {
 		LOG_ERROR("Failed initializing GameState\n");
+		return false;
 	}
 
 	// Start running the loop
@@ -61,57 +66,21 @@ void GameCore::Draw(float dt) {
 }
 
 void GameCore::SetWindowTitle(const char* title) {
-	m_Window.SetGameTitle(title);
+	m_Window.SetTitle(title);
 }
 
 ConfigCtrl* GameCore::GetConfigCtrl() {
 	return &m_CFG;
 }
 
-void GameCore::LoadGameDescriptor() {
-	pack_file_t pack;
-	SetWindowTitle("STG Engine by Clb184");
-	std::string title = "";
-	std::vector<std::string> sounds;
-	if(0 == PackFileOpen(&pack, "STG.DAT")) {
-		LOG_INFO("Loading STG.DAT...");
-		char* data;
-		size_t size;
-		if(0 == PackFileLoadEntry(&pack, "game.json", (void**)&data, &size)) {
-			nlohmann::json jsn = nlohmann::json::parse(data);
+void GameCore::LoadGameInfo() {
 			
-			// Load game title
-			if(jsn.find("title") != jsn.end()) {
-				title = jsn["title"];
-			} else {
-				m_IO.LogError("Title string not found");
-			}
-			
-			// Load sounds
-			if(jsn.find("sounds") != jsn.end()) {
-				sounds = jsn["sounds"];
-			} else {
-				m_IO.LogError("Sound names not found");
-			}
-
-			free(data);
-		}
-		else {
-			m_IO.LogError("game.json not found");
-			PackFileClose(&pack);
-		}
-
-		PackFileClose(&pack);
-	} else {
-		m_IO.LogError("Failed to load game info");
-	}
-
 	// Start with the properties
-	SetWindowTitle(title.c_str()); // Title
-	if(false == InitializeSoundControl(&g_Sound, sounds.size())) { // Sounds
+	m_Window.SetTitle(m_Info.GetTitle().c_str()); // Title
+	if(false == InitializeSoundControl(&g_Sound, m_Info.GetSoundEntries().size())) { // Sounds
 		m_IO.LogError("Failed loading sounds");
 	} else {
 		m_IO.LogInfo("SoundControl initialized");
-		m_IO.LogInfo("Loaded " + std::to_string(sounds.size()) + " sounds");
+		//m_IO.LogInfo("Loaded " + std::to_string(sounds.size()) + " sounds");
 	}
 }

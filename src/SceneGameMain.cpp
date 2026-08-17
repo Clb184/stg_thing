@@ -34,7 +34,7 @@ SceneGameMain::~SceneGameMain() {
 
 auto ToRad = [](float deg) { return deg * 3.14159f / 180.0f; };
 
-bool SceneGameMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO) {
+bool SceneGameMain::Init(GameState* state, InputDevice* input, GameInfo* info, ScreenOutput* IO) {
 	assert(nullptr != state);
 
 	LOG_INFO("Initializing GameMain");
@@ -44,13 +44,14 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input, ScreenOutput* IO)
 	m_pState = state;
 	m_pInput = input;
 	m_Out = IO;
+	m_pInfo = info;
 
 	m_TexMan.Init(IO);
 	CreateShaders();
 	CreateBackground();
 	m_BGCtrl.Init(&m_TexMan);
 	m_BGCtrl.SetDebugControl(input);
-	LoadFirstPackResources();
+	LoadFirstPackResources(info);
 	
 	// Set XASM2 seed
 	XASM2RandomInit(123);
@@ -74,7 +75,7 @@ void SceneGameMain::Move(float dt) {
 
 	// Debug restart
 	if(m_pInput->GetKeyPress(GLFW_KEY_R)) {
-		Init(m_pState, m_pInput, m_Out);
+		Init(m_pState, m_pInput, m_pInfo, m_Out);
 	}
 	
 	m_BGCtrl.Move(dt);
@@ -207,59 +208,13 @@ void SceneGameMain::CreateBackground() {
 
 }
 
-bool SceneGameMain::LoadFirstPackResources() {
+bool SceneGameMain::LoadFirstPackResources(GameInfo* info) {
 	char buf[512];
-	pack_file_t pack;
 	std::string level = "";
 	std::string bgm = "";
-	if(0 == PackFileOpen(&pack, "STG.DAT")) {
-		LOG_INFO("Loading STG.DAT...");
-		char* data;
-		size_t size;
-		// test level
-		if(0 == PackFileLoadEntry(&pack, "game.json", (void**)&data, &size)) {
-			nlohmann::json jsn = nlohmann::json::parse(data);
-			if(jsn.find("test_level") != jsn.end()) {
-				level = jsn["test_level"];
-				m_Out->LogInfo("Loading demo level \"" + level + "\"");
-			} else {
-				m_Out->LogError("Demo level not found");
-				return false;
-			}
-
-			if(jsn.find("bgm") != jsn.end()) {
-				bgm = jsn["bgm"];
-			} else {
-				m_Out->LogError("BGM not found");
-			}
-
-			free(data);
-		}
-		else {
-			m_Out->LogError("Failed to load level list");
-			PackFileClose(&pack);
-			return false;
-		}
-
-		// BGM
-		if(0 == PackFileLoadEntry(&pack, bgm.c_str(), (void**)&data, &size)) {
-			m_Out->LogInfo("Loading BGM \"" + bgm + "\"");
-			if(0 != LoadMusicFromMemory(&g_Sound, (char*)data, size)) {
-				m_Out->LogError("Couldn't load BGM");
-			} else {
-				//MusicEnableLoop(&g_Sound, 1);
-				//MusicSetLoop(&g_Sound, 0, 0);
-				MusicPlay(&g_Sound);
-			}
-			free(data);
-		} else {
-			m_Out->LogError("BGM not found");
-		}
-
-		PackFileClose(&pack);
-	} else {
-		m_Out->LogError("File provided is not a valid Archive, skipping");
-	}
+	level = info->GetTestLevel();
+	m_Out->LogInfo("Loading demo level \"" + level + "\"");
+	return true;
 }
 
 void SceneGameMain::LoadPackResources(const char* level) {

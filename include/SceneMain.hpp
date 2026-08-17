@@ -19,7 +19,7 @@ public:
 	~SceneMain();
 
 	// Inherited
-	bool Init(GameState* state, InputDevice* data, ScreenOutput* IO);
+	bool Init(GameState* state, InputDevice* data, GameInfo* info, ScreenOutput* IO);
 	void Move(float dt);
 	void Draw();
 

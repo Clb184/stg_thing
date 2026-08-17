@@ -4,14 +4,12 @@
 #include "Scene.hpp"
 #include "GL/glew.h"
 #include "OpenGL/Font.h"
+#include "GameInfo.hpp"
 #include "TextureManager.hpp"
 #include "Sprite.hpp"
 #include "cstdint"
 #include "string"
-#include "DirectXMath.h"
 #include "ScreenOutput.hpp"
-#include "Camera.hpp"
-#include "3DPlane.hpp"
 #include "BackgroundCtrl.hpp"
 
 #include "PackArchive/PackFile.h"
@@ -24,7 +22,7 @@ public:
 	~SceneGameMain();
 
 	// Inherited
-	bool Init(GameState* state, InputDevice* input, ScreenOutput* IO);
+	bool Init(GameState* state, InputDevice* input, GameInfo* info, ScreenOutput* IO);
 	void Move(float dt);
 	void Draw();
 
@@ -35,7 +33,7 @@ private:
 	void InitializeCamera();
 
 	// Load packed resources
-	bool LoadFirstPackResources();
+	bool LoadFirstPackResources(GameInfo* info);
 	void LoadPackResources(const char* script);
 
 	// Jump between draw modes
@@ -69,6 +67,7 @@ private: // Text
 
 	ScreenOutput* m_Out;
 	float m_DebugKeyWait;
+	GameInfo* m_pInfo;
 	InputDevice* m_pInput;
 	GameState* m_pState;
 

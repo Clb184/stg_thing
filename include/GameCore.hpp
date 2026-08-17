@@ -6,6 +6,7 @@
 #include "GameState.hpp"
 #include "InputDevice.hpp"
 #include "ScreenOutput.hpp"
+#include "GameInfo.hpp"
 
 class GameCore {
 public:
@@ -22,7 +23,7 @@ public:
 	ConfigCtrl* GetConfigCtrl();
 
 private:
-	void LoadGameDescriptor();
+	void LoadGameInfo();
 
 private:
 	ConfigCtrl m_CFG;
@@ -30,6 +31,7 @@ private:
 	ScreenOutput m_IO;
 	GameWindow m_Window;
 	GameState m_State;
+	GameInfo m_Info;
 };
 
 #endif
