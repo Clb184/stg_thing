@@ -707,6 +707,16 @@ start:
 		vm->cmd += sizeof(float);
 		goto start;
 
+	case XASM2_DELTATIME:
+		vm->cmd++;
+		vm->r1.f *= dt;
+		goto start;
+
+	case XASM2_GETLIFETIME:
+		vm->cmd++;
+		vm->r1.f = vm->life_time;
+		goto start;
+
 	default:
 		vm->cmd++;
 		if(0 != extension && (0 == extension(*cmd, vm, dt, data))) {

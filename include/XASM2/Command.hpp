@@ -129,6 +129,8 @@ enum XASM2_CMD : uint8_t {
 	XASM2_MINFC, // min(r1, c)
 	XASM2_MAXF, // max(r1, r2)
 	XASM2_MAXFC, // max(r1, c)
+	XASM2_DELTATIME, // Multiplies by delta time
+	XASM2_GETLIFETIME,
 
 };
 

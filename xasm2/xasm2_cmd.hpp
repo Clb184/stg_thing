@@ -162,6 +162,8 @@ inline const std::unordered_map<std::string, uint8_t> cmd2byte = { // Table with
 	{"minfc", XASM2_MINFC},
 	{"maxf", XASM2_MAXF},
 	{"maxfc", XASM2_MAXFC},
+	{"deltatime", XASM2_DELTATIME},
+	{"getlifetime", XASM2_GETLIFETIME},
 };
 
 // Argument types
