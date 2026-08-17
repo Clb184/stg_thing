@@ -14,7 +14,10 @@ public:
 
 	void SetBombs(int cnt);
 	int GetBombs() const;
-		
+	
+	void SetMasterVolume(int level);
+	int GetMasterVolume() const;
+
 	void SetSndVolume(int level);
 	int GetSndVolume() const;
 

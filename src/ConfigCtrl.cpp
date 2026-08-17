@@ -2,7 +2,7 @@
 #include "IO.h"
 #include "Output.h"
 
-const char* g_ConfigName = "config.json";
+const char* g_ConfigName = "CONFIG.JSON";
 
 ConfigCtrl::ConfigCtrl() {
 	LOG_INFO("Loading Config file");
@@ -19,6 +19,7 @@ ConfigCtrl::ConfigCtrl() {
 			m_LoadedConfig.playername = config["playername"];
 			m_LoadedConfig.lives = config["lives"];
 			m_LoadedConfig.bombs = config["bombs"];
+			m_LoadedConfig.mastervol = config["mastervol"];
 			m_LoadedConfig.sndvol = config["sndvol"];
 			m_LoadedConfig.snd_enable = config["snden"];
 			m_LoadedConfig.bgmvol = config["bgmvol"];
@@ -51,7 +52,15 @@ void ConfigCtrl::SetBombs(int cnt) {
 int ConfigCtrl::GetBombs() const {
 	return m_LoadedConfig.bombs;
 }
-		
+
+void ConfigCtrl::SetMasterVolume(int level) {
+	m_LoadedConfig.mastervol = level;
+}
+
+int ConfigCtrl::GetMasterVolume() const {
+	return m_LoadedConfig.mastervol;
+}
+
 void ConfigCtrl::SetSndVolume(int level) {
 	m_LoadedConfig.sndvol = level;
 }
@@ -98,6 +107,7 @@ void ConfigCtrl::SaveConfig() {
 	save_cfg["playername"] = m_LoadedConfig.playername;
 	save_cfg["lives"] = m_LoadedConfig.lives;
 	save_cfg["bombs"] = m_LoadedConfig.bombs;
+	save_cfg["mastervol"] = m_LoadedConfig.mastervol;
 	save_cfg["sndvol"] = m_LoadedConfig.sndvol;
 	save_cfg["snden"] = m_LoadedConfig.snd_enable;
 	save_cfg["bgmvol"] = m_LoadedConfig.bgmvol;
@@ -125,6 +135,7 @@ void ConfigCtrl::LoadDefaultConfig() {
 	m_LoadedConfig.playername = "Player";
 	m_LoadedConfig.lives = 2;
 	m_LoadedConfig.bombs = 3;
+	m_LoadedConfig.mastervol = 100;
 	m_LoadedConfig.sndvol = 80;
 	m_LoadedConfig.snd_enable = true;
 	m_LoadedConfig.bgmvol = 80;
@@ -136,13 +147,14 @@ void ConfigCtrl::LoadDefaultConfig() {
 bool ConfigCtrl::ValidateJSON(const nlohmann::json& js) {
 	LOG_INFO("Validating config JSON");
 	// Validate string:
-	if(js.find("playername") == js.end() || js.find("lives") == js.end() || js.find("bombs") == js.end() || js.find("sndvol") == js.end() || js.find("bgmvol") == js.end() || js.find("window") == js.end() || js.find("resolution") == js.end() || js.find("snden") == js.end() || js.find("bgmen") == js.end()) return false;
+	if(js.find("playername") == js.end() || js.find("lives") == js.end() || js.find("bombs") == js.end() || js.find("mastervol") == js.end() || js.find("sndvol") == js.end() || js.find("bgmvol") == js.end() || js.find("window") == js.end() || js.find("resolution") == js.end() || js.find("snden") == js.end() || js.find("bgmen") == js.end()) return false;
 	try {
 		std::string str = js["playername"];
 		
 		int integer = 0;
 		integer = js["lives"];
 		integer = js["bombs"];
+		integer = js["mastervol"];
 		integer = js["sndvol"];
 		integer = js["bgmvol"];
 		integer = js["window"];

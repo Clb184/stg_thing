@@ -14,6 +14,7 @@ struct game_config_t {
 	std::string playername;
 	int lives;
 	int bombs;
+	int mastervol;
 	int sndvol;
 	bool snd_enable;
 	int bgmvol;
