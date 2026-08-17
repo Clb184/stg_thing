@@ -17,11 +17,15 @@ public:
 	~TextureManager();
 	
 	void Init(ScreenOutput* IO);
+
 	GLuint Load(const char* file);
-	GLuint LoadPack(pack_file_t* pack_file, const char* entry_name);
+	GLuint LoadP(pack_file_t* pack_file, const char* entry_name);
 	GLuint LoadEx(char* data, size_t size);
+
 	GLuint GetTextureID(int id);
 	texture_metric_t GetTextureMetrics(int id);
+	int GetCount() const;
+
 	void Cleanup();
 
 private:

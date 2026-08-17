@@ -32,7 +32,7 @@ GLuint TextureManager::Load(const char* name) {
 	return ret;
 }
 
-GLuint TextureManager::LoadPack(pack_file_t* pack_file, const char* entry) {
+GLuint TextureManager::LoadP(pack_file_t* pack_file, const char* entry) {
 	LOG_INFO("Loading texture from pack file...");
 	char* data = nullptr;
 	size_t size = 0;
@@ -85,6 +85,10 @@ GLuint TextureManager::GetTextureID(int idx) {
 texture_metric_t TextureManager::GetTextureMetrics(int id) {
 	if(id >= m_Textures.size()) return  { 0 };
 	return m_Textures[id].metrics;
+}
+
+int TextureManager::GetCount() const {
+	return m_Textures.size();
 }
 
 void TextureManager::Cleanup() {

@@ -20,7 +20,7 @@ struct TaskCamera {
 
 	bool Init();
 	void Use();
-	bool Setup(uint8_t* script);
+	bool Setup(uint8_t* base, int offset);
 	void Move(float dt);
 	
 	Camera camera;

@@ -98,12 +98,13 @@ void SceneGameMain::Draw() {
 	// Draw UI and others
 	Enter2DMode();
 	glBindFramebuffer(GL_FRAMEBUFFER, m_GameAreaTex.framebuffer);
-	DirectX::XMMATRIX proj = DirectX::XMMatrixOrthographicOffCenterLH(0.0f, 400.0f, 480.0f, 0.0f, 1.0f, -1.0f);
+	DirectX::XMMATRIX proj = DirectX::XMMatrixOrthographicOffCenterLH(-200.0f, 200.0f, 480.0f, 0.0f, 1.0f, -1.0f);
 	glUniformMatrix4fv(0, 1, GL_FALSE, (float*)&proj);
 	m_PPBG.SetTexID(m_BGCtrl.GetTexture());
-	m_PPBG.SetPos(200.0f, 240.0f);
+	m_PPBG.SetPos(0.0f, 240.0f);
 	m_PPBG.Draw();
-
+	
+	// Get back viewport's original dimentions
 	glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	proj = DirectX::XMMatrixOrthographicOffCenterLH(0.0f, 640.0f, 480.0f, 0.0f, 1.0f, -1.0f);
@@ -199,25 +200,24 @@ void SceneGameMain::CreateBackground() {
 	LoadFontFromFile(m_FTLib, &m_Desc, "DAT/PermanentMarker.ttf");
 	CreateFontWithAtlas(m_Desc, &m_Font, 20);
 	
-	// Load script data
-	size_t size = 0;
-	uint8_t* dat = 0;
-
-	g_Sound.MusicLoad(0);
-	g_Sound.MusicPlay();
-
-	LoadDataFromFile("camera.dat", (void**)&dat, &size);
-	m_BGCtrl.SetupTask(dat);
-	data = (char*)dat;
 
 }
 
 bool SceneGameMain::LoadFirstPackResources(GameInfo* info) {
 	char buf[512];
 	std::string level = "";
-	std::string bgm = "";
 	level = info->GetTestLevel();
-	m_Out->LogInfo("Loading demo level \"" + level + "\"");
+	m_Out->LogInfo("Loading script \"" + level + "\"");
+	if(m_ScriptLoader.Load(level.c_str())) {
+		m_Out->LogInfo("Loaded demo level \"" + level + "\"");
+		g_Sound.MusicLoad(0);
+		g_Sound.MusicPlay();
+
+		m_BGCtrl.SetupTask(m_ScriptLoader.GetBase(), m_ScriptLoader.GetEntryPoint());
+	}
+	else {
+		m_Out->LogError("Failed loading demo level");
+	}
 	return true;
 }
 

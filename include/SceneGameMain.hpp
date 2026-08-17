@@ -11,6 +11,7 @@
 #include "string"
 #include "ScreenOutput.hpp"
 #include "BackgroundCtrl.hpp"
+#include "XASM2Loader.hpp"
 
 #include "PackArchive/PackFile.h"
 
@@ -72,8 +73,8 @@ private: // Text
 	GameState* m_pState;
 
 private: // Plane and related
+	XASM2Loader m_ScriptLoader;
 	BackgroundCtrl m_BGCtrl;
-	char* data;
 
 	render_texture_t m_GameAreaTex;
 

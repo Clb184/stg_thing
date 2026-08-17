@@ -17,7 +17,7 @@ public:
 
 	void Init(TextureManager* texman);
 	GLuint GetTexture() const;
-	void SetupTask(uint8_t* script);
+	void SetupTask(uint8_t* base, int offset);
 	void Move(float dt);
 	void Draw();
 

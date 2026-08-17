@@ -31,7 +31,7 @@ private:
 		DirectX::XMFLOAT4 extra = {0.0f, 0.0f, 0.0f, 0.0f};
 	};
 
-	// In the strange case I ever decide to loot at a fixed point with the camera (?
+	// In the strange case I ever decide to look at a fixed point with the camera (?
 	bool m_bLookAt;
 	float m_LookAtPos[4];
 	

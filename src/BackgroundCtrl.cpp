@@ -30,8 +30,8 @@ GLuint BackgroundCtrl::GetTexture() const {
 	return m_PPBG.texture;
 }
 
-void BackgroundCtrl::SetupTask(uint8_t* script) {
-	m_Camera.Setup(script);
+void BackgroundCtrl::SetupTask(uint8_t* base, int offset) {
+	m_Camera.Setup(base, offset);
 }
 
 void BackgroundCtrl::Move(float dt) {

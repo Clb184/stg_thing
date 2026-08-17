@@ -45,8 +45,8 @@ int XASM2CameraTask(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
 	return 0;
 }
 
-bool TaskCamera::Setup(uint8_t* script) {
-	XASM2VMInit(&task, script, 12);
+bool TaskCamera::Setup(uint8_t* base, int offset) {
+	XASM2VMInit(&task, base, offset);
 	XASM2VMSetMembers(&task, 31, (int*)&light);
 	return true;
 }
