@@ -4,7 +4,8 @@
 #include "cassert"
 
 XASM2Loader::XASM2Loader() {
-
+	m_pData = 0;
+	m_Entry = 0;
 }
 
 XASM2Loader::~XASM2Loader() {

@@ -41,7 +41,7 @@ void XASM2VMInit(xasm2_vm_t* vm, uint8_t* script, uint32_t offset) {
 	vm->r4 = 0;
 	vm->frame_ptr = 0;
 	vm->stack_ptr = 0;
-	memset(vm->stack, 0x00, sizeof(xasm2_vm_t) * XASM2_STACK_SIZE);
+	memset(vm->stack, 0x00, sizeof(xasm2_num_t) * XASM2_STACK_SIZE);
 }
 
 void XASM2VMSetMembers(xasm2_vm_t* vm, int num, int* member) {

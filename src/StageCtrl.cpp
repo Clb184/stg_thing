@@ -14,7 +14,8 @@ bool StageCtrl::Init() {
 }
 
 bool StageCtrl::SetupTask(uint8_t* base, int offset) {
-	return m_Stage.Setup(base, offset);
+	m_Stage.Setup(base, offset);
+	return true;
 }
 
 void StageCtrl::Move(float dt) {

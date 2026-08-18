@@ -50,15 +50,16 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input, GameInfo* info, S
 	CreateShaders();
 	CreateBackground();
 	
+	// Init scripts
 	m_StageCtrl.Init();
 	m_BGCtrl.Init(&m_TexMan);
+
 	m_BGCtrl.SetDebugControl(input);
 	LoadFirstPackResources(info);
 	
 	// Set XASM2 seed
 	XASM2RandomInit(123);
 	m_Timer = 0.0f;
-
 
 	return true;
 }
@@ -213,8 +214,9 @@ bool SceneGameMain::LoadFirstPackResources(GameInfo* info) {
 	m_Out->LogInfo("Loading script \"" + level + "\"");
 	if(m_ScriptLoader.Load(level.c_str())) {
 		m_Out->LogInfo("Loaded demo level \"" + level + "\"");
-
-		m_StageCtrl.SetupTask(m_ScriptLoader.GetBase(), m_ScriptLoader.GetEntryPoint());
+		uint8_t* base = m_ScriptLoader.GetBase();
+		int offset = m_ScriptLoader.GetEntryPoint();
+		m_StageCtrl.SetupTask(base, offset);
 	}
 	else {
 		m_Out->LogError("Failed loading demo level");
