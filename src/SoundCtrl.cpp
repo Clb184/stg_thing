@@ -24,7 +24,7 @@ bool SoundCtrl::Init(GameInfo* info, ConfigCtrl* cfg, ScreenOutput* out) {
 	if(ret = InitializeSoundControl(&m_SndCtrl, sounds.size())) {
 		std::string dat = info->GetArchive();
 		if(0 == PackFileOpen(&pack, dat.c_str())) {
-			LOG_INFO("Opened pack \"" + dat + "\"");
+			LOG_INFO("Opened pack");
 			int i = 0;
 			for(auto& snd : sounds) {
 				char* data = 0;

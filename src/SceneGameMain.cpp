@@ -49,6 +49,8 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input, GameInfo* info, S
 	m_TexMan.Init(IO);
 	CreateShaders();
 	CreateBackground();
+	
+	m_StageCtrl.Init();
 	m_BGCtrl.Init(&m_TexMan);
 	m_BGCtrl.SetDebugControl(input);
 	LoadFirstPackResources(info);
@@ -78,6 +80,7 @@ void SceneGameMain::Move(float dt) {
 		Init(m_pState, m_pInput, m_pInfo, m_Out);
 	}
 	
+	m_StageCtrl.Move(dt);
 	m_BGCtrl.Move(dt);
 }
 
@@ -210,10 +213,8 @@ bool SceneGameMain::LoadFirstPackResources(GameInfo* info) {
 	m_Out->LogInfo("Loading script \"" + level + "\"");
 	if(m_ScriptLoader.Load(level.c_str())) {
 		m_Out->LogInfo("Loaded demo level \"" + level + "\"");
-		g_Sound.MusicLoad(0);
-		g_Sound.MusicPlay();
 
-		m_BGCtrl.SetupTask(m_ScriptLoader.GetBase(), m_ScriptLoader.GetEntryPoint());
+		m_StageCtrl.SetupTask(m_ScriptLoader.GetBase(), m_ScriptLoader.GetEntryPoint());
 	}
 	else {
 		m_Out->LogError("Failed loading demo level");

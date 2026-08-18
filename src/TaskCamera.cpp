@@ -23,6 +23,7 @@ bool TaskCamera::Init() {
 	desc.data = nullptr;
 	desc.type = GL_DYNAMIC_DRAW;
 	CreateBuffer(desc, &wlight);
+	XASM2VMZeroInit(&task);
 	return true;
 }
 

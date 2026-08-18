@@ -3,7 +3,7 @@
 #include "cstdio"
 #include "cstdlib"
 #include "cmath"
-
+#include "cstring"
 #include "cassert"
 #include "random"
 
@@ -16,6 +16,11 @@ std::uniform_real_distribution<float> g_RandAngleGenerator(-3.14159f, 3.14159f);
 
 void XASM2RandomInit(uint64_t seed) {
 	g_RandomDevice.seed(seed);
+}
+
+void XASM2VMZeroInit(xasm2_vm_t* vm) {
+	memset(vm, 0x00, sizeof(xasm2_vm_t));
+	vm->flags = XASM2VM_HALT;
 }
 
 void XASM2VMInit(xasm2_vm_t* vm, uint8_t* script, uint32_t offset) {
@@ -36,6 +41,7 @@ void XASM2VMInit(xasm2_vm_t* vm, uint8_t* script, uint32_t offset) {
 	vm->r4 = 0;
 	vm->frame_ptr = 0;
 	vm->stack_ptr = 0;
+	memset(vm->stack, 0x00, sizeof(xasm2_vm_t) * XASM2_STACK_SIZE);
 }
 
 void XASM2VMSetMembers(xasm2_vm_t* vm, int num, int* member) {
@@ -52,8 +58,8 @@ void XASM2VMSetGlobals(xasm2_vm_t* vm, int num, int* global) {
 
 int XASM2Move(xasm2_vm_t* vm, float dt, xasm2_vm_ext extension, void* data) {
 	assert(nullptr != vm);
-	assert(nullptr != vm->src_cmd);
-	assert(nullptr != vm->cmd);
+	//assert(nullptr != vm->src_cmd);
+	//assert(nullptr != vm->cmd);
 	assert(nullptr != vm->stack);
 	// Or if VM is halted or terminated
 	if((XASM2VM_HALT | XASM2VM_TERMINATE) & vm->flags) {

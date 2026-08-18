@@ -1,0 +1,36 @@
+{
+	"cmd" : [
+		{ "name" : "musicload" },
+		{ "name" : "musicplay" },
+		{ "name" : "musicpause" },
+		{ "name" : "musicstop" }
+	],
+	"set" : [
+		{
+			"name" : "stage",
+			"values" : [
+				[ "sunx", 0],
+				["suny", 1],
+				["sunz", 2],
+				["ambientr", 4],
+				["ambientg", 5],
+				["ambientb", 6],
+				["fogr", 8],
+				["fogg", 9],
+				["fogb", 10],
+				["sunr", 12],
+				["sung", 13],
+				["sunb", 14],
+				["camx", 20],
+				["camy", 21],
+				["camz", 22],
+				["campitch", 24],
+				["camyaw", 25],
+				["camroll", 26],
+				["fognear", 28],
+				["fogfar", 29],
+				["fov", 30]
+			]
+		}
+	]
+}

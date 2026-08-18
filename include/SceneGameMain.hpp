@@ -10,6 +10,7 @@
 #include "cstdint"
 #include "string"
 #include "ScreenOutput.hpp"
+#include "StageCtrl.hpp"
 #include "BackgroundCtrl.hpp"
 #include "XASM2Loader.hpp"
 
@@ -74,12 +75,10 @@ private: // Text
 
 private: // Plane and related
 	XASM2Loader m_ScriptLoader;
+	StageCtrl m_StageCtrl;
 	BackgroundCtrl m_BGCtrl;
 
 	render_texture_t m_GameAreaTex;
-
-	std::string m_ResourceRoot;
-
 };
 
 #endif
