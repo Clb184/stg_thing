@@ -172,30 +172,36 @@ error:
 				break;
 			case TYPE_COMMAND: // nop, load, loadc, store
 				{
+					// Name of cmd
 					std::string cmd_name = std::get<0>(t);
 					uint8_t cmd = 0;
+					const std::vector<ARG_TYPE>* args;
+					
+					// Map to use
 					if(cmd2byte.find(cmd_name) != cmd2byte.end()) {
-						cmd = (uint8_t)cmd2byte.at(cmd_name);
+						cmd = (uint8_t)std::get<0>(cmd2byte.at(cmd_name));
+						args = &std::get<1>(cmd2byte.at(cmd_name));
 					} else {
-						cmd = (uint8_t)cmd2byteEx.at(cmd_name);
+						printf("Using Extension map\n");
+						cmd = (uint8_t)std::get<0>(cmd2byteEx.at(cmd_name));
+						args = &std::get<1>(cmd2byteEx.at(cmd_name));
 					}
 					buffer[index] = cmd;
 					printf("COMMAND: %s\n", std::get<0>(t).c_str());
 					index++;
 					i++;
-					const std::map<uint8_t, std::vector<ARG_TYPE>>* arg_map = nullptr;
-					if(g_Args.find(cmd) != g_Args.end()) {
-						arg_map = &g_Args;
+					if(args->size() > 0) {
+					/*if(g_Args.find(cmd) != g_Args.end()) {
 					} else if(g_ExtraCmdArgs.find(cmd) != g_ExtraCmdArgs.end()) {
 						printf("Using Extension map\n");
 						arg_map = &g_ExtraCmdArgs;
 					} else {
 						i--;
 						break;
-					}
-					if(arg_map->find(cmd) != arg_map->end()) {
-						size_t len = arg_map->at(cmd).size() * 2 - 1; // Comma between
-						const std::vector<ARG_TYPE>& args = arg_map->at(cmd);
+					}*/
+					//if(arg_map->find(cmd) != arg_map->end()) {
+						size_t len = args->size() * 2 - 1; // Comma between
+						//const std::vector<ARG_TYPE>& args = arg_map->at(cmd);
 						for(int a = 0; a < len; a++) {
 							if(i < tok_size) { 
 								const std::string str = std::get<0>(g_Tokens[i]);
@@ -207,7 +213,7 @@ error:
 									auto IsRegister = [] (const std::string& s) { 
 										return s == "r1" || s == "r2" || s == "r3" || s == "r4";
 									};
-									switch(args[a >> 1]) {
+									switch(args->at(a >> 1)) {
 										case ARG_REGISTER:
 											if(type == TYPE_INTEGER) {
 												buffer[index] = (uint8_t)std::stoll(str);
@@ -361,8 +367,8 @@ void LoadCommandArgsFromJson(const char* name) {
 					break;
 				}
 				const std::string& name = cmd["name"];
-				cmd2byteEx[name] = cmd_idx;
-				printf("COMMAND: \"%s\", value %d 0x%x\n", name.c_str(), cmd2byteEx[name], cmd2byteEx[name]);
+				printf("COMMAND: \"%s\", value %d 0x%x\n", name.c_str(), cmd_idx, cmd_idx);
+				std::vector<ARG_TYPE> args = {};
 				if(cmd.find("args") != cmd.end()) {
 					for(const std::string& argt : cmd["args"]) {
 						printf("ARG: %s\n", argt.c_str());
@@ -373,9 +379,10 @@ void LoadCommandArgsFromJson(const char* name) {
 						else if(argt == "float") argtype = ARG_FLOAT;
 						else if(argt == "address") argtype = ARG_ADDRESS;
 						else continue;
-						g_ExtraCmdArgs[cmd_idx].push_back(argtype);
+						args.push_back(argtype);
 					}
 				}
+				cmd2byteEx[name] = std::make_tuple(cmd_idx, std::move(args));
 				cmd_idx++;
 			}
 		}
