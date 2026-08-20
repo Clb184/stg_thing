@@ -49,7 +49,10 @@ void SpriteManager::InitDrawList() {
 
 sprite_inf_t* SpriteManager::NextSprite() {
 	assert(nullptr != m_pSpriteData);
-	if(m_SpriteIndex >= m_MaxSprites || false == m_bEnabled) return nullptr;
+	if(m_SpriteIndex >= m_MaxSprites || false == m_bEnabled)  {
+		m_bEnabled = false;
+		return nullptr;
+	}
 
 	return &m_pSpriteData[m_SpriteIndex++];
 }
@@ -95,7 +98,7 @@ void SpriteManager::Draw() {
 
 	}
 	
-	glBindBuffer(GL_ARRAY_BUFFER, m_VA);
+	glBindVertexArray(m_VA);
 	for(int i = 0; i < m_SpriteIndex; i++) {
 		glBindTextureUnit(0, m_pSpriteData[i].tex_id);
 		glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4);
