@@ -2,6 +2,7 @@
 #define TASKSTAGE_INCLUDED
 
 #include "XASM2/VM.hpp"
+#include "BackgroundCtrl.hpp"
 
 struct TaskStage {
 	TaskStage();
@@ -14,6 +15,7 @@ struct TaskStage {
 	xasm2_vm_t task;
 	int GRI[4];
 	float GRF[4];
+	BackgroundCtrl* bg_ctrl;
 };
 
 #endif

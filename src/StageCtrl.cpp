@@ -8,8 +8,9 @@ StageCtrl::~StageCtrl() {
 
 }
 
-bool StageCtrl::Init() {
+bool StageCtrl::Init(BackgroundCtrl* bg) {
 	m_Stage.Init();
+	m_Stage.bg_ctrl = bg;
 	return true;
 }
 

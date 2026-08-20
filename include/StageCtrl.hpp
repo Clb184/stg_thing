@@ -2,13 +2,14 @@
 #define STAGECTRL_INCLUDED
 
 #include "TaskStage.hpp"
+#include "BackgroundCtrl.hpp"
 
 class StageCtrl {
 public:
 	StageCtrl();
 	~StageCtrl();
 
-	bool Init();
+	bool Init(BackgroundCtrl* bg);
 	bool SetupTask(uint8_t* base, int offset);
 	void Move(float dt);
 	void Draw();

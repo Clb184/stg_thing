@@ -30,6 +30,13 @@ int XASM2StageTask(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
 		case 0x81: g_Sound.MusicPlay(); break;
 		case 0x82: g_Sound.MusicPause(); break;
 		case 0x83: g_Sound.MusicStop(); break;
+		case 0x84: 
+			if(0 != task->bg_ctrl) {
+				task->bg_ctrl->SetupTask(vm->src_cmd, *(int*)vm->cmd);
+			}
+			vm->cmd += 4;
+			break;
+		default: return -1;
 	}
 	return 0;
 }

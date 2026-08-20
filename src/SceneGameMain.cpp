@@ -51,7 +51,7 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input, GameInfo* info, S
 	CreateBackground();
 	
 	// Init scripts
-	m_StageCtrl.Init();
+	m_StageCtrl.Init(&m_BGCtrl);
 	m_BGCtrl.Init(&m_TexMan);
 
 	m_BGCtrl.SetDebugControl(input);
