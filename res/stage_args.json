@@ -1,9 +1,11 @@
 {
+	"name" : "stage",
 	"cmd" : [
 		{ "name" : "musicload" },
 		{ "name" : "musicplay" },
 		{ "name" : "musicpause" },
-		{ "name" : "musicstop" }
+		{ "name" : "musicstop" },
+		{ "name" : "setcamera", "args" : ["address"]}
 	],
 	"set" : [
 		{

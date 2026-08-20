@@ -6,9 +6,9 @@
 	"extra_levels" : [""],
 	"players" : ["DAT/PL00.DAT"],
 	"bgm" : [
-			[ "BGM/02.ogg", 852960, 2969088 ],
-			[ "BGM/01.ogg", 0, 0 ],
-			[ "BGM/00.ogg", 0, 0 ]
+			[ "BGM/00.ogg", 0, 0 ],
+			[ "BGM/01.ogg", 0, 0 ]
 		],
-	"sfx" : []
+	"sfx" : [],
+	"asd" : [ "BGM/02.ogg", 852960, 2969088 ]
 }

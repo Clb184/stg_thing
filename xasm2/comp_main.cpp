@@ -17,6 +17,7 @@ enum toktype : uint8_t {
 	TYPE_PROC, // @ symbol
 	TYPE_ENDANAME, // address_name:
 	TYPE_COMMA, // Comma
+	TYPE_CHANGEMAP, // Bind command + constant map
 	TYPE_UNKNOWN, // Any extra
 };
 
@@ -53,6 +54,7 @@ int OpenReadFile(const char* source, size_t* size_out, char** text_out) {
 int Tokenize(char* text, const char* source_name, size_t size) {
 	//printf("Enter Tokenize\n");
 	size_t line = 1;
+	cmd_map* current_map = 0;
 	for(size_t i = 0; i < size; ) {
 		char c = text[i];
 		if(c == 0) break; // If we reach an empty spot (EOF)
@@ -79,8 +81,11 @@ int Tokenize(char* text, const char* source_name, size_t size) {
 			if(IsKeyword(s)) {
 				t = TYPE_KEYWORD;
 			}
-			else if(cmd2byte.find(s) != cmd2byte.end() || cmd2byteEx.find(s) != cmd2byteEx.end()) {
+			else if(cmd2byte.find(s) != cmd2byte.end()) {
 				//printf("byte: 0x%x ", cmd2byte.at(s));
+				t = TYPE_COMMAND;
+			}
+			else if(0 != current_map && current_map->find(s) != current_map->end()) {
 				t = TYPE_COMMAND;
 			}
 			//printf("%s\n", s.c_str());
@@ -137,6 +142,27 @@ int Tokenize(char* text, const char* source_name, size_t size) {
 			g_Tokens.emplace_back(std::make_tuple(s, t, source_name, line));
 			i++;
 		}
+		else if (c == '#') {
+			i++;
+			std::string s = "";
+			auto IsIdentifierC = [](char c) { return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_'; };
+			while(IsIdentifierC(text[i])) {
+				s.push_back(text[i]);
+				i++;
+			}
+			if(s == "default") {
+				printf("Unbinding map\n");
+				current_map = nullptr;
+			} else if (g_CmdMaps.find(s) != g_CmdMaps.end()) {
+				printf("Using map \"%s\"\n", s.c_str());
+				current_map = &g_CmdMaps[s];
+			} else {
+				printf("Map not found \"%s\" (1st pass)", s.c_str());
+				current_map = nullptr;
+			}
+			g_Tokens.emplace_back(std::make_tuple(s, TYPE_CHANGEMAP, source_name, line));
+
+		}
 		else if (c == ';') { // Comment
 			while(text[i] != '\n') {
 				i++;
@@ -158,6 +184,7 @@ int64_t ToData() {
 	size_t index = g_Index;
 	size_t tok_size = g_Tokens.size();
 	bool on_error = false;
+	cmd_map* current_map = 0;
 	for(size_t i = 0; i < tok_size; i++) {
 		const token_t& t = g_Tokens[i];
 		if(on_error) {
@@ -172,117 +199,107 @@ error:
 				break;
 			case TYPE_COMMAND: // nop, load, loadc, store
 				{
-					// Name of cmd
-					std::string cmd_name = std::get<0>(t);
-					uint8_t cmd = 0;
-					const std::vector<ARG_TYPE>* args;
-					
-					// Map to use
-					if(cmd2byte.find(cmd_name) != cmd2byte.end()) {
-						cmd = (uint8_t)std::get<0>(cmd2byte.at(cmd_name));
-						args = &std::get<1>(cmd2byte.at(cmd_name));
-					} else {
-						printf("Using Extension map\n");
-						cmd = (uint8_t)std::get<0>(cmd2byteEx.at(cmd_name));
-						args = &std::get<1>(cmd2byteEx.at(cmd_name));
-					}
-					buffer[index] = cmd;
-					printf("COMMAND: %s\n", std::get<0>(t).c_str());
-					index++;
-					i++;
-					if(args->size() > 0) {
-					/*if(g_Args.find(cmd) != g_Args.end()) {
-					} else if(g_ExtraCmdArgs.find(cmd) != g_ExtraCmdArgs.end()) {
-						printf("Using Extension map\n");
-						arg_map = &g_ExtraCmdArgs;
-					} else {
-						i--;
-						break;
-					}*/
-					//if(arg_map->find(cmd) != arg_map->end()) {
-						size_t len = args->size() * 2 - 1; // Comma between
-						//const std::vector<ARG_TYPE>& args = arg_map->at(cmd);
-						for(int a = 0; a < len; a++) {
-							if(i < tok_size) { 
-								const std::string str = std::get<0>(g_Tokens[i]);
-								uint8_t type = std::get<1>(g_Tokens[i]);
-								i++;
-								if((a % 2) && type == TYPE_COMMA) {
-									continue;
-								} else if(a % 2 == 0) {
-									auto IsRegister = [] (const std::string& s) { 
-										return s == "r1" || s == "r2" || s == "r3" || s == "r4";
-									};
-									switch(args->at(a >> 1)) {
-										case ARG_REGISTER:
-											if(type == TYPE_INTEGER) {
-												buffer[index] = (uint8_t)std::stoll(str);
-												index++;
-											} else if(type == TYPE_IDENTIFIER && IsRegister(str)) {
-												if(str == "r1") buffer[index] = 0; else if(str == "r2") buffer[index] = 1; else if(str == "r3") buffer[index] = 2; else if(str == "r4") buffer[index] = 3;
-												index++;
-											} else {
-												printf("ARG_REGISTER: Expected integer\n");
-												goto error;
-											}
-
-											break;
-										case ARG_NUMBER:
-											if(type == TYPE_INTEGER) {
-												*(int32_t*)(buffer + index) = (int32_t)std::stoll(str);
-												index += sizeof(int32_t);
-											} else if (type == TYPE_FLOAT) {
-												*(float*)(buffer + index) = (float)std::stod(str);
-												index += sizeof(float);
-											} else {
-												printf("ARG_NUMBER: Expected integer or float\n");
-												goto error;
-											}
-											break;
-										case ARG_INTEGER:
-											if(type == TYPE_INTEGER) {
-												*(int32_t*)(buffer + index) = (int32_t)std::stoll(str);
-												index += sizeof(int32_t);
-											} else if (type == TYPE_FLOAT) {
-												*(int32_t*)(buffer + index) = (int32_t)std::stod(str);
-												index += sizeof(int32_t);
-											} else {
-												printf("ARG_INTEGER: Expected integer or float\n");
-												goto error;
-											}
-											break;
-										case ARG_FLOAT:
-											if(type == TYPE_INTEGER) {
-												*(float*)(buffer + index) = (float)std::stoll(str);
-												index += sizeof(float);
-											} else if (type == TYPE_FLOAT) {
-												*(float*)(buffer + index) = (float)std::stod(str);
-												index += sizeof(float);
-											} else {
-												printf("ARG_FLOAT: Expected integer or float\n");
-												goto error;
-											}
-											break;
-										case ARG_ADDRESS:
-											if(type == TYPE_IDENTIFIER) {
-												g_SymbolTable[str].push_back((uint32_t)index);
-												index += 4;
-											} else {
-												printf("ARG_ADDRESS: Expected identifier, got %s\n", str.c_str());
-												goto error;
-											}
-											break;
+				// Name of cmd
+				std::string cmd_name = std::get<0>(t);
+				uint8_t cmd = 0;
+				const std::vector<ARG_TYPE>* args;
+				
+				// Map to use
+				if(cmd2byte.find(cmd_name) != cmd2byte.end()) {
+					cmd = (uint8_t)std::get<0>(cmd2byte.at(cmd_name));
+					args = &std::get<1>(cmd2byte.at(cmd_name));
+				} else if(0 != current_map) {
+					printf("Using Extension map\n");
+					cmd = (uint8_t)std::get<0>(current_map->at(cmd_name));
+					args = &std::get<1>(current_map->at(cmd_name));
+				}
+				buffer[index] = cmd;
+				printf("COMMAND: %s\n", std::get<0>(t).c_str());
+				index++;
+				i++;
+			if(args->size() > 0) {
+				size_t len = args->size() * 2 - 1; // Comma between
+				for(int a = 0; a < len; a++) {
+					if(i < tok_size) { 
+						const std::string str = std::get<0>(g_Tokens[i]);
+						uint8_t type = std::get<1>(g_Tokens[i]);
+						i++;
+						if((a % 2) && type == TYPE_COMMA) {
+							continue;
+						} else if(a % 2 == 0) {
+							auto IsRegister = [] (const std::string& s) { 
+								return s == "r1" || s == "r2" || s == "r3" || s == "r4";
+							};
+							switch(args->at(a >> 1)) {
+								case ARG_REGISTER:
+									if(type == TYPE_INTEGER) {
+										buffer[index] = (uint8_t)std::stoll(str);
+										index++;
+									} else if(type == TYPE_IDENTIFIER && IsRegister(str)) {
+										if(str == "r1") buffer[index] = 0; else if(str == "r2") buffer[index] = 1; else if(str == "r3") buffer[index] = 2; else if(str == "r4") buffer[index] = 3;
+										index++;
+									} else {
+										printf("ARG_REGISTER: Expected integer\n");
+										goto error;
 									}
 
-								} else {
-									printf("Missing comma\n");
-									goto error;
-								}
+									break;
+								case ARG_NUMBER:
+									if(type == TYPE_INTEGER) {
+										*(int32_t*)(buffer + index) = (int32_t)std::stoll(str);
+										index += sizeof(int32_t);
+									} else if (type == TYPE_FLOAT) {
+										*(float*)(buffer + index) = (float)std::stod(str);
+										index += sizeof(float);
+									} else {
+										printf("ARG_NUMBER: Expected integer or float\n");
+										goto error;
+									}
+									break;
+								case ARG_INTEGER:
+									if(type == TYPE_INTEGER) {
+										*(int32_t*)(buffer + index) = (int32_t)std::stoll(str);
+										index += sizeof(int32_t);
+									} else if (type == TYPE_FLOAT) {
+										*(int32_t*)(buffer + index) = (int32_t)std::stod(str);
+										index += sizeof(int32_t);
+									} else {
+										printf("ARG_INTEGER: Expected integer or float\n");
+										goto error;
+									}
+									break;
+								case ARG_FLOAT:
+									if(type == TYPE_INTEGER) {
+										*(float*)(buffer + index) = (float)std::stoll(str);
+										index += sizeof(float);
+									} else if (type == TYPE_FLOAT) {
+										*(float*)(buffer + index) = (float)std::stod(str);
+										index += sizeof(float);
+									} else {
+										printf("ARG_FLOAT: Expected integer or float\n");
+										goto error;
+									}
+									break;
+								case ARG_ADDRESS:
+									if(type == TYPE_IDENTIFIER) {
+										g_SymbolTable[str].push_back((uint32_t)index);
+										index += 4;
+									} else {
+										printf("ARG_ADDRESS: Expected identifier, got %s\n", str.c_str());
+										goto error;
+									}
+									break;
 							}
+
+						} else {
+							printf("Missing comma\n");
+							goto error;
 						}
 					}
-					i--;
 				}
+			}
+			i--;
+		}
 				break;
 			case TYPE_IDENTIFIER: // Defined by const or address
 				if(i + 1 < tok_size && 
@@ -311,6 +328,21 @@ error:
 					}
 				}
 				break;
+			case TYPE_CHANGEMAP:
+				if(i < tok_size) {
+					const std::string& s = std::get<0>(g_Tokens[i]);
+					if(s == "default") {
+						current_map = nullptr;
+					}
+					else if(g_CmdMaps.find(s) != g_CmdMaps.end()) {
+						current_map = &g_CmdMaps[s];
+					}
+					else {
+						current_map = nullptr;
+						printf("Map not found \"%s\" (ToData)\n", s.c_str());
+					}
+				}
+			break;
 			default:
 			case TYPE_UNKNOWN: // Any extra
 				printf("Token out of order\n");
@@ -321,7 +353,7 @@ error:
 	return index;
 }
 
-void FillAddresses() {
+bool FillAddresses() {
 	for(const auto& [proc, proc_address] : g_AddressTable) {
 		printf("Proc name: \"%s\" address: 0x%x\n", proc.c_str(), proc_address);
 		printf("Proc \"%s\" has %d mentions\n", proc.c_str(), g_SymbolTable[proc].size());
@@ -330,6 +362,7 @@ void FillAddresses() {
 			*(uint32_t*)(g_Buffer + offset) = proc_address;
 		}
 	}
+	return true;
 }
 
 void WriteBinary(const char* name, size_t size) {
@@ -353,11 +386,26 @@ void LoadCommandArgsFromJson(const char* name) {
 	uint16_t cmd_idx = 0x80;
 	printf("Loading command args from json\n");
 	if(0 == OpenReadFile(name, &size, &text)) {
-		g_ExtraCmdArgs.clear();
 		try {
 			json = nlohmann::json::parse(text);
 			printf("Parsing \"%s\"\n", name);
 			const auto& cmd_args = json["cmd"];
+			std::string map_name;
+			cmd_map map;
+			if(json.find("name") != json.end()) {
+				map_name = json["name"];
+				if(map_name == "default") {
+					printf("Overwriting default map is not allowed, skipping");
+					free(text);
+					return;
+				}
+				printf("Command map \"\#%s\"\n", map_name.c_str());
+			}
+			else {
+				printf("Name not found, discarding command map");
+				free(text);
+				return;
+			}
 			for(const auto& cmd : cmd_args) {
 				if(cmd.find("value") != cmd.end()) {
 					cmd_idx = std::stoll((const std::string&)cmd["value"], nullptr, 16);
@@ -382,15 +430,17 @@ void LoadCommandArgsFromJson(const char* name) {
 						args.push_back(argtype);
 					}
 				}
-				cmd2byteEx[name] = std::make_tuple(cmd_idx, std::move(args));
+				map[name] = std::make_tuple(cmd_idx, args);
+				//cmd2byteEx[name] = std::make_tuple(cmd_idx, std::move(args));
 				cmd_idx++;
 			}
+			g_CmdMaps[map_name] = std::move(map);
 		}
 		catch(const std::exception& e) {
 			printf("JSON exception, stop processing: %s\n", e.what());
 			return;
 		}
-		
+		free(text);
 	}
 
 }
@@ -456,12 +506,13 @@ int main(int argc, char** argv) {
 	
 	if(false == on_error) {
 		// Fill addresses
-		FillAddresses();
-		// Finally, write file
-		WriteBinary(argv[1], g_Index);
-		if(nullptr != g_Buffer) {
-			free(g_Buffer);
-			g_Buffer = nullptr;
+		if(FillAddresses()) {
+			// Finally, write file
+			WriteBinary(argv[1], g_Index);
+			if(nullptr != g_Buffer) {
+				free(g_Buffer);
+				g_Buffer = nullptr;
+			}
 		}
 	}
 	return 0;

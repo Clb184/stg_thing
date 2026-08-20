@@ -1,25 +1,36 @@
+#stage
 @main:
-	;musicload
-	;musicplay
-	;call camera
+	setcamera camera
+
+	loadc r1, 0
+	musicload
+	musicplay
+
+	wait 60.0
+
+	loadc r1, 1
+	musicload
+	musicplay
+	
 	halt
 
+#camera
 @camera:
 	; Setup camera pos and rot
 	setm 20, 0.0
 	setm 21, -150.0
 	setm 22, 260.0
 
-	setm 24, -3.2288
-	setm 24, -3.14159
+	setm 24, -3.14159 ;-3.2288
 	setm 25, 0.0 ;-0.1919
 	setm 26, -0.9599
 
 	; Move and lock between 256.0f
+loop:
 	loadm r1, 21
 	greatfc 106.0
 	jmpt redo
-	;addpos 0.0, 80.0, 0.0
+	addpos 0.0, 80.0, 0.0
 	nop
 	jmp loop
 redo:

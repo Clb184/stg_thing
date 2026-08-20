@@ -57,8 +57,12 @@ enum ARG_TYPE : uint8_t {
 	ARG_UNKNOWN,
 };
 
-inline std::unordered_map<std::string, std::tuple<uint8_t, std::vector<ARG_TYPE>>> cmd2byteEx = {}; // Table to be filled with extra commands
-inline const std::unordered_map<std::string, std::tuple<uint8_t, std::vector<ARG_TYPE>>> cmd2byte = { // Table with base command values
+typedef std::unordered_map<std::string, std::tuple<uint8_t, std::vector<ARG_TYPE>>> cmd_map;
+
+inline std::unordered_map<std::string, cmd_map> g_CmdMaps = {};
+
+inline cmd_map cmd2byteEx = {}; // Table to be filled with extra commands
+inline const cmd_map cmd2byte = { // Table with base command values
 	{"nop", {XASM2_NOP, {}}},
 	{"load", {XASM2_LOAD, {ARG_REGISTER, ARG_INTEGER}}},
 	{"loadc", {XASM2_LOADC, {ARG_REGISTER, ARG_NUMBER}}},
@@ -175,7 +179,7 @@ inline const std::unordered_map<std::string, std::tuple<uint8_t, std::vector<ARG
 	{"deltatime", {XASM2_DELTATIME, {}}},
 	{"getlifetime", {XASM2_GETLIFETIME, {}}},
 };
-
+/*
 inline std::map<uint8_t, std::vector<ARG_TYPE>> g_ExtraCmdArgs= {}; // Extra commands arguments
 inline const std::map<uint8_t, std::vector<ARG_TYPE>> g_Args = { // Default base commands
 	{XASM2_LOAD, {ARG_REGISTER, ARG_INTEGER}},
@@ -234,7 +238,7 @@ inline const std::map<uint8_t, std::vector<ARG_TYPE>> g_Args = { // Default base
 	{XASM2_MINFC, {ARG_FLOAT}},
 	{XASM2_MAXFC, {ARG_FLOAT}},
 };
-
+*/
 // Symbols, like labels and procedures
 inline std::unordered_map<std::string, std::vector<uint32_t>> g_SymbolTable = {};
 inline std::unordered_map<std::string, uint32_t> g_AddressTable = {};

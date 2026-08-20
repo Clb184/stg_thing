@@ -1,4 +1,5 @@
 {
+	"name" : "camera",
 	"cmd" : [
 		{ "name" : "addpos", "args" : ["float", "float", "float"] },
 		{ "name" : "addrot", "args" : ["float", "float", "float"] }
