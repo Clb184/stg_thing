@@ -16,6 +16,9 @@
 
 #camera
 @camera:
+	; Make space for variables
+	enter 4
+
 	; Setup camera pos and rot
 	setm 20, 0.0
 	setm 21, -150.0

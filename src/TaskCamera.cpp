@@ -42,6 +42,13 @@ int XASM2CameraTask(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
 			DirectX::XMStoreFloat4(&camera->light.cam_pos, dest);
 			vm->cmd += sizeof(DirectX::XMFLOAT3);
 			break;
+		case 0x81: // Add vector to rotation
+			DirectX::XMVECTOR dest = DirectX::XMLoadFloat4(&camera->light.cam_rot);
+			DirectX::XMVECTOR add = DirectX::XMLoadFloat3((DirectX::XMFLOAT3*)vm->cmd);
+			dest = DirectX::XMVectorAdd(dest, DirectX::XMVectorMultiply(add, DirectX::XMVectorReplicate(dt)));
+			DirectX::XMStoreFloat4(&camera->light.cam_rot, dest);
+			vm->cmd += sizeof(DirectX::XMFLOAT3);
+			break;
 	}
 	return 0;
 }
