@@ -1,7 +1,7 @@
 #ifndef SOUNDCTRL_INCLUDED
 #define SOUNDCTRL_INCLUDED
 
-#include "Miniaudio/Sound.h"
+#include "MiniAudio/Sound.h"
 #include "GameInfo.hpp"
 #include "ScreenOutput.hpp"
 #include "ConfigCtrl.hpp"

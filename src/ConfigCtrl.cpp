@@ -1,21 +1,23 @@
 #include "ConfigCtrl.hpp"
 #include "IO.h"
 #include "Output.h"
+#include "glaze/glaze.hpp"
 
 const char* g_ConfigName = "CONFIG.JSON";
 
 ConfigCtrl::ConfigCtrl() {
 	LOG_INFO("Loading Config file");
 	char* source = nullptr;
-	nlohmann::json config;
+	//nlohmann::json config;
 
 	if(true == LoadTextFromFile(g_ConfigName, &source, 0)) {
 		LOG_INFO("Parsing JS");
-		config = nlohmann::json::parse(source);
+		//config = nlohmann::json::parse(source);
+		//std::string config = glz::read_json();
 		LOG_INFO("Freeing source JSON");
-		free(source);
-		if(true == ValidateJSON(config)) {
+		if(true == ValidateJSON(source)) {
 			LOG_INFO("Success on loading config");
+			/*
 			m_LoadedConfig.playername = config["playername"];
 			m_LoadedConfig.lives = config["lives"];
 			m_LoadedConfig.bombs = config["bombs"];
@@ -26,8 +28,13 @@ ConfigCtrl::ConfigCtrl() {
 			m_LoadedConfig.bgm_enable = config["bgmen"];
 			m_LoadedConfig.win_state = (WINDOW_STATE)(int)config["window"];
 			m_LoadedConfig.resolution = config["resolution"];
+			*/
+			std::string config = source;
+			glz::read_json(m_LoadedConfig, config);
+			free(source);
 			return;
 		}
+		free(source);
 	}
 	LOG_ERROR("Failed loading config");
 	LoadDefaultConfig();
@@ -103,6 +110,7 @@ int ConfigCtrl::GetWindowResolution() const {
 
 void ConfigCtrl::SaveConfig() {
 	LOG_INFO("Saving configuration");
+	/*
 	nlohmann::json save_cfg;
 	save_cfg["playername"] = m_LoadedConfig.playername;
 	save_cfg["lives"] = m_LoadedConfig.lives;
@@ -115,14 +123,21 @@ void ConfigCtrl::SaveConfig() {
 	save_cfg["window"] = (int)m_LoadedConfig.win_state;
 	save_cfg["resolution"] = m_LoadedConfig.resolution;
 	save_cfg["0"] = "Any extra keys or incorrect values will reset the config, be careful";
+	*/
+	std::string jsn;
+	auto error = glz::write_json(m_LoadedConfig, jsn);
+	if(error) {
+		std::string err = "JSON error: " + glz::format_error(error, jsn);
+		LOG_ERROR(err.c_str());
+	}
 
 #ifdef NDEBUG
 #endif
-	fprintf(stdout, "JSON CONFIG: \n%s\n", save_cfg.dump(4).c_str());
+	fprintf(stdout, "JSON CONFIG: \n%s\n", jsn.c_str());
 	FILE* fp = fopen(g_ConfigName, "w");
 	if(0 != fp) {
-		const std::string str = save_cfg.dump(4);
-		fwrite(str.c_str(), str.length(), 1, fp);
+		//const std::string str = save_cfg.dump(4);
+		fwrite(jsn.c_str(), jsn.length(), 1, fp);
 		fclose(fp);
 	}
 	else {
@@ -144,8 +159,9 @@ void ConfigCtrl::LoadDefaultConfig() {
 	m_LoadedConfig.resolution = 4; // Start at 1280x960
 }
 
-bool ConfigCtrl::ValidateJSON(const nlohmann::json& js) {
+bool ConfigCtrl::ValidateJSON(const char* js) {
 	LOG_INFO("Validating config JSON");
+	/*
 	// Validate string:
 	if(js.find("playername") == js.end() || js.find("lives") == js.end() || js.find("bombs") == js.end() || js.find("mastervol") == js.end() || js.find("sndvol") == js.end() || js.find("bgmvol") == js.end() || js.find("window") == js.end() || js.find("resolution") == js.end() || js.find("snden") == js.end() || js.find("bgmen") == js.end()) return false;
 	try {
@@ -166,6 +182,15 @@ bool ConfigCtrl::ValidateJSON(const nlohmann::json& js) {
 	}
 	catch(...) {
 		return false;
+	}*/
+	game_config_t cfg;
+	std::string jsn = js;
+	auto error = glz::read_json(cfg, jsn);
+	if(error) {
+		std::string err = "JSON error: " + glz::format_error(error, jsn);
+		LOG_ERROR(err.c_str());
+		return false;
 	}
+
 	return true;
 }

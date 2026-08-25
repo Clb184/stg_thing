@@ -2,7 +2,6 @@
 #define CONFIGCTRL_INCLUDED
 
 #include "Config.hpp"
-#include "nlohmann/json.hpp"
 
 class ConfigCtrl {
 public:	
@@ -36,7 +35,7 @@ public:
 
 	void LoadDefaultConfig(); // 2 lives, 3 bombs, 80 vol for snd and BGM, 
 private:
-	bool ValidateJSON(const nlohmann::json& json_data);
+	bool ValidateJSON(const char* json_data);
 
 private:
 	game_config_t m_LoadedConfig;

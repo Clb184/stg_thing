@@ -8,7 +8,7 @@
 #include "InputDevice.hpp"
 #include "Misc/Primitives.h"
 #include "iostream"
-#include "nlohmann/json.hpp"
+#include "string"
 #include "GameCore.hpp"
 
 SceneGameMain::SceneGameMain() {

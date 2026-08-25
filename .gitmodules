@@ -4,3 +4,6 @@
 [submodule "deps/cpr"]
 	path = deps/cpr
 	url = https://github.com/libcpr/cpr
+[submodule "deps/glaze"]
+	path = deps/glaze
+	url = https://github.com/stephenberry/glaze

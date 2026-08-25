@@ -4,6 +4,7 @@
 #include "utility"
 #include "string"
 #include "vector"
+#include "cstdint"
 
 class GameInfo {
 public:
