@@ -3,6 +3,7 @@
 #include "GameInfo.hpp"
 #include "_json.hpp"
 #include "IO.h"
+#include "Output.h"
 
 GameInfo::GameInfo() {
 
@@ -13,6 +14,7 @@ GameInfo::~GameInfo() {
 }
 
 bool GameInfo::Init() {
+	LOG_INFO("Initializing GameInfo");
 	char* data;
 	size_t size;
 	Cleanup();
