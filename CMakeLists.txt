@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.15)
 project(shooting LANGUAGES C CXX)
 
 add_subdirectory(deps/XPFW)
-add_subdirectory(deps/glaze)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_DEBUG_POSTFIX d)

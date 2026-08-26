@@ -1,7 +1,7 @@
 #include "GameState.hpp"
 #include "Output.h"
 #include "cassert"
-//#include "GameCore.hpp"
+#include "GameCore.hpp"
 #include "PackArchive/PackFile.h"
 
 GameState::GameState(GameCore* core) {
@@ -97,7 +97,7 @@ void GameState::Draw() {
 }
 
 void GameState::ChangeWindowTitle(const char* title) {
-	//m_pCore->SetWindowTitle(title);
+	m_pCore->SetWindowTitle(title);
 }
 
 void GameState::ChangeScene(SCENE_TYPE type) {
@@ -106,5 +106,5 @@ void GameState::ChangeScene(SCENE_TYPE type) {
 }
 
 void GameState::Exit() {
-	//m_pCore->StopGame();
+	m_pCore->StopGame();
 }
