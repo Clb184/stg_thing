@@ -1,15 +1,14 @@
 #ifndef SCENEGAMEMAIN_INCLUDED
 #define SCENEGAMEMAIN_INCLUDED
 
+#include "cstdint"
+#include "string"
+
 #include "Scene.hpp"
 #include "GL/glew.h"
 #include "OpenGL/Font.h"
-#include "GameInfo.hpp"
 #include "TextureManager.hpp"
 #include "Sprite.hpp"
-#include "cstdint"
-#include "string"
-#include "ScreenOutput.hpp"
 #include "StageCtrl.hpp"
 #include "BackgroundCtrl.hpp"
 #include "XASM2Loader.hpp"

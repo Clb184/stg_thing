@@ -1,7 +1,8 @@
-#include "GameInfo.hpp"
-#include "nlohmann/json.hpp"
-#include "IO.h"
 #include "iostream"
+
+#include "GameInfo.hpp"
+#include "_json.hpp"
+#include "IO.h"
 
 GameInfo::GameInfo() {
 

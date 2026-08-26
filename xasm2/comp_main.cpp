@@ -4,7 +4,7 @@
 #include "utility"
 #include "string"
 
-#include "nlohmann/json.hpp"
+#include "_json.hpp"
 #include "xasm2_cmd.hpp"
 
 enum toktype : uint8_t {

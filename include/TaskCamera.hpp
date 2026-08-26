@@ -1,9 +1,9 @@
 #ifndef TASKCAMERA_INCLUDED
 #define TASKCAMERA_INCLUDED
 
-#include "DirectXMath.h"
 #include "XASM2/VM.hpp"
 #include "Camera.hpp"
+#include "DirectXMath.h"
 
 struct WorldLight {
 	DirectX::XMFLOAT4 global_light = {0.0f, 0.0f, -0.78539f, 0.0f};

@@ -1,8 +1,8 @@
-#include "TaskCamera.hpp"
 #include "cstring"
 #include "cstdlib"
 #include "cstdio"
 
+#include "TaskCamera.hpp"
 
 TaskCamera::TaskCamera() {
 	//pos = {0.0f, 0.0f, 0.0f};
@@ -35,20 +35,20 @@ void TaskCamera::Use() {
 int XASM2CameraTask(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
 	TaskCamera* camera = (TaskCamera*)data;
 	switch(cmd) {
-		case 0x80: // Add vector to pos
+		case 0x80: { // Add vector to pos
 			DirectX::XMVECTOR dest = DirectX::XMLoadFloat4(&camera->light.cam_pos);
 			DirectX::XMVECTOR add = DirectX::XMLoadFloat3((DirectX::XMFLOAT3*)vm->cmd);
 			dest = DirectX::XMVectorAdd(dest, DirectX::XMVectorMultiply(add, DirectX::XMVectorReplicate(dt)));
 			DirectX::XMStoreFloat4(&camera->light.cam_pos, dest);
 			vm->cmd += sizeof(DirectX::XMFLOAT3);
-			break;
-		case 0x81: // Add vector to rotation
-			DirectX::XMVECTOR dest = DirectX::XMLoadFloat4(&camera->light.cam_rot);
+			   }	break;
+		case 0x81: { // Add vector to rotation
+			DirectX::XMVECTOR dest = DirectX::XMLoadFloat4(&camera->rot);
 			DirectX::XMVECTOR add = DirectX::XMLoadFloat3((DirectX::XMFLOAT3*)vm->cmd);
 			dest = DirectX::XMVectorAdd(dest, DirectX::XMVectorMultiply(add, DirectX::XMVectorReplicate(dt)));
-			DirectX::XMStoreFloat4(&camera->light.cam_rot, dest);
+			DirectX::XMStoreFloat4(&camera->rot, dest);
 			vm->cmd += sizeof(DirectX::XMFLOAT3);
-			break;
+			   }	break;
 	}
 	return 0;
 }

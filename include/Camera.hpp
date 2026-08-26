@@ -1,8 +1,8 @@
 #ifndef CAMERA_INCLUDED
 #define CAMERA_INCLUDED
 
-#include "DirectXMath.h"
 #include "OpenGL/Buffer.h"
+#include "DirectXMath.h"
 
 class Camera {
 public:

@@ -9,8 +9,8 @@ set(CMAKE_DEBUG_POSTFIX d)
 
 file(GLOB src src/*.cpp src/XASM2/*.cpp)
 add_executable(shooting ${src})
-target_link_libraries(shooting PUBLIC XPFW glaze)
-target_include_directories(shooting PUBLIC include/)
+target_link_libraries(shooting PUBLIC XPFW)
+target_include_directories(shooting PUBLIC include/ deps/glaze/include/)
 set_target_properties(shooting PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 file(GLOB src_xasm2 xasm2/*.cpp)

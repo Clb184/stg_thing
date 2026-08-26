@@ -1,15 +1,18 @@
+#include "cassert"
+#include "iostream"
+#include "string"
+
 #include "SceneGameMain.hpp"
 #include "Output.h"
-#include "cassert"
 #include "GameState.hpp"
 #include "XASM2/VM.hpp"
 #include "OpenGL/Shader.h"
 #include "IO.h"
 #include "InputDevice.hpp"
 #include "Misc/Primitives.h"
-#include "iostream"
-#include "string"
 #include "GameCore.hpp"
+#include "ScreenOutput.hpp"
+#include "GameInfo.hpp"
 
 SceneGameMain::SceneGameMain() {
 	m_Score = 0;

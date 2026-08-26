@@ -1,10 +1,11 @@
 #ifndef TEXTUREMANAGER_INCLUDED
 #define TEXTUREMANAGER_INCLUDED
 
+#include "vector"
+
 #include "OpenGL/Texture.h"
 #include "PackArchive/PackFile.h"
 #include "ScreenOutput.hpp"
-#include "vector"
 
 class TextureManager {
 private:

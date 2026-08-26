@@ -1,10 +1,10 @@
-#include "SceneMain.hpp"
 #include "cassert"
+
+#include "SceneMain.hpp"
 #include "Output.h"
 #include "IO.h"
 #include "GameInfo.hpp"
 #include "GameState.hpp"
-#include "nlohmann/json.hpp"
 #include "OpenGL/Shader.h"
 #include "DirectXMath.h"
 
