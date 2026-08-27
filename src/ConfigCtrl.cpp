@@ -125,7 +125,7 @@ void ConfigCtrl::SaveConfig() {
 	save_cfg["0"] = "Any extra keys or incorrect values will reset the config, be careful";
 	*/
 	std::string jsn;
-	auto error = glz::write_json(m_LoadedConfig, jsn);
+	auto error = glz::write<glz::opts{.prettify = true}>(m_LoadedConfig, jsn);
 	if(error) {
 		std::string err = "JSON error: " + glz::format_error(error, jsn);
 		LOG_ERROR(err.c_str());
