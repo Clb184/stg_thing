@@ -15,6 +15,7 @@ std::uniform_real_distribution<float> g_RandFloat2Generator(-1.0f, 1.0f);
 std::uniform_real_distribution<float> g_RandAngleGenerator(-3.14159f, 3.14159f);
 
 void XASM2RandomInit(uint64_t seed) {
+	printf("Sizeof XASM2 VM is %d\n", sizeof(xasm2_vm_t));
 	g_RandomDevice.seed(seed);
 }
 
