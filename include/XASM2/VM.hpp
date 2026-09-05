@@ -53,7 +53,7 @@ struct xasm2_vm_t {
 	xasm2_num_t r4 = 0;
 	uint32_t frame_ptr = 0;
 	uint32_t stack_ptr = 0;
-	xasm2_num_t stack[XASM2_STACK_SIZE];
+	xasm2_num_t* stack;
 };
 
 typedef int(*xasm2_vm_ext)(uint8_t, xasm2_vm_t*, float, void*);
