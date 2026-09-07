@@ -4,7 +4,9 @@ project(shooting LANGUAGES C CXX)
 add_subdirectory(deps/XPFW)
 
 set(CMAKE_CXX_STANDARD 23)
+if(WIN32)
 set(CMAKE_DEBUG_POSTFIX d)
+endif()
 
 file(GLOB src src/*.cpp src/XASM2/*.cpp)
 add_executable(shooting ${src})
