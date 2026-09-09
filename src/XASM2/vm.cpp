@@ -29,12 +29,7 @@ void XASM2VMInit(xasm2_vm_t* vm, uint8_t* script, uint32_t offset) {
 	assert(nullptr != vm);
 	vm->src_cmd = script;
 	vm->cmd = script + offset;
-	vm->member_reg = 0;
-	vm->member_regs = 0;
-	vm->global_reg = 0;
-	vm->global_regs = 0;
 	vm->flags = 0;
-	vm->interrupt = 0;
 	vm->wait_time = 0.0f;
 	vm->life_time = 0.0f;
 	vm->r1 = 0;
@@ -46,6 +41,10 @@ void XASM2VMInit(xasm2_vm_t* vm, uint8_t* script, uint32_t offset) {
 	if(0 != vm->stack) free(vm->stack);
 	vm->stack = (xasm2_num_t*)malloc(sizeof(xasm2_num_t) * XASM2_STACK_SIZE);
 	memset(vm->stack, 0x00, sizeof(xasm2_num_t) * XASM2_STACK_SIZE);
+	vm->member_reg = 0;
+	vm->member_regs = 0;
+	vm->global_reg = 0;
+	vm->global_regs = 0;
 }
 
 void XASM2VMSetMembers(xasm2_vm_t* vm, int num, int* member) {
@@ -288,17 +287,6 @@ start:
 		vm->flags |= XASM2VM_TERMINATE;
 		goto terminate;	
 	
-	case XASM2_STI:
-		vm->cmd++;	
-		vm->interrupt = *(uint32_t*)vm->cmd;
-		vm->cmd += sizeof(int);
-		goto start;
-
-	case XASM2_CLI:
-		vm->cmd++;
-		vm->interrupt = 0;
-		goto start;
-
 	// Arithmetic
 	case XASM2_ADD:
 		vm->cmd++;
@@ -753,8 +741,7 @@ exit:
 	return 0;
 }
 
-int XASM2TriggerInterrupt(xasm2_vm_t* vm) {
-	vm->cmd = vm->src_cmd += vm->interrupt;
-	vm->interrupt = 0;
+int XASM2VMInterrupt(xasm2_vm_t* vm, uint32_t offset) {
+	vm->cmd = vm->src_cmd + offset;
 	return 0;
 }

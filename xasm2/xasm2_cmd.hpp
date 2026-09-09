@@ -91,8 +91,6 @@ inline const cmd_map cmd2byte = { // Table with base command values
 	{"wait", {XASM2_WAIT, {ARG_FLOAT}}},
 	{"halt", {XASM2_HALT, {}}},
 	{"exit", {XASM2_EXIT, {}}},
-	{"sti", {XASM2_STI, {ARG_ADDRESS}}},
-	{"cli", {XASM2_CLI, {}}},
 		
 	{"add", {XASM2_ADD, {}}},
 	{"addc", {XASM2_ADDC, {ARG_INTEGER}}},

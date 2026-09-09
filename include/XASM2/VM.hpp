@@ -39,12 +39,7 @@ enum XASM2VM_FLAG : uint32_t {
 struct xasm2_vm_t {
 	uint8_t* src_cmd = nullptr;
 	uint8_t* cmd = nullptr;
-	int* member_reg = nullptr;
-	int* global_reg = nullptr;
-	int member_regs = 0;
-	int global_regs = 0;
 	uint32_t flags = 0;
-	uint32_t interrupt = 0;
 	float wait_time = 0.0f;
 	float life_time = 0.0f;
 	xasm2_num_t r1 = 0;
@@ -54,6 +49,10 @@ struct xasm2_vm_t {
 	uint32_t frame_ptr = 0;
 	uint32_t stack_ptr = 0;
 	xasm2_num_t* stack;
+	int* member_reg = nullptr;
+	int* global_reg = nullptr;
+	int member_regs = 0;
+	int global_regs = 0;
 };
 
 typedef int(*xasm2_vm_ext)(uint8_t, xasm2_vm_t*, float, void*);
@@ -70,6 +69,6 @@ void XASM2VMSetGlobals(xasm2_vm_t* vm, int num, int* global);
 
 int XASM2Move(xasm2_vm_t* vm, float dt, xasm2_vm_ext extension, void* data);
 
-int XASM2TriggerInterrupt(xasm2_vm_t* vm);
+int XASM2VMInterrupt(xasm2_vm_t* vm, uint32_t offset);
 
 #endif
