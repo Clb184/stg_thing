@@ -41,7 +41,6 @@ struct xasm2_vm_t {
 	uint8_t* cmd = nullptr;
 	uint32_t flags = 0;
 	float wait_time = 0.0f;
-	float life_time = 0.0f;
 	xasm2_num_t r1 = 0;
 	xasm2_num_t r2 = 0;
 	xasm2_num_t r3 = 0;

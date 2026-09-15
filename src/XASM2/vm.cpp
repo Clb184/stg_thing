@@ -31,7 +31,6 @@ void XASM2VMInit(xasm2_vm_t* vm, uint8_t* script, uint32_t offset) {
 	vm->cmd = script + offset;
 	vm->flags = 0;
 	vm->wait_time = 0.0f;
-	vm->life_time = 0.0f;
 	vm->r1 = 0;
 	vm->r2 = 0;
 	vm->r3 = 0;
@@ -68,7 +67,6 @@ int XASM2Move(xasm2_vm_t* vm, float dt, xasm2_vm_ext extension, void* data) {
 	if((XASM2VM_HALT | XASM2VM_TERMINATE) & vm->flags) {
 		return 0;
 	}
-	vm->life_time += dt;
 
 	//Before moving logic, check if there's time pending
 	if(vm->wait_time > 0) {
@@ -708,11 +706,6 @@ start:
 	case XASM2_DELTATIME:
 		vm->cmd++;
 		vm->r1.f *= dt;
-		goto start;
-
-	case XASM2_GETLIFETIME:
-		vm->cmd++;
-		vm->r1.f = vm->life_time;
 		goto start;
 
 	default:
