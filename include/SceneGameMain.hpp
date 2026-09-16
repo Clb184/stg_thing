@@ -9,6 +9,7 @@
 #include "OpenGL/Font.h"
 #include "TextureManager.hpp"
 #include "Sprite.hpp"
+#include "SpriteManager.hpp"
 #include "StageCtrl.hpp"
 #include "BackgroundCtrl.hpp"
 #include "XASM2Loader.hpp"
@@ -77,6 +78,7 @@ private: // Plane and related
 	StageCtrl m_StageCtrl;
 	BackgroundCtrl m_BGCtrl;
 
+	SpriteBatcher<40000> m_Sprites;
 	render_texture_t m_GameAreaTex;
 };
 

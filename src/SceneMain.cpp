@@ -36,6 +36,7 @@ bool SceneMain::Init(GameState* state, InputDevice* input, GameInfo* info, Scree
 	m_OptionDelay = 1.0f;
 
 	m_TexMan.Init(IO);
+	m_SpriteMan.Init();
 	CreateShaders();
 	CreateBackground();
 	m_Out = IO;

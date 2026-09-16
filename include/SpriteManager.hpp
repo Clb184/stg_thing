@@ -6,7 +6,6 @@
 #include "Sprite.hpp"
 #include "Misc/Primitives.h"
 #include "PersistentBuffer.hpp"
-#include "TextureManager.hpp"
 #include "Output.h"
 
 #include "DirectXMath.h"
@@ -30,14 +29,13 @@ public:
 		m_SpriteIndex = 0;
 		m_VA = 0;
 		memset(&m_Inst, 0, sizeof(m_Inst));
-		m_pTexMan = nullptr;
 	}
 
 	~SpriteBatcher() {
 		Cleanup();
 	}
 
-	bool Init(TextureManager* tex_man) { // Max amount of accepted sprites
+	bool Init() { // Max amount of accepted sprites
 		LOG_INFO("Initializing Sprite Manager");
 		Cleanup();
 	
@@ -53,7 +51,6 @@ public:
 		CreateVertexAttribute(TL2DAttributes[0], buffinfo, &m_VA);
 		CreateVertexAttribute(TL2DAttributes[1], buffinfo, &m_VA);
 		CreateVertexAttribute(TL2DAttributes[2], buffinfo, &m_VA);
-		m_pTexMan = tex_man;
 		return true;
 		
 	}
@@ -81,7 +78,6 @@ public:
 	}
 
 	void Draw() { // Draw each sprite
-		assert(nullptr != m_pTexMan);
 		if (m_SpriteIndex <= 0) return;
 		
 		TLVertex2D* vertices = (TLVertex2D*)m_PBuffer.RequestBuffer();
@@ -127,7 +123,6 @@ public:
 	}
 
 	void Cleanup() {
-		m_pTexMan = nullptr;
 		glDeleteVertexArrays(1, &m_VA);
 		m_VA = 0;
 	}
@@ -140,8 +135,6 @@ private:
 	int m_MaxSprites;
 	int m_SpriteIndex;
 	SpriteInst<cnt> m_Inst;
-	
-	TextureManager* m_pTexMan;
 	PersistentBuffer m_PBuffer;
 };
 

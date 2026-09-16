@@ -50,6 +50,7 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input, GameInfo* info, S
 	m_pInfo = info;
 
 	m_TexMan.Init(IO);
+	m_Sprites.Init();
 	CreateShaders();
 	CreateBackground();
 	
