@@ -1,8 +1,8 @@
-#include "SpriteManager.hpp"
+/*
+ #include "SpriteManager.hpp"
 #include "cassert"
 #include "Output.h"
 #include "DirectXMath.h"
-
 SpriteManager::SpriteManager() {
 	m_pSpriteData = nullptr;
 	m_bEnabled  = false;
@@ -112,4 +112,4 @@ void SpriteManager::Cleanup() {
 	}
 	m_pTexMan = nullptr;
 	glDeleteBuffers(1, &m_VA);
-}
+}*/
