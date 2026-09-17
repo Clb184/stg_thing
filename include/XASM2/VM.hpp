@@ -47,7 +47,7 @@ struct xasm2_vm_t {
 	xasm2_num_t r4 = 0;
 	uint32_t frame_ptr = 0;
 	uint32_t stack_ptr = 0;
-	xasm2_num_t* stack;
+	xasm2_num_t* stack = nullptr;
 	int* member_reg = nullptr;
 	int* global_reg = nullptr;
 	int member_regs = 0;

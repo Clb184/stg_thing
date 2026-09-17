@@ -37,9 +37,12 @@ public:
 
 	bool Init() { // Max amount of accepted sprites
 		LOG_INFO("Initializing Sprite Manager");
+		GLERR;
 		Cleanup();
 	
+		// 4 Vertices data, put into 123 234 indices sets for drawing batched quads 
 		m_PBuffer.Init(sizeof(TLVertex2D) * cnt * 4, 3);
+		GL_ERROR();
 		attribute_info_t TL2DAttributes[] = {
 			{0, 2, GL_FLOAT, GL_FALSE, (sizeof(float) * 0)},
 			{1, 2, GL_FLOAT, GL_FALSE, (sizeof(float) * 2)},
@@ -48,6 +51,7 @@ public:
 	
 		buffer_info_t buffinfo = { m_PBuffer.GetBufferID(), sizeof(TLVertex2D)};
 		glCreateVertexArrays(1, &m_VA);
+		GL_ERROR();
 		CreateVertexAttribute(TL2DAttributes[0], buffinfo, &m_VA);
 		CreateVertexAttribute(TL2DAttributes[1], buffinfo, &m_VA);
 		CreateVertexAttribute(TL2DAttributes[2], buffinfo, &m_VA);
@@ -131,7 +135,8 @@ private:
 
 private:
 	bool m_bEnabled;
-	GLuint m_VA;
+	GLuint m_VA; // Vertex Array
+	GLuint m_IB; // Index Buffer
 	int m_MaxSprites;
 	int m_SpriteIndex;
 	SpriteInst<cnt> m_Inst;

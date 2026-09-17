@@ -17,13 +17,15 @@ PersistentBuffer::~PersistentBuffer() {
 
 bool PersistentBuffer::Init(int size, int num_regions) {
 	assert(num_regions > 0);
+	GLERR;
 
 	Cleanup();
 
 	// Create a persistent buffer
-	buffer_descriptor_t desc = { (GLsizei)size, nullptr, GL_MAP_WRITE_BIT | GL_MAP_COHERENT_BIT | GL_MAP_PERSISTENT_BIT };
+	buffer_descriptor_t desc = { (GLsizei)(size * num_regions), nullptr, GL_MAP_WRITE_BIT | GL_MAP_COHERENT_BIT | GL_MAP_PERSISTENT_BIT };
 	CreateStaticBuffer(desc, &m_Buffer);
 	void* data = (void*)glMapNamedBufferRange(m_Buffer, 0, size * num_regions, GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+	GL_ERROR();
 
 	// Sync objects
 	m_pDrawFence = new GLsync[num_regions];
