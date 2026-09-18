@@ -1,4 +1,4 @@
-#include "PersistentBuffer.hpp"
+/*#include "PersistentBuffer.hpp"
 #include "cassert"
 #include "Output.h"
 
@@ -86,4 +86,4 @@ void PersistentBuffer::Cleanup() {
 
 GLuint PersistentBuffer::GetBufferID() const {
 	return m_Buffer;
-}
+}*/

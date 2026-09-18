@@ -78,7 +78,7 @@ private: // Plane and related
 	StageCtrl m_StageCtrl;
 	BackgroundCtrl m_BGCtrl;
 
-	SpriteBatcher<40000> m_Sprites;
+	SpriteBatcher<40000, 3> m_Sprites;
 	render_texture_t m_GameAreaTex;
 };
 

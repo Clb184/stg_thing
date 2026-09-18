@@ -37,7 +37,7 @@ private:
 	GLuint m_2DShader;
 	GLuint m_3DShader;
 	TextureManager m_TexMan;
-	SpriteBatcher<1000> m_SpriteMan;
+	SpriteBatcher<1000, 3> m_SpriteMan;
 	Sprite m_BGSprite;
 	GameState* m_pState;
 

@@ -5,9 +5,9 @@ var cpo_save: string
 cpo_save = &cpo
 set cpo&vim
 inoremap <C-U> u
-nmap Q gq
-xmap Q gq
 omap Q gq
+xmap Q gq
+nmap Q gq
 xmap gx <Plug>(open-word-under-cursor)
 nmap gx <Plug>(open-word-under-cursor)
 xnoremap <Plug>(open-word-under-cursor) <ScriptCmd>vim9.Open(getregion(getpos('v'), getpos('.'), { type: mode() })->join())
@@ -18,12 +18,15 @@ nnoremap <silent> <Plug>(fzf-normal) <Nop>
 nnoremap <silent> <Plug>(fzf-insert) i
 inoremap  u
 &cpo = cpo_save
+set autoindent
 set background=dark
 legacy set backupdir=~/.cache/vim/backup//
 legacy set directory=~/.cache/vim/swap//
 legacy set display=truncate
 set fileencodings=ucs-bom,utf-8,default,latin1
+legacy set formatoptions=tqcro
 set helplang=en
+set hlsearch
 set incsearch
 set langnoremap
 set nolangremap
@@ -35,10 +38,10 @@ legacy set suffixes=.bak,~,.o,.info,.swp,.aux,.bbl,.blg,.brf,.cb,.dvi,.idx,.ilg,
 set ttimeout
 set ttimeoutlen=100
 legacy set undodir=~/.cache/vim/undo//
-set window=51
-import autoload '/usr/share/vim/vim92/autoload/dist/vim9.vim'
+set window=50
 import autoload '/usr/share/vim/vim92/autoload/dist/ft.vim'
 import autoload '/usr/share/vim/vim92/autoload/dist/script.vim'
+import autoload '/usr/share/vim/vim92/autoload/dist/vim9.vim'
 const so_save: number = &g:so | const siso_save: number = &g:siso | setg so=0 siso=0 | setl so=-1 siso=-1
 v:this_session = expand("<sfile>:p")
 doautoall SessionLoadPre
@@ -55,9 +58,9 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   wipebuf = bufnr('%')
 endif
 set shortmess+=aoO
-badd +1 src/Main.cpp
+badd +16 src/Main.cpp
 badd +4 deps/XPFW/include/MiniAudio/Sound.h
-badd +1 include/SoundCtrl.hpp
+badd +4 include/SoundCtrl.hpp
 badd +14 src/GameInfo.cpp
 badd +1 include/GameInfo.hpp
 badd +109 src/GameState.cpp
@@ -65,7 +68,7 @@ badd +1 include/GameState.hpp
 badd +1 include/GameCore.hpp
 badd +1 include/ConfigCtrl.hpp
 badd +215 src/SceneGameMain.cpp
-badd +1 include/SceneGameMain.hpp
+badd +5 include/SceneGameMain.hpp
 badd +5 CMakeLists.txt
 badd +1 src/ConfigCtrl.cpp
 badd +1 deps/XPFW/src_demo/caf0_pack.cpp
@@ -80,13 +83,18 @@ badd +1 deps/XPFW/CMakeLists.txt
 badd +7 deps/XPFW/deps/miniaudio/CMakeLists.txt
 badd +64 deps/XPFW/src/Window.c
 badd +1 deps/XPFW/deps/glfw/CMakeLists.txt
-badd +34 src/GameWindow.cpp
+badd +31 src/GameWindow.cpp
 badd +27 src/GameCore.cpp
 badd +1 build/CONFIG.JSON
-badd +1 include/GameWindow.hpp
+badd +5 include/GameWindow.hpp
 badd +13 include/Config.hpp
 badd +18 src/XASM2/vm.cpp
-badd +0 include/XASM2/VM.hpp
+badd +1 include/XASM2/VM.hpp
+badd +0 build/camera.xasm2
+badd +0 xasm2/xasm2_cmd.hpp
+badd +87 include/XASM2/Command.hpp
+badd +0 include/SpriteManager.hpp
+badd +0 deps/XPFW/include/OpenGL/Buffer.h
 argglobal
 :%argdel
 :$argadd src/Main.cpp
@@ -106,311 +114,6 @@ tabnew +setlocal\ bufhidden=wipe
 tabnew +setlocal\ bufhidden=wipe
 tabnew +setlocal\ bufhidden=wipe
 tabrewind
-edit src/Main.cpp
-argglobal
-setlocal keymap=
-setlocal noarabic
-setlocal noautoindent
-legacy setlocal backupcopy=
-setlocal balloonexpr=
-setlocal nobinary
-setlocal nobreakindent
-setlocal breakindentopt=
-setlocal bufhidden=
-setlocal buflisted
-setlocal buftype=
-setlocal cindent
-setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal cinoptions=
-setlocal cinscopedecls=public,protected,private
-setlocal cinwords=if,else,while,do,for,switch
-setlocal colorcolumn=
-legacy setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,:///,://
-legacy setlocal commentstring=//\ %s
-setlocal complete=.,w,b,u,t,i
-setlocal completefunc=
-setlocal completeopt=
-setlocal concealcursor=
-setlocal conceallevel=0
-setlocal nocopyindent
-setlocal cryptmethod=
-setlocal nocursorbind
-setlocal nocursorcolumn
-setlocal nocursorline
-setlocal cursorlineopt=both
-legacy setlocal define=^\\s*#\\s*define
-setlocal dictionary=
-setlocal nodiff
-setlocal diffanchors=
-setlocal equalprg=
-setlocal errorformat=
-setlocal eventignorewin=
-setlocal noexpandtab
-if &filetype != 'cpp'
-legacy setlocal filetype=cpp
-endif
-setlocal fillchars=
-setlocal findfunc=
-setlocal fixendofline
-setlocal foldcolumn=0
-setlocal foldenable
-setlocal foldexpr=0
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldmarker={{{,}}}
-setlocal foldmethod=manual
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldtext=foldtext()
-setlocal formatexpr=
-setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
-legacy setlocal formatoptions=croql
-setlocal formatprg=
-setlocal grepformat=
-setlocal grepprg=
-setlocal iminsert=0
-setlocal imsearch=-1
-legacy setlocal include=^\\s*#\\s*include
-setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal noinfercase
-legacy setlocal iskeyword=@,48-57,_,192-255
-setlocal keywordprg=
-setlocal lhistory=10
-setlocal nolinebreak
-setlocal nolisp
-setlocal lispoptions=
-setlocal lispwords=
-setlocal nolist
-setlocal listchars=
-setlocal makeencoding=
-setlocal makeprg=
-setlocal matchpairs=(:),{:},[:]
-setlocal modeline
-setlocal modifiable
-legacy setlocal nrformats=bin,hex
-setlocal nonumber
-setlocal numberwidth=4
-legacy setlocal omnifunc=ccomplete#Complete
-setlocal path=
-setlocal nopreserveindent
-setlocal nopreviewwindow
-setlocal quoteescape=\\
-setlocal noreadonly
-setlocal norelativenumber
-setlocal norightleft
-setlocal rightleftcmd=search
-setlocal noscrollbind
-setlocal scrolloff=-1
-setlocal scrolloffpad=-1
-setlocal shiftwidth=8
-setlocal noshortname
-setlocal showbreak=
-setlocal sidescrolloff=-1
-setlocal signcolumn=auto
-setlocal nosmartindent
-setlocal nosmoothscroll
-setlocal softtabstop=0
-setlocal nospell
-setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
-setlocal spellfile=
-setlocal spelllang=en
-setlocal spelloptions=
-setlocal statusline=
-setlocal statuslineopt=
-setlocal suffixesadd=
-setlocal swapfile
-setlocal synmaxcol=3000
-if &syntax != 'cpp'
-legacy setlocal syntax=cpp
-endif
-setlocal tabstop=8
-legacy setlocal tagcase=
-setlocal tagfunc=
-setlocal tags=
-setlocal termwinkey=
-setlocal termwinscroll=10000
-setlocal termwinsize=
-setlocal textwidth=0
-setlocal thesaurus=
-setlocal thesaurusfunc=
-setlocal noundofile
-setlocal undolevels=-123456
-setlocal varsofttabstop=
-setlocal vartabstop=
-setlocal virtualedit=
-setlocal wincolor=
-setlocal nowinfixbuf
-setlocal nowinfixheight
-setlocal nowinfixwidth
-setlocal winhighlight=
-setlocal wrap
-setlocal wrapmargin=0
-silent! normal! zE
-&fdl = &fdl
-{
-  var l: number = 16 - ((14 * winheight(0) + 23) / 46)
-  if l < 1 | l = 1 | endif
-  keepjumps exe ":" .. l
-  normal! zt
-  keepjumps :16
-  normal! 0
-}
-tabnext
-edit include/SoundCtrl.hpp
-argglobal
-balt src/Main.cpp
-setlocal keymap=
-setlocal noarabic
-setlocal noautoindent
-setlocal backupcopy=
-setlocal balloonexpr=
-setlocal nobinary
-setlocal nobreakindent
-setlocal breakindentopt=
-setlocal bufhidden=
-setlocal buflisted
-setlocal buftype=
-setlocal cindent
-setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal cinoptions=
-setlocal cinscopedecls=public,protected,private
-setlocal cinwords=if,else,while,do,for,switch
-setlocal colorcolumn=
-legacy setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,:///,://
-legacy setlocal commentstring=//\ %s
-setlocal complete=.,w,b,u,t,i
-setlocal completefunc=
-setlocal completeopt=
-setlocal concealcursor=
-setlocal conceallevel=0
-setlocal nocopyindent
-setlocal cryptmethod=
-setlocal nocursorbind
-setlocal nocursorcolumn
-setlocal nocursorline
-setlocal cursorlineopt=both
-legacy setlocal define=^\\s*#\\s*define
-setlocal dictionary=
-setlocal nodiff
-setlocal diffanchors=
-setlocal equalprg=
-setlocal errorformat=
-setlocal eventignorewin=
-setlocal noexpandtab
-if &filetype != 'cpp'
-setlocal filetype=cpp
-endif
-setlocal fillchars=
-setlocal findfunc=
-setlocal fixendofline
-setlocal foldcolumn=0
-setlocal foldenable
-setlocal foldexpr=0
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldmarker={{{,}}}
-setlocal foldmethod=manual
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldtext=foldtext()
-setlocal formatexpr=
-setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
-legacy setlocal formatoptions=croql
-setlocal formatprg=
-setlocal grepformat=
-setlocal grepprg=
-setlocal iminsert=0
-setlocal imsearch=-1
-legacy setlocal include=^\\s*#\\s*include
-setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal noinfercase
-legacy setlocal iskeyword=@,48-57,_,192-255
-setlocal keywordprg=
-setlocal lhistory=10
-setlocal nolinebreak
-setlocal nolisp
-setlocal lispoptions=
-setlocal lispwords=
-setlocal nolist
-setlocal listchars=
-setlocal makeencoding=
-setlocal makeprg=
-setlocal matchpairs=(:),{:},[:]
-setlocal modeline
-setlocal modifiable
-legacy setlocal nrformats=bin,hex
-setlocal nonumber
-setlocal numberwidth=4
-legacy setlocal omnifunc=ccomplete#Complete
-setlocal path=
-setlocal nopreserveindent
-setlocal nopreviewwindow
-setlocal quoteescape=\\
-setlocal noreadonly
-setlocal norelativenumber
-setlocal norightleft
-setlocal rightleftcmd=search
-setlocal noscrollbind
-setlocal scrolloff=-1
-setlocal scrolloffpad=-1
-setlocal shiftwidth=8
-setlocal noshortname
-setlocal showbreak=
-setlocal sidescrolloff=-1
-setlocal signcolumn=auto
-setlocal nosmartindent
-setlocal nosmoothscroll
-setlocal softtabstop=0
-setlocal nospell
-setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
-setlocal spellfile=
-setlocal spelllang=en
-setlocal spelloptions=
-setlocal statusline=
-setlocal statuslineopt=
-setlocal suffixesadd=
-setlocal swapfile
-setlocal synmaxcol=3000
-if &syntax != 'cpp'
-legacy setlocal syntax=cpp
-endif
-setlocal tabstop=8
-setlocal tagcase=
-setlocal tagfunc=
-setlocal tags=
-setlocal termwinkey=
-setlocal termwinscroll=10000
-setlocal termwinsize=
-setlocal textwidth=0
-setlocal thesaurus=
-setlocal thesaurusfunc=
-setlocal noundofile
-setlocal undolevels=-123456
-setlocal varsofttabstop=
-setlocal vartabstop=
-setlocal virtualedit=
-setlocal wincolor=
-setlocal nowinfixbuf
-setlocal nowinfixheight
-setlocal nowinfixwidth
-setlocal winhighlight=
-setlocal wrap
-setlocal wrapmargin=0
-silent! normal! zE
-&fdl = &fdl
-{
-  var l: number = 4 - ((3 * winheight(0) + 23) / 46)
-  if l < 1 | l = 1 | endif
-  keepjumps exe ":" .. l
-  normal! zt
-  keepjumps :4
-  normal! 015|
-}
-tabnext
 edit src/GameInfo.cpp
 save_splitbelow = &splitbelow
 save_splitright = &splitright
@@ -428,10 +131,10 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe ':1resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :1resize ' .. ((&columns * 101 + 106) / 212)
-exe ':2resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :2resize ' .. ((&columns * 104 + 106) / 212)
+exe ':1resize ' .. ((&lines * 45 + 25) / 51)
+exe 'vert :1resize ' .. ((&columns * 104 + 106) / 212)
+exe ':2resize ' .. ((&lines * 45 + 25) / 51)
+exe 'vert :2resize ' .. ((&columns * 107 + 106) / 212)
 argglobal
 balt include/GameInfo.hpp
 setlocal keymap=
@@ -516,6 +219,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 legacy setlocal omnifunc=ccomplete#Complete
@@ -524,6 +228,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -669,6 +374,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 legacy setlocal omnifunc=ccomplete#Complete
@@ -677,6 +383,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -737,10 +444,10 @@ silent! normal! zE
   normal! 0
 }
 wincmd w
-exe ':1resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :1resize ' .. ((&columns * 101 + 106) / 212)
-exe ':2resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :2resize ' .. ((&columns * 104 + 106) / 212)
+exe ':1resize ' .. ((&lines * 45 + 25) / 51)
+exe 'vert :1resize ' .. ((&columns * 104 + 106) / 212)
+exe ':2resize ' .. ((&lines * 45 + 25) / 51)
+exe 'vert :2resize ' .. ((&columns * 107 + 106) / 212)
 tabnext
 edit src/GameState.cpp
 save_splitbelow = &splitbelow
@@ -757,10 +464,10 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe ':1resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :1resize ' .. ((&columns * 82 + 106) / 212)
-exe ':2resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :2resize ' .. ((&columns * 123 + 106) / 212)
+exe ':1resize ' .. ((&lines * 45 + 25) / 51)
+exe 'vert :1resize ' .. ((&columns * 85 + 106) / 212)
+exe ':2resize ' .. ((&lines * 45 + 25) / 51)
+exe 'vert :2resize ' .. ((&columns * 126 + 106) / 212)
 argglobal
 balt include/GameState.hpp
 setlocal keymap=
@@ -845,6 +552,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 legacy setlocal omnifunc=ccomplete#Complete
@@ -853,6 +561,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -998,6 +707,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 legacy setlocal omnifunc=ccomplete#Complete
@@ -1006,6 +716,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -1058,7 +769,7 @@ setlocal wrapmargin=0
 silent! normal! zE
 &fdl = &fdl
 {
-  var l: number = 7 - ((5 * winheight(0) + 22) / 45)
+  var l: number = 7 - ((0 * winheight(0) + 22) / 45)
   if l < 1 | l = 1 | endif
   keepjumps exe ":" .. l
   normal! zt
@@ -1066,30 +777,12 @@ silent! normal! zE
   normal! 0
 }
 wincmd w
-exe ':1resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :1resize ' .. ((&columns * 82 + 106) / 212)
-exe ':2resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :2resize ' .. ((&columns * 123 + 106) / 212)
+exe ':1resize ' .. ((&lines * 45 + 25) / 51)
+exe 'vert :1resize ' .. ((&columns * 85 + 106) / 212)
+exe ':2resize ' .. ((&lines * 45 + 25) / 51)
+exe 'vert :2resize ' .. ((&columns * 126 + 106) / 212)
 tabnext
 edit src/SceneGameMain.cpp
-save_splitbelow = &splitbelow
-save_splitright = &splitright
-set splitbelow splitright
-wincmd _ | wincmd |
-vsplit
-:1wincmd h
-wincmd w
-&splitbelow = save_splitbelow
-&splitright = save_splitright
-wincmd t
-set winminheight=0
-set winheight=1
-set winminwidth=0
-set winwidth=1
-exe ':1resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :1resize ' .. ((&columns * 64 + 106) / 212)
-exe ':2resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :2resize ' .. ((&columns * 141 + 106) / 212)
 argglobal
 balt include/SceneGameMain.hpp
 setlocal keymap=
@@ -1174,6 +867,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 legacy setlocal omnifunc=ccomplete#Complete
@@ -1182,6 +876,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -1234,171 +929,13 @@ setlocal wrapmargin=0
 silent! normal! zE
 &fdl = &fdl
 {
-  var l: number = 215 - ((5 * winheight(0) + 22) / 45)
+  var l: number = 170 - ((5 * winheight(0) + 23) / 46)
   if l < 1 | l = 1 | endif
   keepjumps exe ":" .. l
   normal! zt
-  keepjumps :215
+  keepjumps :170
   normal! 09|
 }
-wincmd w
-argglobal
-if bufexists(fnamemodify("include/SceneGameMain.hpp", ":p")) | buffer include/SceneGameMain.hpp | else | edit include/SceneGameMain.hpp | endif
-balt src/SceneGameMain.cpp
-setlocal keymap=
-setlocal noarabic
-setlocal noautoindent
-setlocal backupcopy=
-setlocal balloonexpr=
-setlocal nobinary
-setlocal nobreakindent
-setlocal breakindentopt=
-setlocal bufhidden=
-setlocal buflisted
-setlocal buftype=
-setlocal cindent
-setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal cinoptions=
-setlocal cinscopedecls=public,protected,private
-setlocal cinwords=if,else,while,do,for,switch
-setlocal colorcolumn=
-legacy setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,:///,://
-legacy setlocal commentstring=//\ %s
-setlocal complete=.,w,b,u,t,i
-setlocal completefunc=
-setlocal completeopt=
-setlocal concealcursor=
-setlocal conceallevel=0
-setlocal nocopyindent
-setlocal cryptmethod=
-setlocal nocursorbind
-setlocal nocursorcolumn
-setlocal nocursorline
-setlocal cursorlineopt=both
-legacy setlocal define=^\\s*#\\s*define
-setlocal dictionary=
-setlocal nodiff
-setlocal diffanchors=
-setlocal equalprg=
-setlocal errorformat=
-setlocal eventignorewin=
-setlocal noexpandtab
-if &filetype != 'cpp'
-setlocal filetype=cpp
-endif
-setlocal fillchars=
-setlocal findfunc=
-setlocal fixendofline
-setlocal foldcolumn=0
-setlocal foldenable
-setlocal foldexpr=0
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldmarker={{{,}}}
-setlocal foldmethod=manual
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldtext=foldtext()
-setlocal formatexpr=
-setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
-legacy setlocal formatoptions=croql
-setlocal formatprg=
-setlocal grepformat=
-setlocal grepprg=
-setlocal iminsert=0
-setlocal imsearch=-1
-legacy setlocal include=^\\s*#\\s*include
-setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal noinfercase
-legacy setlocal iskeyword=@,48-57,_,192-255
-setlocal keywordprg=
-setlocal lhistory=10
-setlocal nolinebreak
-setlocal nolisp
-setlocal lispoptions=
-setlocal lispwords=
-setlocal nolist
-setlocal listchars=
-setlocal makeencoding=
-setlocal makeprg=
-setlocal matchpairs=(:),{:},[:]
-setlocal modeline
-setlocal modifiable
-legacy setlocal nrformats=bin,hex
-setlocal nonumber
-setlocal numberwidth=4
-legacy setlocal omnifunc=ccomplete#Complete
-setlocal path=
-setlocal nopreserveindent
-setlocal nopreviewwindow
-setlocal quoteescape=\\
-setlocal noreadonly
-setlocal norelativenumber
-setlocal norightleft
-setlocal rightleftcmd=search
-setlocal noscrollbind
-setlocal scrolloff=-1
-setlocal scrolloffpad=-1
-setlocal shiftwidth=8
-setlocal noshortname
-setlocal showbreak=
-setlocal sidescrolloff=-1
-setlocal signcolumn=auto
-setlocal nosmartindent
-setlocal nosmoothscroll
-setlocal softtabstop=0
-setlocal nospell
-setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
-setlocal spellfile=
-setlocal spelllang=en
-setlocal spelloptions=
-setlocal statusline=
-setlocal statuslineopt=
-setlocal suffixesadd=
-setlocal swapfile
-setlocal synmaxcol=3000
-if &syntax != 'cpp'
-legacy setlocal syntax=cpp
-endif
-setlocal tabstop=8
-setlocal tagcase=
-setlocal tagfunc=
-setlocal tags=
-setlocal termwinkey=
-setlocal termwinscroll=10000
-setlocal termwinsize=
-setlocal textwidth=0
-setlocal thesaurus=
-setlocal thesaurusfunc=
-setlocal noundofile
-setlocal undolevels=-123456
-setlocal varsofttabstop=
-setlocal vartabstop=
-setlocal virtualedit=
-setlocal wincolor=
-setlocal nowinfixbuf
-setlocal nowinfixheight
-setlocal nowinfixwidth
-setlocal winhighlight=
-setlocal wrap
-setlocal wrapmargin=0
-silent! normal! zE
-&fdl = &fdl
-{
-  var l: number = 5 - ((4 * winheight(0) + 22) / 45)
-  if l < 1 | l = 1 | endif
-  keepjumps exe ":" .. l
-  normal! zt
-  keepjumps :5
-  normal! 0
-}
-wincmd w
-exe ':1resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :1resize ' .. ((&columns * 64 + 106) / 212)
-exe ':2resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :2resize ' .. ((&columns * 141 + 106) / 212)
 tabnext
 edit src/GameWindow.cpp
 save_splitbelow = &splitbelow
@@ -1415,8 +952,8 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe 'vert :1resize ' .. ((&columns * 102 + 106) / 212)
-exe 'vert :2resize ' .. ((&columns * 109 + 106) / 212)
+exe 'vert :1resize ' .. ((&columns * 105 + 106) / 212)
+exe 'vert :2resize ' .. ((&columns * 106 + 106) / 212)
 argglobal
 balt include/GameWindow.hpp
 setlocal keymap=
@@ -1501,6 +1038,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 legacy setlocal omnifunc=ccomplete#Complete
@@ -1509,6 +1047,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -1561,7 +1100,7 @@ setlocal wrapmargin=0
 silent! normal! zE
 &fdl = &fdl
 {
-  var l: number = 34 - ((33 * winheight(0) + 24) / 49)
+  var l: number = 34 - ((33 * winheight(0) + 24) / 48)
   if l < 1 | l = 1 | endif
   keepjumps exe ":" .. l
   normal! zt
@@ -1570,8 +1109,8 @@ silent! normal! zE
 }
 wincmd w
 argglobal
-if bufexists(fnamemodify("include/GameWindow.hpp", ":p")) | buffer include/GameWindow.hpp | else | edit include/GameWindow.hpp | endif
-balt src/GameWindow.cpp
+if bufexists(fnamemodify("src/GameWindow.cpp", ":p")) | buffer src/GameWindow.cpp | else | edit src/GameWindow.cpp | endif
+balt include/GameWindow.hpp
 setlocal keymap=
 setlocal noarabic
 setlocal noautoindent
@@ -1611,7 +1150,7 @@ setlocal errorformat=
 setlocal eventignorewin=
 setlocal noexpandtab
 if &filetype != 'cpp'
-setlocal filetype=cpp
+legacy setlocal filetype=cpp
 endif
 setlocal fillchars=
 setlocal findfunc=
@@ -1654,6 +1193,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 legacy setlocal omnifunc=ccomplete#Complete
@@ -1662,6 +1202,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -1714,16 +1255,16 @@ setlocal wrapmargin=0
 silent! normal! zE
 &fdl = &fdl
 {
-  var l: number = 5 - ((0 * winheight(0) + 24) / 49)
+  var l: number = 34 - ((32 * winheight(0) + 24) / 48)
   if l < 1 | l = 1 | endif
   keepjumps exe ":" .. l
   normal! zt
-  keepjumps :5
-  normal! 0
+  keepjumps :34
+  normal! 09|
 }
 wincmd w
-exe 'vert :1resize ' .. ((&columns * 102 + 106) / 212)
-exe 'vert :2resize ' .. ((&columns * 109 + 106) / 212)
+exe 'vert :1resize ' .. ((&columns * 105 + 106) / 212)
+exe 'vert :2resize ' .. ((&columns * 106 + 106) / 212)
 tabnext
 edit deps/XPFW/src/Window.c
 argglobal
@@ -1810,6 +1351,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 legacy setlocal omnifunc=ccomplete#Complete
@@ -1818,6 +1360,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -1870,7 +1413,7 @@ setlocal wrapmargin=0
 silent! normal! zE
 &fdl = &fdl
 {
-  var l: number = 67 - ((5 * winheight(0) + 25) / 50)
+  var l: number = 67 - ((5 * winheight(0) + 24) / 49)
   if l < 1 | l = 1 | endif
   keepjumps exe ":" .. l
   normal! zt
@@ -1878,9 +1421,180 @@ silent! normal! zE
   normal! 09|
 }
 tabnext
-edit include/XASM2/VM.hpp
+edit src/XASM2/vm.cpp
+save_splitbelow = &splitbelow
+save_splitright = &splitright
+set splitbelow splitright
+wincmd _ | wincmd |
+vsplit
+:1wincmd h
+wincmd w
+&splitbelow = save_splitbelow
+&splitright = save_splitright
+wincmd t
+set winminheight=0
+set winheight=1
+set winminwidth=0
+set winwidth=1
+exe 'vert :1resize ' .. ((&columns * 106 + 106) / 212)
+exe 'vert :2resize ' .. ((&columns * 105 + 106) / 212)
 argglobal
-balt deps/XPFW/src/Window.c
+balt include/XASM2/VM.hpp
+setlocal keymap=
+setlocal noarabic
+setlocal autoindent
+setlocal backupcopy=
+setlocal balloonexpr=
+setlocal nobinary
+setlocal nobreakindent
+setlocal breakindentopt=
+setlocal bufhidden=
+setlocal buflisted
+setlocal buftype=
+setlocal nocindent
+setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal cinoptions=
+setlocal cinscopedecls=public,protected,private
+setlocal cinwords=if,else,while,do,for,switch
+setlocal colorcolumn=
+setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
+setlocal commentstring=/*\ %s\ */
+setlocal complete=.,w,b,u,t,i
+setlocal completefunc=
+setlocal completeopt=
+setlocal concealcursor=
+setlocal conceallevel=0
+setlocal nocopyindent
+setlocal cryptmethod=
+setlocal nocursorbind
+setlocal nocursorcolumn
+setlocal nocursorline
+setlocal cursorlineopt=both
+setlocal define=
+setlocal dictionary=
+setlocal nodiff
+setlocal diffanchors=
+setlocal equalprg=
+setlocal errorformat=
+setlocal eventignorewin=
+setlocal noexpandtab
+if &filetype != 'cpp'
+legacy setlocal filetype=cpp
+endif
+setlocal fillchars=
+setlocal findfunc=
+setlocal fixendofline
+setlocal foldcolumn=0
+setlocal foldenable
+setlocal foldexpr=0
+setlocal foldignore=#
+setlocal foldlevel=0
+setlocal foldmarker={{{,}}}
+setlocal foldmethod=manual
+setlocal foldminlines=1
+setlocal foldnestmax=20
+setlocal foldtext=foldtext()
+setlocal formatexpr=
+setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
+legacy setlocal formatoptions=tqcro
+setlocal formatprg=
+setlocal grepformat=
+setlocal grepprg=
+setlocal iminsert=0
+setlocal imsearch=-1
+setlocal include=
+setlocal includeexpr=
+setlocal indentexpr=
+setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal noinfercase
+legacy setlocal iskeyword=@,48-57,_,192-255
+setlocal keywordprg=
+setlocal lhistory=10
+setlocal nolinebreak
+setlocal nolisp
+setlocal lispoptions=
+setlocal lispwords=
+setlocal nolist
+setlocal listchars=
+setlocal makeencoding=
+setlocal makeprg=
+setlocal matchpairs=(:),{:},[:]
+setlocal modeline
+setlocal modifiable
+legacy setlocal nrformats=bin,hex
+set number
+setlocal number
+setlocal numberwidth=4
+setlocal omnifunc=
+setlocal path=
+setlocal nopreserveindent
+setlocal nopreviewwindow
+setlocal quoteescape=\\
+setlocal noreadonly
+set relativenumber
+setlocal relativenumber
+setlocal norightleft
+setlocal rightleftcmd=search
+setlocal noscrollbind
+setlocal scrolloff=-1
+setlocal scrolloffpad=-1
+setlocal shiftwidth=8
+setlocal noshortname
+setlocal showbreak=
+setlocal sidescrolloff=-1
+setlocal signcolumn=auto
+setlocal nosmartindent
+setlocal nosmoothscroll
+setlocal softtabstop=0
+setlocal nospell
+setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
+setlocal spellfile=
+setlocal spelllang=en
+setlocal spelloptions=
+setlocal statusline=
+setlocal statuslineopt=
+setlocal suffixesadd=
+setlocal swapfile
+setlocal synmaxcol=3000
+if &syntax != 'cpp'
+legacy setlocal syntax=cpp
+endif
+setlocal tabstop=8
+setlocal tagcase=
+setlocal tagfunc=
+setlocal tags=
+setlocal termwinkey=
+setlocal termwinscroll=10000
+setlocal termwinsize=
+setlocal textwidth=0
+setlocal thesaurus=
+setlocal thesaurusfunc=
+setlocal noundofile
+setlocal undolevels=-123456
+setlocal varsofttabstop=
+setlocal vartabstop=
+setlocal virtualedit=
+setlocal wincolor=
+setlocal nowinfixbuf
+setlocal nowinfixheight
+setlocal nowinfixwidth
+setlocal winhighlight=
+setlocal wrap
+setlocal wrapmargin=0
+silent! normal! zE
+&fdl = &fdl
+{
+  var l: number = 227 - ((20 * winheight(0) + 24) / 48)
+  if l < 1 | l = 1 | endif
+  keepjumps exe ":" .. l
+  normal! zt
+  keepjumps :227
+  normal! 0
+}
+wincmd w
+argglobal
+if bufexists(fnamemodify("include/XASM2/VM.hpp", ":p")) | buffer include/XASM2/VM.hpp | else | edit include/XASM2/VM.hpp | endif
+balt src/XASM2/vm.cpp
 setlocal keymap=
 setlocal noarabic
 setlocal noautoindent
@@ -1963,6 +1677,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 legacy setlocal omnifunc=ccomplete#Complete
@@ -1971,6 +1686,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -2023,11 +1739,634 @@ setlocal wrapmargin=0
 silent! normal! zE
 &fdl = &fdl
 {
-  var l: number = 41 - ((24 * winheight(0) + 25) / 50)
+  var l: number = 33 - ((15 * winheight(0) + 24) / 48)
   if l < 1 | l = 1 | endif
   keepjumps exe ":" .. l
   normal! zt
-  keepjumps :41
+  keepjumps :33
+  normal! 0
+}
+wincmd w
+exe 'vert :1resize ' .. ((&columns * 106 + 106) / 212)
+exe 'vert :2resize ' .. ((&columns * 105 + 106) / 212)
+tabnext
+edit xasm2/xasm2_cmd.hpp
+argglobal
+balt src/XASM2/vm.cpp
+setlocal keymap=
+setlocal noarabic
+setlocal autoindent
+setlocal backupcopy=
+setlocal balloonexpr=
+setlocal nobinary
+setlocal nobreakindent
+setlocal breakindentopt=
+setlocal bufhidden=
+setlocal buflisted
+setlocal buftype=
+setlocal nocindent
+setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal cinoptions=
+setlocal cinscopedecls=public,protected,private
+setlocal cinwords=if,else,while,do,for,switch
+setlocal colorcolumn=
+setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
+setlocal commentstring=/*\ %s\ */
+setlocal complete=.,w,b,u,t,i
+setlocal completefunc=
+setlocal completeopt=
+setlocal concealcursor=
+setlocal conceallevel=0
+setlocal nocopyindent
+setlocal cryptmethod=
+setlocal nocursorbind
+setlocal nocursorcolumn
+setlocal nocursorline
+setlocal cursorlineopt=both
+setlocal define=
+setlocal dictionary=
+setlocal nodiff
+setlocal diffanchors=
+setlocal equalprg=
+setlocal errorformat=
+setlocal eventignorewin=
+setlocal noexpandtab
+if &filetype != 'cpp'
+setlocal filetype=cpp
+endif
+setlocal fillchars=
+setlocal findfunc=
+setlocal fixendofline
+setlocal foldcolumn=0
+setlocal foldenable
+setlocal foldexpr=0
+setlocal foldignore=#
+setlocal foldlevel=0
+setlocal foldmarker={{{,}}}
+setlocal foldmethod=manual
+setlocal foldminlines=1
+setlocal foldnestmax=20
+setlocal foldtext=foldtext()
+setlocal formatexpr=
+setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
+legacy setlocal formatoptions=tqcro
+setlocal formatprg=
+setlocal grepformat=
+setlocal grepprg=
+setlocal iminsert=0
+setlocal imsearch=-1
+setlocal include=
+setlocal includeexpr=
+setlocal indentexpr=
+setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal noinfercase
+legacy setlocal iskeyword=@,48-57,_,192-255
+setlocal keywordprg=
+setlocal lhistory=10
+setlocal nolinebreak
+setlocal nolisp
+setlocal lispoptions=
+setlocal lispwords=
+setlocal nolist
+setlocal listchars=
+setlocal makeencoding=
+setlocal makeprg=
+setlocal matchpairs=(:),{:},[:]
+setlocal modeline
+setlocal modifiable
+legacy setlocal nrformats=bin,hex
+set number
+setlocal number
+setlocal numberwidth=4
+setlocal omnifunc=
+setlocal path=
+setlocal nopreserveindent
+setlocal nopreviewwindow
+setlocal quoteescape=\\
+setlocal noreadonly
+set relativenumber
+setlocal relativenumber
+setlocal norightleft
+setlocal rightleftcmd=search
+setlocal noscrollbind
+setlocal scrolloff=-1
+setlocal scrolloffpad=-1
+setlocal shiftwidth=8
+setlocal noshortname
+setlocal showbreak=
+setlocal sidescrolloff=-1
+setlocal signcolumn=auto
+setlocal nosmartindent
+setlocal nosmoothscroll
+setlocal softtabstop=0
+setlocal nospell
+setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
+setlocal spellfile=
+setlocal spelllang=en
+setlocal spelloptions=
+setlocal statusline=
+setlocal statuslineopt=
+setlocal suffixesadd=
+setlocal swapfile
+setlocal synmaxcol=3000
+if &syntax != 'cpp'
+legacy setlocal syntax=cpp
+endif
+setlocal tabstop=8
+setlocal tagcase=
+setlocal tagfunc=
+setlocal tags=
+setlocal termwinkey=
+setlocal termwinscroll=10000
+setlocal termwinsize=
+setlocal textwidth=0
+setlocal thesaurus=
+setlocal thesaurusfunc=
+setlocal noundofile
+setlocal undolevels=-123456
+setlocal varsofttabstop=
+setlocal vartabstop=
+setlocal virtualedit=
+setlocal wincolor=
+setlocal nowinfixbuf
+setlocal nowinfixheight
+setlocal nowinfixwidth
+setlocal winhighlight=
+setlocal wrap
+setlocal wrapmargin=0
+silent! normal! zE
+&fdl = &fdl
+{
+  var l: number = 64 - ((15 * winheight(0) + 24) / 49)
+  if l < 1 | l = 1 | endif
+  keepjumps exe ":" .. l
+  normal! zt
+  keepjumps :64
+  normal! 0
+}
+tabnext
+edit include/SpriteManager.hpp
+argglobal
+balt xasm2/xasm2_cmd.hpp
+setlocal keymap=
+setlocal noarabic
+setlocal autoindent
+setlocal backupcopy=
+setlocal balloonexpr=
+setlocal nobinary
+setlocal nobreakindent
+setlocal breakindentopt=
+setlocal bufhidden=
+setlocal buflisted
+setlocal buftype=
+setlocal nocindent
+setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal cinoptions=
+setlocal cinscopedecls=public,protected,private
+setlocal cinwords=if,else,while,do,for,switch
+setlocal colorcolumn=
+setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
+setlocal commentstring=/*\ %s\ */
+setlocal complete=.,w,b,u,t,i
+setlocal completefunc=
+setlocal completeopt=
+setlocal concealcursor=
+setlocal conceallevel=0
+setlocal nocopyindent
+setlocal cryptmethod=
+setlocal nocursorbind
+setlocal nocursorcolumn
+setlocal nocursorline
+setlocal cursorlineopt=both
+setlocal define=
+setlocal dictionary=
+setlocal nodiff
+setlocal diffanchors=
+setlocal equalprg=
+setlocal errorformat=
+setlocal eventignorewin=
+setlocal noexpandtab
+if &filetype != 'cpp'
+setlocal filetype=cpp
+endif
+setlocal fillchars=
+setlocal findfunc=
+setlocal fixendofline
+setlocal foldcolumn=0
+setlocal foldenable
+setlocal foldexpr=0
+setlocal foldignore=#
+setlocal foldlevel=0
+setlocal foldmarker={{{,}}}
+setlocal foldmethod=manual
+setlocal foldminlines=1
+setlocal foldnestmax=20
+setlocal foldtext=foldtext()
+setlocal formatexpr=
+setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
+legacy setlocal formatoptions=tqcro
+setlocal formatprg=
+setlocal grepformat=
+setlocal grepprg=
+setlocal iminsert=0
+setlocal imsearch=-1
+setlocal include=
+setlocal includeexpr=
+setlocal indentexpr=
+setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal noinfercase
+legacy setlocal iskeyword=@,48-57,_,192-255
+setlocal keywordprg=
+setlocal lhistory=10
+setlocal nolinebreak
+setlocal nolisp
+setlocal lispoptions=
+setlocal lispwords=
+setlocal nolist
+setlocal listchars=
+setlocal makeencoding=
+setlocal makeprg=
+setlocal matchpairs=(:),{:},[:]
+setlocal modeline
+setlocal modifiable
+legacy setlocal nrformats=bin,hex
+set number
+setlocal number
+setlocal numberwidth=4
+setlocal omnifunc=
+setlocal path=
+setlocal nopreserveindent
+setlocal nopreviewwindow
+setlocal quoteescape=\\
+setlocal noreadonly
+set relativenumber
+setlocal relativenumber
+setlocal norightleft
+setlocal rightleftcmd=search
+setlocal noscrollbind
+setlocal scrolloff=-1
+setlocal scrolloffpad=-1
+setlocal shiftwidth=8
+setlocal noshortname
+setlocal showbreak=
+setlocal sidescrolloff=-1
+setlocal signcolumn=auto
+setlocal nosmartindent
+setlocal nosmoothscroll
+setlocal softtabstop=0
+setlocal nospell
+setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
+setlocal spellfile=
+setlocal spelllang=en
+setlocal spelloptions=
+setlocal statusline=
+setlocal statuslineopt=
+setlocal suffixesadd=
+setlocal swapfile
+setlocal synmaxcol=3000
+if &syntax != 'cpp'
+legacy setlocal syntax=cpp
+endif
+setlocal tabstop=8
+setlocal tagcase=
+setlocal tagfunc=
+setlocal tags=
+setlocal termwinkey=
+setlocal termwinscroll=10000
+setlocal termwinsize=
+setlocal textwidth=0
+setlocal thesaurus=
+setlocal thesaurusfunc=
+setlocal noundofile
+setlocal undolevels=-123456
+setlocal varsofttabstop=
+setlocal vartabstop=
+setlocal virtualedit=
+setlocal wincolor=
+setlocal nowinfixbuf
+setlocal nowinfixheight
+setlocal nowinfixwidth
+setlocal winhighlight=
+setlocal wrap
+setlocal wrapmargin=0
+silent! normal! zE
+&fdl = &fdl
+{
+  var l: number = 17 - ((12 * winheight(0) + 24) / 49)
+  if l < 1 | l = 1 | endif
+  keepjumps exe ":" .. l
+  normal! zt
+  keepjumps :17
+  normal! 075|
+}
+tabnext
+edit deps/XPFW/include/OpenGL/Buffer.h
+argglobal
+balt include/SpriteManager.hpp
+setlocal keymap=
+setlocal noarabic
+setlocal autoindent
+setlocal backupcopy=
+setlocal balloonexpr=
+setlocal nobinary
+setlocal nobreakindent
+setlocal breakindentopt=
+setlocal bufhidden=
+setlocal buflisted
+setlocal buftype=
+setlocal nocindent
+setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal cinoptions=
+setlocal cinscopedecls=public,protected,private
+setlocal cinwords=if,else,while,do,for,switch
+setlocal colorcolumn=
+setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
+setlocal commentstring=/*\ %s\ */
+setlocal complete=.,w,b,u,t,i
+setlocal completefunc=
+setlocal completeopt=
+setlocal concealcursor=
+setlocal conceallevel=0
+setlocal nocopyindent
+setlocal cryptmethod=
+setlocal nocursorbind
+setlocal nocursorcolumn
+setlocal nocursorline
+setlocal cursorlineopt=both
+setlocal define=
+setlocal dictionary=
+setlocal nodiff
+setlocal diffanchors=
+setlocal equalprg=
+setlocal errorformat=
+setlocal eventignorewin=
+setlocal noexpandtab
+if &filetype != 'c'
+setlocal filetype=c
+endif
+setlocal fillchars=
+setlocal findfunc=
+setlocal fixendofline
+setlocal foldcolumn=0
+setlocal foldenable
+setlocal foldexpr=0
+setlocal foldignore=#
+setlocal foldlevel=0
+setlocal foldmarker={{{,}}}
+setlocal foldmethod=manual
+setlocal foldminlines=1
+setlocal foldnestmax=20
+setlocal foldtext=foldtext()
+setlocal formatexpr=
+setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
+legacy setlocal formatoptions=tqcro
+setlocal formatprg=
+setlocal grepformat=
+setlocal grepprg=
+setlocal iminsert=0
+setlocal imsearch=-1
+setlocal include=
+setlocal includeexpr=
+setlocal indentexpr=
+setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal noinfercase
+legacy setlocal iskeyword=@,48-57,_,192-255
+setlocal keywordprg=
+setlocal lhistory=10
+setlocal nolinebreak
+setlocal nolisp
+setlocal lispoptions=
+setlocal lispwords=
+setlocal nolist
+setlocal listchars=
+setlocal makeencoding=
+setlocal makeprg=
+setlocal matchpairs=(:),{:},[:]
+setlocal modeline
+setlocal modifiable
+legacy setlocal nrformats=bin,hex
+set number
+setlocal number
+setlocal numberwidth=4
+setlocal omnifunc=
+setlocal path=
+setlocal nopreserveindent
+setlocal nopreviewwindow
+setlocal quoteescape=\\
+setlocal noreadonly
+set relativenumber
+setlocal relativenumber
+setlocal norightleft
+setlocal rightleftcmd=search
+setlocal noscrollbind
+setlocal scrolloff=-1
+setlocal scrolloffpad=-1
+setlocal shiftwidth=8
+setlocal noshortname
+setlocal showbreak=
+setlocal sidescrolloff=-1
+setlocal signcolumn=auto
+setlocal nosmartindent
+setlocal nosmoothscroll
+setlocal softtabstop=0
+setlocal nospell
+setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
+setlocal spellfile=
+setlocal spelllang=en
+setlocal spelloptions=
+setlocal statusline=
+setlocal statuslineopt=
+setlocal suffixesadd=
+setlocal swapfile
+setlocal synmaxcol=3000
+if &syntax != 'c'
+legacy setlocal syntax=c
+endif
+setlocal tabstop=8
+setlocal tagcase=
+setlocal tagfunc=
+setlocal tags=
+setlocal termwinkey=
+setlocal termwinscroll=10000
+setlocal termwinsize=
+setlocal textwidth=0
+setlocal thesaurus=
+setlocal thesaurusfunc=
+setlocal noundofile
+setlocal undolevels=-123456
+setlocal varsofttabstop=
+setlocal vartabstop=
+setlocal virtualedit=
+setlocal wincolor=
+setlocal nowinfixbuf
+setlocal nowinfixheight
+setlocal nowinfixwidth
+setlocal winhighlight=
+setlocal wrap
+setlocal wrapmargin=0
+silent! normal! zE
+&fdl = &fdl
+{
+  var l: number = 24 - ((23 * winheight(0) + 25) / 50)
+  if l < 1 | l = 1 | endif
+  keepjumps exe ":" .. l
+  normal! zt
+  keepjumps :24
+  normal! 0136|
+}
+tabnext
+edit build/camera.xasm2
+argglobal
+balt src/XASM2/vm.cpp
+setlocal keymap=
+setlocal noarabic
+setlocal autoindent
+setlocal backupcopy=
+setlocal balloonexpr=
+setlocal nobinary
+setlocal nobreakindent
+setlocal breakindentopt=
+setlocal bufhidden=
+setlocal buflisted
+setlocal buftype=
+setlocal nocindent
+setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal cinoptions=
+setlocal cinscopedecls=public,protected,private
+setlocal cinwords=if,else,while,do,for,switch
+setlocal colorcolumn=
+setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
+setlocal commentstring=/*\ %s\ */
+setlocal complete=.,w,b,u,t,i
+setlocal completefunc=
+setlocal completeopt=
+setlocal concealcursor=
+setlocal conceallevel=0
+setlocal nocopyindent
+setlocal cryptmethod=
+setlocal nocursorbind
+setlocal nocursorcolumn
+setlocal nocursorline
+setlocal cursorlineopt=both
+setlocal define=
+setlocal dictionary=
+setlocal nodiff
+setlocal diffanchors=
+setlocal equalprg=
+setlocal errorformat=
+setlocal eventignorewin=
+setlocal noexpandtab
+if &filetype != 'conf'
+legacy setlocal filetype=conf
+endif
+setlocal fillchars=
+setlocal findfunc=
+setlocal fixendofline
+setlocal foldcolumn=0
+setlocal foldenable
+setlocal foldexpr=0
+setlocal foldignore=#
+setlocal foldlevel=0
+setlocal foldmarker={{{,}}}
+setlocal foldmethod=manual
+setlocal foldminlines=1
+setlocal foldnestmax=20
+setlocal foldtext=foldtext()
+setlocal formatexpr=
+setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
+legacy setlocal formatoptions=tqcro
+setlocal formatprg=
+setlocal grepformat=
+setlocal grepprg=
+setlocal iminsert=0
+setlocal imsearch=-1
+setlocal include=
+setlocal includeexpr=
+setlocal indentexpr=
+setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
+setlocal noinfercase
+legacy setlocal iskeyword=@,48-57,_,192-255
+setlocal keywordprg=
+setlocal lhistory=10
+setlocal nolinebreak
+setlocal nolisp
+setlocal lispoptions=
+setlocal lispwords=
+setlocal nolist
+setlocal listchars=
+setlocal makeencoding=
+setlocal makeprg=
+setlocal matchpairs=(:),{:},[:]
+setlocal modeline
+setlocal modifiable
+legacy setlocal nrformats=bin,hex
+set number
+setlocal number
+setlocal numberwidth=4
+setlocal omnifunc=
+setlocal path=
+setlocal nopreserveindent
+setlocal nopreviewwindow
+setlocal quoteescape=\\
+setlocal noreadonly
+set relativenumber
+setlocal relativenumber
+setlocal norightleft
+setlocal rightleftcmd=search
+setlocal noscrollbind
+setlocal scrolloff=-1
+setlocal scrolloffpad=-1
+setlocal shiftwidth=8
+setlocal noshortname
+setlocal showbreak=
+setlocal sidescrolloff=-1
+setlocal signcolumn=auto
+setlocal nosmartindent
+setlocal nosmoothscroll
+setlocal softtabstop=0
+setlocal nospell
+setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
+setlocal spellfile=
+setlocal spelllang=en
+setlocal spelloptions=
+setlocal statusline=
+setlocal statuslineopt=
+setlocal suffixesadd=
+setlocal swapfile
+setlocal synmaxcol=3000
+if &syntax != 'conf'
+legacy setlocal syntax=conf
+endif
+setlocal tabstop=8
+setlocal tagcase=
+setlocal tagfunc=
+setlocal tags=
+setlocal termwinkey=
+setlocal termwinscroll=10000
+setlocal termwinsize=
+setlocal textwidth=0
+setlocal thesaurus=
+setlocal thesaurusfunc=
+setlocal noundofile
+setlocal undolevels=-123456
+setlocal varsofttabstop=
+setlocal vartabstop=
+setlocal virtualedit=
+setlocal wincolor=
+setlocal nowinfixbuf
+setlocal nowinfixheight
+setlocal nowinfixwidth
+setlocal winhighlight=
+setlocal wrap
+setlocal wrapmargin=0
+silent! normal! zE
+&fdl = &fdl
+{
+  var l: number = 11 - ((10 * winheight(0) + 25) / 50)
+  if l < 1 | l = 1 | endif
+  keepjumps exe ":" .. l
+  normal! zt
+  keepjumps :11
   normal! 0
 }
 tabnext
@@ -2046,10 +2385,10 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe ':1resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :1resize ' .. ((&columns * 102 + 106) / 212)
-exe ':2resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :2resize ' .. ((&columns * 103 + 106) / 212)
+exe ':1resize ' .. ((&lines * 46 + 25) / 51)
+exe 'vert :1resize ' .. ((&columns * 105 + 106) / 212)
+exe ':2resize ' .. ((&lines * 46 + 25) / 51)
+exe 'vert :2resize ' .. ((&columns * 106 + 106) / 212)
 argglobal
 balt include/GameCore.hpp
 setlocal keymap=
@@ -2134,6 +2473,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 legacy setlocal omnifunc=ccomplete#Complete
@@ -2142,6 +2482,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -2194,7 +2535,7 @@ setlocal wrapmargin=0
 silent! normal! zE
 &fdl = &fdl
 {
-  var l: number = 27 - ((10 * winheight(0) + 22) / 45)
+  var l: number = 27 - ((10 * winheight(0) + 23) / 46)
   if l < 1 | l = 1 | endif
   keepjumps exe ":" .. l
   normal! zt
@@ -2287,6 +2628,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 legacy setlocal omnifunc=ccomplete#Complete
@@ -2295,6 +2637,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -2347,7 +2690,7 @@ setlocal wrapmargin=0
 silent! normal! zE
 &fdl = &fdl
 {
-  var l: number = 4 - ((3 * winheight(0) + 22) / 45)
+  var l: number = 4 - ((3 * winheight(0) + 23) / 46)
   if l < 1 | l = 1 | endif
   keepjumps exe ":" .. l
   normal! zt
@@ -2355,10 +2698,10 @@ silent! normal! zE
   normal! 0
 }
 wincmd w
-exe ':1resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :1resize ' .. ((&columns * 102 + 106) / 212)
-exe ':2resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :2resize ' .. ((&columns * 103 + 106) / 212)
+exe ':1resize ' .. ((&lines * 46 + 25) / 51)
+exe 'vert :1resize ' .. ((&columns * 105 + 106) / 212)
+exe ':2resize ' .. ((&lines * 46 + 25) / 51)
+exe 'vert :2resize ' .. ((&columns * 106 + 106) / 212)
 tabnext
 edit build/CONFIG.JSON
 argglobal
@@ -2445,6 +2788,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 setlocal omnifunc=
@@ -2453,6 +2797,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -2505,7 +2850,7 @@ setlocal wrapmargin=0
 silent! normal! zE
 &fdl = &fdl
 {
-  var l: number = 1 - ((0 * winheight(0) + 23) / 46)
+  var l: number = 1 - ((0 * winheight(0) + 25) / 50)
   if l < 1 | l = 1 | endif
   keepjumps exe ":" .. l
   normal! zt
@@ -2598,6 +2943,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 setlocal omnifunc=
@@ -2606,6 +2952,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -2658,7 +3005,7 @@ setlocal wrapmargin=0
 silent! normal! zE
 &fdl = &fdl
 {
-  var l: number = 82 - ((13 * winheight(0) + 23) / 46)
+  var l: number = 82 - ((14 * winheight(0) + 25) / 50)
   if l < 1 | l = 1 | endif
   keepjumps exe ":" .. l
   normal! zt
@@ -2751,6 +3098,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 setlocal omnifunc=
@@ -2759,6 +3107,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -2811,7 +3160,7 @@ setlocal wrapmargin=0
 silent! normal! zE
 &fdl = &fdl
 {
-  var l: number = 63 - ((40 * winheight(0) + 23) / 46)
+  var l: number = 63 - ((44 * winheight(0) + 25) / 50)
   if l < 1 | l = 1 | endif
   keepjumps exe ":" .. l
   normal! zt
@@ -2838,12 +3187,12 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe ':1resize ' .. ((&lines * 22 + 26) / 52)
-exe 'vert :1resize ' .. ((&columns * 82 + 106) / 212)
-exe ':2resize ' .. ((&lines * 22 + 26) / 52)
-exe 'vert :2resize ' .. ((&columns * 82 + 106) / 212)
-exe ':3resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :3resize ' .. ((&columns * 123 + 106) / 212)
+exe ':1resize ' .. ((&lines * 21 + 25) / 51)
+exe 'vert :1resize ' .. ((&columns * 85 + 106) / 212)
+exe ':2resize ' .. ((&lines * 24 + 25) / 51)
+exe 'vert :2resize ' .. ((&columns * 85 + 106) / 212)
+exe ':3resize ' .. ((&lines * 46 + 25) / 51)
+exe 'vert :3resize ' .. ((&columns * 126 + 106) / 212)
 argglobal
 balt include/ConfigCtrl.hpp
 setlocal keymap=
@@ -2928,6 +3277,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 legacy setlocal omnifunc=ccomplete#Complete
@@ -2936,6 +3286,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -2988,7 +3339,7 @@ setlocal wrapmargin=0
 silent! normal! zE
 &fdl = &fdl
 {
-  var l: number = 13 - ((11 * winheight(0) + 11) / 22)
+  var l: number = 13 - ((10 * winheight(0) + 10) / 21)
   if l < 1 | l = 1 | endif
   keepjumps exe ":" .. l
   normal! zt
@@ -3081,6 +3432,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 legacy setlocal omnifunc=ccomplete#Complete
@@ -3089,6 +3441,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -3141,7 +3494,7 @@ setlocal wrapmargin=0
 silent! normal! zE
 &fdl = &fdl
 {
-  var l: number = 5 - ((0 * winheight(0) + 11) / 22)
+  var l: number = 5 - ((0 * winheight(0) + 12) / 24)
   if l < 1 | l = 1 | endif
   keepjumps exe ":" .. l
   normal! zt
@@ -3234,6 +3587,7 @@ setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 legacy setlocal nrformats=bin,hex
+set number
 setlocal nonumber
 setlocal numberwidth=4
 legacy setlocal omnifunc=ccomplete#Complete
@@ -3242,6 +3596,7 @@ setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
 setlocal noreadonly
+set relativenumber
 setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
@@ -3294,7 +3649,7 @@ setlocal wrapmargin=0
 silent! normal! zE
 &fdl = &fdl
 {
-  var l: number = 5 - ((4 * winheight(0) + 22) / 45)
+  var l: number = 5 - ((4 * winheight(0) + 23) / 46)
   if l < 1 | l = 1 | endif
   keepjumps exe ":" .. l
   normal! zt
@@ -3302,323 +3657,13 @@ silent! normal! zE
   normal! 0
 }
 wincmd w
-exe ':1resize ' .. ((&lines * 22 + 26) / 52)
-exe 'vert :1resize ' .. ((&columns * 82 + 106) / 212)
-exe ':2resize ' .. ((&lines * 22 + 26) / 52)
-exe 'vert :2resize ' .. ((&columns * 82 + 106) / 212)
-exe ':3resize ' .. ((&lines * 45 + 26) / 52)
-exe 'vert :3resize ' .. ((&columns * 123 + 106) / 212)
-tabnext
-edit deps/XPFW/src_demo/caf0_pack.cpp
-argglobal
-balt src/ConfigCtrl.cpp
-setlocal keymap=
-setlocal noarabic
-setlocal noautoindent
-setlocal backupcopy=
-setlocal balloonexpr=
-setlocal nobinary
-setlocal nobreakindent
-setlocal breakindentopt=
-setlocal bufhidden=
-setlocal buflisted
-setlocal buftype=
-setlocal cindent
-setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal cinoptions=
-setlocal cinscopedecls=public,protected,private
-setlocal cinwords=if,else,while,do,for,switch
-setlocal colorcolumn=
-legacy setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,:///,://
-legacy setlocal commentstring=//\ %s
-setlocal complete=.,w,b,u,t,i
-setlocal completefunc=
-setlocal completeopt=
-setlocal concealcursor=
-setlocal conceallevel=0
-setlocal nocopyindent
-setlocal cryptmethod=
-setlocal nocursorbind
-setlocal nocursorcolumn
-setlocal nocursorline
-setlocal cursorlineopt=both
-legacy setlocal define=^\\s*#\\s*define
-setlocal dictionary=
-setlocal nodiff
-setlocal diffanchors=
-setlocal equalprg=
-setlocal errorformat=
-setlocal eventignorewin=
-setlocal noexpandtab
-if &filetype != 'cpp'
-legacy setlocal filetype=cpp
-endif
-setlocal fillchars=
-setlocal findfunc=
-setlocal fixendofline
-setlocal foldcolumn=0
-setlocal foldenable
-setlocal foldexpr=0
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldmarker={{{,}}}
-setlocal foldmethod=manual
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldtext=foldtext()
-setlocal formatexpr=
-setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
-legacy setlocal formatoptions=croql
-setlocal formatprg=
-setlocal grepformat=
-setlocal grepprg=
-setlocal iminsert=0
-setlocal imsearch=-1
-legacy setlocal include=^\\s*#\\s*include
-setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal noinfercase
-legacy setlocal iskeyword=@,48-57,_,192-255
-setlocal keywordprg=
-setlocal lhistory=10
-setlocal nolinebreak
-setlocal nolisp
-setlocal lispoptions=
-setlocal lispwords=
-setlocal nolist
-setlocal listchars=
-setlocal makeencoding=
-setlocal makeprg=
-setlocal matchpairs=(:),{:},[:]
-setlocal modeline
-setlocal modifiable
-legacy setlocal nrformats=bin,hex
-set number
-setlocal number
-setlocal numberwidth=4
-legacy setlocal omnifunc=ccomplete#Complete
-setlocal path=
-setlocal nopreserveindent
-setlocal nopreviewwindow
-setlocal quoteescape=\\
-setlocal noreadonly
-set relativenumber
-setlocal relativenumber
-setlocal norightleft
-setlocal rightleftcmd=search
-setlocal noscrollbind
-setlocal scrolloff=-1
-setlocal scrolloffpad=-1
-setlocal shiftwidth=8
-setlocal noshortname
-setlocal showbreak=
-setlocal sidescrolloff=-1
-setlocal signcolumn=auto
-setlocal nosmartindent
-setlocal nosmoothscroll
-setlocal softtabstop=0
-setlocal nospell
-setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
-setlocal spellfile=
-setlocal spelllang=en
-setlocal spelloptions=
-setlocal statusline=
-setlocal statuslineopt=
-setlocal suffixesadd=
-setlocal swapfile
-setlocal synmaxcol=3000
-if &syntax != 'cpp'
-legacy setlocal syntax=cpp
-endif
-setlocal tabstop=8
-setlocal tagcase=
-setlocal tagfunc=
-setlocal tags=
-setlocal termwinkey=
-setlocal termwinscroll=10000
-setlocal termwinsize=
-setlocal textwidth=0
-setlocal thesaurus=
-setlocal thesaurusfunc=
-setlocal noundofile
-setlocal undolevels=-123456
-setlocal varsofttabstop=
-setlocal vartabstop=
-setlocal virtualedit=
-setlocal wincolor=
-setlocal nowinfixbuf
-setlocal nowinfixheight
-setlocal nowinfixwidth
-setlocal winhighlight=
-setlocal wrap
-setlocal wrapmargin=0
-silent! normal! zE
-&fdl = &fdl
-{
-  var l: number = 66 - ((29 * winheight(0) + 23) / 46)
-  if l < 1 | l = 1 | endif
-  keepjumps exe ":" .. l
-  normal! zt
-  keepjumps :66
-  normal! 0
-}
-tabnext
-edit deps/XPFW/src/PackFile.c
-argglobal
-balt deps/XPFW/src_demo/caf0_pack.cpp
-setlocal keymap=
-setlocal noarabic
-setlocal noautoindent
-setlocal backupcopy=
-setlocal balloonexpr=
-setlocal nobinary
-setlocal nobreakindent
-setlocal breakindentopt=
-setlocal bufhidden=
-setlocal buflisted
-setlocal buftype=
-setlocal cindent
-setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal cinoptions=
-setlocal cinscopedecls=public,protected,private
-setlocal cinwords=if,else,while,do,for,switch
-setlocal colorcolumn=
-legacy setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,:///,://
-legacy setlocal commentstring=/*\ %s\ */
-setlocal complete=.,w,b,u,t,i
-setlocal completefunc=
-setlocal completeopt=
-setlocal concealcursor=
-setlocal conceallevel=0
-setlocal nocopyindent
-setlocal cryptmethod=
-setlocal nocursorbind
-setlocal nocursorcolumn
-setlocal nocursorline
-setlocal cursorlineopt=both
-legacy setlocal define=^\\s*#\\s*define
-setlocal dictionary=
-setlocal nodiff
-setlocal diffanchors=
-setlocal equalprg=
-setlocal errorformat=
-setlocal eventignorewin=
-setlocal noexpandtab
-if &filetype != 'c'
-setlocal filetype=c
-endif
-setlocal fillchars=
-setlocal findfunc=
-setlocal fixendofline
-setlocal foldcolumn=0
-setlocal foldenable
-setlocal foldexpr=0
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldmarker={{{,}}}
-setlocal foldmethod=manual
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldtext=foldtext()
-setlocal formatexpr=
-setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
-legacy setlocal formatoptions=croql
-setlocal formatprg=
-setlocal grepformat=
-setlocal grepprg=
-setlocal iminsert=0
-setlocal imsearch=-1
-legacy setlocal include=^\\s*#\\s*include
-setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal noinfercase
-legacy setlocal iskeyword=@,48-57,_,192-255
-setlocal keywordprg=
-setlocal lhistory=10
-setlocal nolinebreak
-setlocal nolisp
-setlocal lispoptions=
-setlocal lispwords=
-setlocal nolist
-setlocal listchars=
-setlocal makeencoding=
-setlocal makeprg=
-setlocal matchpairs=(:),{:},[:]
-setlocal modeline
-setlocal modifiable
-legacy setlocal nrformats=bin,hex
-set number
-setlocal number
-setlocal numberwidth=4
-legacy setlocal omnifunc=ccomplete#Complete
-setlocal path=
-setlocal nopreserveindent
-setlocal nopreviewwindow
-setlocal quoteescape=\\
-setlocal noreadonly
-set relativenumber
-setlocal relativenumber
-setlocal norightleft
-setlocal rightleftcmd=search
-setlocal noscrollbind
-setlocal scrolloff=-1
-setlocal scrolloffpad=-1
-setlocal shiftwidth=8
-setlocal noshortname
-setlocal showbreak=
-setlocal sidescrolloff=-1
-setlocal signcolumn=auto
-setlocal nosmartindent
-setlocal nosmoothscroll
-setlocal softtabstop=0
-setlocal nospell
-setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
-setlocal spellfile=
-setlocal spelllang=en
-setlocal spelloptions=
-setlocal statusline=
-setlocal statuslineopt=
-setlocal suffixesadd=
-setlocal swapfile
-setlocal synmaxcol=3000
-if &syntax != 'c'
-legacy setlocal syntax=c
-endif
-setlocal tabstop=8
-setlocal tagcase=
-setlocal tagfunc=
-setlocal tags=
-setlocal termwinkey=
-setlocal termwinscroll=10000
-setlocal termwinsize=
-setlocal textwidth=0
-setlocal thesaurus=
-setlocal thesaurusfunc=
-setlocal noundofile
-setlocal undolevels=-123456
-setlocal varsofttabstop=
-setlocal vartabstop=
-setlocal virtualedit=
-setlocal wincolor=
-setlocal nowinfixbuf
-setlocal nowinfixheight
-setlocal nowinfixwidth
-setlocal winhighlight=
-setlocal wrap
-setlocal wrapmargin=0
-silent! normal! zE
-&fdl = &fdl
-{
-  var l: number = 233 - ((40 * winheight(0) + 23) / 46)
-  if l < 1 | l = 1 | endif
-  keepjumps exe ":" .. l
-  normal! zt
-  keepjumps :233
-  normal! 020|
-}
-tabnext 8
+exe ':1resize ' .. ((&lines * 21 + 25) / 51)
+exe 'vert :1resize ' .. ((&columns * 85 + 106) / 212)
+exe ':2resize ' .. ((&lines * 24 + 25) / 51)
+exe 'vert :2resize ' .. ((&columns * 85 + 106) / 212)
+exe ':3resize ' .. ((&lines * 46 + 25) / 51)
+exe 'vert :3resize ' .. ((&columns * 126 + 106) / 212)
+tabnext 4
 set stal=1
 if wipebuf != -1 && len(win_findbuf(wipebuf)) == 0
   silent exe 'bwipe ' .. wipebuf
