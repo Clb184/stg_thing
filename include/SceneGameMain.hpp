@@ -10,6 +10,7 @@
 #include "TextureManager.hpp"
 #include "Sprite.hpp"
 #include "SpriteManager.hpp"
+#include "EnemyManager.hpp"
 #include "StageCtrl.hpp"
 #include "BackgroundCtrl.hpp"
 #include "XASM2Loader.hpp"
@@ -77,7 +78,8 @@ private: // Plane and related
 	XASM2Loader m_ScriptLoader;
 	StageCtrl m_StageCtrl;
 	BackgroundCtrl m_BGCtrl;
-
+	
+	EnemyManager m_EnmMan;
 	SpriteBatcher<40000, 3> m_Sprites;
 	render_texture_t m_GameAreaTex;
 };

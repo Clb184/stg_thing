@@ -9,8 +9,8 @@
 template<typename T>
 struct node_t {
 	bool active;
-	T data;
 	struct node_t<T>* next;
+	T data;
 };
 
 template<typename T, int max_space>

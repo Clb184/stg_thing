@@ -51,6 +51,7 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input, GameInfo* info, S
 
 	m_TexMan.Init(IO);
 	m_Sprites.Init();
+	m_EnmMan.Init();
 	CreateShaders();
 	CreateBackground();
 	
@@ -86,6 +87,7 @@ void SceneGameMain::Move(float dt) {
 	}
 	
 	m_StageCtrl.Move(dt);
+	m_EnmMan.Move(dt);
 	m_BGCtrl.Move(dt);
 }
 
@@ -122,6 +124,8 @@ void SceneGameMain::Draw() {
 	m_PPBG.SetTexID(m_GameAreaTex.texture);
 	m_PPBG.SetPos(16.0f + 200.0f, 240.0f);
 	m_PPBG.Draw();
+
+	m_EnmMan.Draw();
 
 	// UI
 	m_LeftUI.Draw();
