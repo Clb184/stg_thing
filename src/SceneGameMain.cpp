@@ -51,7 +51,6 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input, GameInfo* info, S
 
 	m_TexMan.Init(IO);
 	m_Sprites.Init();
-	m_EnmMan.Init();
 	CreateShaders();
 	CreateBackground();
 	
@@ -225,6 +224,7 @@ bool SceneGameMain::LoadFirstPackResources(GameInfo* info) {
 		uint8_t* base = m_ScriptLoader.GetBase();
 		int offset = m_ScriptLoader.GetEntryPoint();
 		m_StageCtrl.SetupTask(base, offset);
+		m_EnmMan.Init(base);
 	}
 	else {
 		m_Out->LogError("Failed loading demo level");

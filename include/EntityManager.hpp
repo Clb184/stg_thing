@@ -26,7 +26,7 @@ public:
 
 		if(false != m_FreeList.empty()) {
 			Entity ent = m_FreeList.back();
-			ent++;
+			ent = (ent & 0xffffff00) | ((ent + 1) & 0xff); // 8 bits for gen, wraps to 0 at 256, up generation with that cap
 			m_FreeList.pop_back();
 			m_Size++;
 			return ent;

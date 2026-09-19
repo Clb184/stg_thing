@@ -106,6 +106,7 @@ public:
 		assert(id < max_ents && id >= 0);
 		int idx = m_DenseCnt;
 		m_DenseCnt++;
+		m_DenseToEntity[idx] = id;
 		m_SparseID[id] = idx;
 		return idx;
 	}
@@ -132,9 +133,7 @@ public:
 	int Get(Entity id) {
 		id >>= 8;
 		assert(id < max_ents && id >= 0);
-		int idx = m_SparseID[id];
-		assert(idx != 0xffffffff);
-		return idx;
+		return m_SparseID[id];
 	}
 
 	void Clear() {
@@ -144,6 +143,10 @@ public:
 
 	int Size() const {
 		return m_DenseCnt;
+	}
+	
+	Entity* GetData() {
+		return m_DenseToEntity;
 	}
 
 private:

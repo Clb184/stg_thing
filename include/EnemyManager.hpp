@@ -12,13 +12,6 @@
 
 #define ENEMY_MAX 3000
 
-class EnemyManager;
-
-struct enemy_t {
-	Entity entity_id;
-	EnemyManager* enm_man;
-};
-
 class EnemyManager {
 public:
 
@@ -26,12 +19,21 @@ public:
 	EnemyManager();
 	~EnemyManager();
 
-	void Init();
+	void Init(uint8_t* base);
 
 	void Move(float dt);
 	void Draw();
+
+	void SetPos(int idx, float x, float y);
+	DirectX::XMFLOAT2 GetPos(int idx);
+	void Add(float x, float y, int hp, int spriteid, uint32_t offset);
+
 private:
-	list_t<Entity, ENEMY_MAX> m_Enemies;
+	void ApplyDamage();
+
+	void Delete(Entity id);
+private:
+	uint8_t* m_pBase;
 	EntityManager<ENEMY_MAX> m_Entities;
 	FixedSparseSet<ENEMY_MAX> m_Set;
 
@@ -39,7 +41,8 @@ private:
 	int m_HP[ENEMY_MAX];
 	int m_SpriteID[ENEMY_MAX];
 	xasm2_vm_t m_VM[ENEMY_MAX];
-
+	
+	std::vector<Entity> m_FreeList;
 	SpriteBatcher<ENEMY_MAX, 3> m_Batcher;
 };
 

@@ -39,6 +39,7 @@ enum XASM2VM_FLAG : uint32_t {
 struct xasm2_vm_t {
 	uint8_t* src_cmd = nullptr;
 	uint8_t* cmd = nullptr;
+	uint32_t extra_id = 0;
 	uint32_t flags = 0;
 	float wait_time = 0.0f;
 	xasm2_num_t r1 = 0;

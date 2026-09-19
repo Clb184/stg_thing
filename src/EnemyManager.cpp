@@ -1,23 +1,29 @@
 #include "EnemyManager.hpp"
 
 EnemyManager::EnemyManager() {
-
+	m_FreeList.reserve(ENEMY_MAX);
 }
 
 EnemyManager::~EnemyManager() {
 
 }
 
-void EnemyManager::Init() {
-	InitSingleList(&m_Enemies);
+void EnemyManager::Init(uint8_t* base) {
 	m_Entities.Init();
 	m_Set.Init();
 	m_Batcher.Init();
+	m_pBase = base;
+	m_FreeList.clear();
 }
 
 int EnmCallback(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
+	EnemyManager* enm = (EnemyManager*)data;
 	switch(cmd) {
-		case 0x80:
+		case 0x80: // Get pos
+			enm->SetPos(vm->extra_id, vm->r1.f, vm->r2.f);
+			break;
+		case 0x81: // Set pos
+			enm->SetPos(vm->extra_id, vm->r1.f, vm->r2.f);
 			break;
 		default:
 			return -1;
@@ -26,13 +32,41 @@ int EnmCallback(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
 };
 
 void EnemyManager::Move(float dt) {
-	if(m_Enemies.count <= 0) return;
-	for (node_t<Entity>* e = m_Enemies.head; e != 0; e = e->next) {
-		uint32_t id = m_Set.Get(e->data);
-		XASM2Move(&m_VM[id], dt, EnmCallback, this);
+	Entity* ents = m_Set.GetData();
+	for (int i = 0; i < m_Set.Size(); i++) {
+		uint32_t idx = m_Set.Get(ents[i]);
+		m_VM[idx].extra_id = idx;
+		XASM2Move(&m_VM[idx], dt, EnmCallback, this);
 	}
 }
 
 void EnemyManager::Draw() {
 	//for
+}
+
+void EnemyManager::SetPos(int idx, float x, float y) {
+	m_EnemyPos[idx] = {x, y};
+}
+
+void EnemyManager::Add(float x, float y, int hp, int spriteid, uint32_t offset) {
+	Entity id = m_Entities.CreateEntity();
+	int idx = m_Set.Add(id);
+	m_EnemyPos[idx] = {x, y};
+	m_HP[idx] = hp;
+	m_SpriteID[idx] = spriteid;
+
+	XASM2VMInit(&m_VM[idx], m_pBase, offset);
+}
+
+void EnemyManager::Delete(Entity id) {
+	int thisi = m_Set.Get(id);
+	m_Entities.DeleteEntity(id);
+	m_Set.Delete(id);
+	int last = m_Set.Size();
+
+	// Swap and pop
+	m_EnemyPos[thisi] = m_EnemyPos[last];
+	m_HP[thisi] = m_HP[last];
+	m_SpriteID[thisi] = m_SpriteID[last];
+	m_VM[thisi] = m_VM[last];
 }
