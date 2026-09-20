@@ -20,7 +20,11 @@ int EnmCallback(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
 	EnemyManager* enm = (EnemyManager*)data;
 	switch(cmd) {
 		case 0x80: // Get pos
-			enm->SetPos(vm->extra_id, vm->r1.f, vm->r2.f);
+		{
+			DirectX::XMFLOAT2 pos = enm->GetPos(vm->extra_id);
+			vm->r1.f = pos.x;
+			vm->r2.f = pos.y;
+		}
 			break;
 		case 0x81: // Set pos
 			enm->SetPos(vm->extra_id, vm->r1.f, vm->r2.f);
@@ -46,6 +50,10 @@ void EnemyManager::Draw() {
 
 void EnemyManager::SetPos(int idx, float x, float y) {
 	m_EnemyPos[idx] = {x, y};
+}
+
+DirectX::XMFLOAT2 EnemyManager::GetPos(int idx) {
+	return m_EnemyPos[idx];
 }
 
 void EnemyManager::Add(float x, float y, int hp, int spriteid, uint32_t offset) {
