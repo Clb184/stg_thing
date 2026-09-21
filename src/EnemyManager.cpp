@@ -22,12 +22,12 @@ int EnmCallback(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
 		case 0x80: // Get pos
 		{
 			DirectX::XMFLOAT2 pos = enm->GetPos(vm->extra_id);
-			vm->r1.f = pos.x;
-			vm->r2.f = pos.y;
+			vm->r[0].f = pos.x;
+			vm->r[1].f = pos.y;
 		}
 			break;
 		case 0x81: // Set pos
-			enm->SetPos(vm->extra_id, vm->r1.f, vm->r2.f);
+			enm->SetPos(vm->extra_id, vm->r[0].f, vm->r[1].f);
 			break;
 		default:
 			return -1;

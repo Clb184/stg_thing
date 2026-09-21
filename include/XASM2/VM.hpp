@@ -42,10 +42,11 @@ struct xasm2_vm_t {
 	uint32_t extra_id = 0;
 	uint32_t flags = 0;
 	float wait_time = 0.0f;
-	xasm2_num_t r1 = 0;
+	xasm2_num_t r[4];
+	/*
 	xasm2_num_t r2 = 0;
 	xasm2_num_t r3 = 0;
-	xasm2_num_t r4 = 0;
+	xasm2_num_t r4 = 0;*/
 	uint32_t frame_ptr = 0;
 	uint32_t stack_ptr = 0;
 	xasm2_num_t* stack = nullptr;
