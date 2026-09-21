@@ -1,0 +1,17 @@
+{
+	"name" : "anim",
+	"cmd" : [
+		{ "name" : "tex", "args" : ["integer"] },
+		{ "name" : "size", "args" : ["float", "float"]},
+		{ "name" : "rot", "args" : ["float"]},
+		{ "name" : "scale", "args" : ["float", "float"]},
+		{ "name" : "uv", "args" : ["float", "float", "float", "float"]}
+	],
+	"set" : [
+		{
+			"name" : "enemy",
+			"values" : [
+			]
+		}
+	]
+}

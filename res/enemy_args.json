@@ -1,0 +1,20 @@
+{
+	"name" : "enemy",
+	"cmd" : [
+		{ "name" : "getpos" },
+		{ "name" : "setpos" },
+		{ "name" : "anm", "args" : ["address"] },
+		{ "name" : "musicload" },
+		{ "name" : "musicplay" },
+		{ "name" : "musicpause" },
+		{ "name" : "musicstop" },
+		{ "name" : "setcamera", "args" : ["address"]}
+	],
+	"set" : [
+		{
+			"name" : "enemy",
+			"values" : [
+			]
+		}
+	]
+}

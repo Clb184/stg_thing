@@ -36,6 +36,9 @@ int XASM2StageTask(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
 			}
 			vm->cmd += 4;
 			break;
+		case 0x85:
+			task->enm_man.AddEnemy(vm->r[0].f, vm->r[1].f, vm->r[2].i, *(int*)vm->cmd);
+			vm->cmd += 4;
 		default: return -1;
 	}
 	return 0;

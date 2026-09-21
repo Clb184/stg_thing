@@ -8,9 +8,10 @@ StageCtrl::~StageCtrl() {
 
 }
 
-bool StageCtrl::Init(BackgroundCtrl* bg) {
+bool StageCtrl::Init(BackgroundCtrl* bg, EnemyManager* enm) {
 	m_Stage.Init();
 	m_Stage.bg_ctrl = bg;
+	m_Stage.enm_man = enm;
 	return true;
 }
 

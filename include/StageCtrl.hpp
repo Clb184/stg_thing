@@ -3,13 +3,14 @@
 
 #include "TaskStage.hpp"
 #include "BackgroundCtrl.hpp"
+#include "EnemyManager.hpp"
 
 class StageCtrl {
 public:
 	StageCtrl();
 	~StageCtrl();
 
-	bool Init(BackgroundCtrl* bg);
+	bool Init(BackgroundCtrl* bg, EnemyManager* enm);
 	bool SetupTask(uint8_t* base, int offset);
 	void Move(float dt);
 	void Draw();

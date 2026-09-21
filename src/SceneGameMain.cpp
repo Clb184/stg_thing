@@ -224,7 +224,7 @@ bool SceneGameMain::LoadFirstPackResources(GameInfo* info) {
 		uint8_t* base = m_ScriptLoader.GetBase();
 		int offset = m_ScriptLoader.GetEntryPoint();
 		m_StageCtrl.SetupTask(base, offset);
-		m_EnmMan.Init(base);
+		m_EnmMan.Init(base, m_BGCtrl);
 	}
 	else {
 		m_Out->LogError("Failed loading demo level");

@@ -16,6 +16,7 @@ struct TaskStage {
 	int GRI[4];
 	float GRF[4];
 	BackgroundCtrl* bg_ctrl;
+	EnemyManager* enm_man;
 };
 
 #endif
