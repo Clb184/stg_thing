@@ -24,8 +24,8 @@ enum XASM2_CMD : uint8_t {
 	XASM2_SET, // (int) Frame offset, (number) value // Set stack offset to value
 	XASM2_SETM, // (int) Member index, (number) value
 	XASM2_SETG, // (int) Global index, (number) value
-	XASM2_MOVR, // Set register value of another
 	XASM2_MOV, // (int) Dst Frame offset, (int) Src Frame offset // Set stack offset to other offset value
+	XASM2_MOVR, // (byte) (byte) Mov reg value to reg
 	XASM2_PUSH, // Push reg 1 onto stack
 	XASM2_POP, // (byte) reg // Pop onto reg
 	XASM2_POP2, // Pop value

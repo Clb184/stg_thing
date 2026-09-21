@@ -110,6 +110,7 @@ start:
 	case XASM2_LOADM:
 		assert(nullptr != vm->member_reg);
 		vm->cmd++;
+		assert(*vm->cmd >= 0 && *vm->cmd < 4);
 		assert(*((int*)(vm->cmd + 1)) < vm->member_regs);
 		vm->r[*vm->cmd] = (xasm2_num_t)vm->member_reg[*(int*)(vm->cmd + 1)];
 		vm->cmd += 1 + sizeof(int);
@@ -117,6 +118,7 @@ start:
 	case XASM2_LOADG:
 		assert(nullptr != vm->global_reg);
 		vm->cmd++;
+		assert(*vm->cmd >= 0 && *vm->cmd < 4);
 		assert(*((int*)(vm->cmd + 1)) < vm->global_regs);
 		vm->r[*vm->cmd] = (xasm2_num_t)vm->global_reg[*(int*)(vm->cmd + 1)];
 		vm->cmd += 1 + sizeof(int);
@@ -161,6 +163,14 @@ start:
 	case XASM2_MOV:
 		vm->cmd++;
 		vm->stack[vm->frame_ptr + *(int*)vm->cmd] = vm->stack[vm->frame_ptr + *(int*)(vm->cmd + sizeof(int))];
+		vm->cmd += 2 * sizeof(int);
+		goto start;
+
+	case XASM2_MOVR:
+		vm->cmd++;
+		assert(*vm->cmd >= 0 && *vm->cmd < 4);
+		assert(*(vm->cmd + 1) >= 0 && *(vm->cmd + 1) < 4);
+		vm->r[*vm->cmd] = vm->r[*(vm->cmd + 1)];
 		vm->cmd += 2 * sizeof(int);
 		goto start;
 

@@ -75,6 +75,7 @@ inline const cmd_map cmd2byte = { // Table with base command values
  	{"setm", {XASM2_SETM, {ARG_INTEGER, ARG_NUMBER}}},
  	{"setg", {XASM2_SETG, {ARG_INTEGER, ARG_NUMBER}}},
 	{"mov", {XASM2_MOV, {ARG_INTEGER, ARG_INTEGER}}},
+	{"movr", {XASM2_MOVR, {ARG_REGISTER, ARG_REGISTER}}},
 	{"push", {XASM2_PUSH, {}}},
 	{"pop", {XASM2_POP, {ARG_REGISTER}}},
 	{"pop2", {XASM2_POP2, {}}},
