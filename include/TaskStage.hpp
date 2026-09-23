@@ -4,6 +4,8 @@
 #include "XASM2/VM.hpp"
 #include "BackgroundCtrl.hpp"
 
+class EnemyManager;
+
 struct TaskStage {
 	TaskStage();
 	~TaskStage();

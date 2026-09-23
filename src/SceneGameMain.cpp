@@ -54,9 +54,10 @@ bool SceneGameMain::Init(GameState* state, InputDevice* input, GameInfo* info, S
 	CreateShaders();
 	CreateBackground();
 	
-	// Init scripts
-	m_StageCtrl.Init(&m_BGCtrl);
+	// Init managers and controls
+	m_StageCtrl.Init(&m_BGCtrl, &m_EnmMan);
 	m_BGCtrl.Init(&m_TexMan);
+	m_EnmMan.Init(&m_BGCtrl);
 
 	m_BGCtrl.SetDebugControl(input);
 	LoadFirstPackResources(info);
@@ -224,7 +225,7 @@ bool SceneGameMain::LoadFirstPackResources(GameInfo* info) {
 		uint8_t* base = m_ScriptLoader.GetBase();
 		int offset = m_ScriptLoader.GetEntryPoint();
 		m_StageCtrl.SetupTask(base, offset);
-		m_EnmMan.Init(base, m_BGCtrl);
+		m_EnmMan.SetBaseAddress(base);
 	}
 	else {
 		m_Out->LogError("Failed loading demo level");

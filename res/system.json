@@ -1,5 +1,0 @@
-{
-	"cmd" : [
-		{ "name": "printreg", "value": "0x80" }
-	]
-}

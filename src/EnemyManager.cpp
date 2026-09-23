@@ -1,6 +1,7 @@
 #include "EnemyManager.hpp"
 #include "GameCore.hpp"
 #include "OpenGL/Texture.h"
+#include "cassert"
 
 EnemyManager::EnemyManager() {
 	m_FreeList.reserve(ENEMY_MAX);
@@ -10,18 +11,22 @@ EnemyManager::~EnemyManager() {
 
 }
 
-void EnemyManager::Init(uint8_t* base, BackgroundCtrl* bgctrl) {
+void EnemyManager::Init(BackgroundCtrl* bgctrl) {
 	m_Entities.Init();
 	m_Set.Init();
 	m_Batcher.Init();
-	m_pBase = base;
+	m_pBase = 0;
 	m_FreeList.clear();
 	m_pBGCtrl = bgctrl;
 	CreateEmptyTexture(&m_Blank, 0xffffffff);
 }
 
+void EnemyManager::SetBaseAddress(uint8_t* base) {
+	m_pBase = base;
+}
+
 int EnmCallback(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
-	EnemyManager* enm = (ExtManagers*)data;
+	EnemyManager* enm = (EnemyManager*)data;
 	switch(cmd) {
 		case 0x80: // Get pos
 		{
@@ -41,9 +46,7 @@ int EnmCallback(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
 		case 0x85: g_Sound.MusicPause(); break;
 		case 0x86: g_Sound.MusicStop(); break;
 		case 0x87: 
-			if(0 != vm->bg_ctrl) {
-				enm->SetCameraTask(*(int*)vm->cmd);
-			}
+			enm->SetCameraTask(*(int*)vm->cmd);
 			vm->cmd += 4;
 			break;
 		default:
@@ -83,6 +86,7 @@ void EnemyManager::AddEnemy(float x, float y, int hp, uint32_t offset) {
 }
 
 void EnemyManager::SetCameraTask(uint32_t offset) {
+	assert(0 != m_pBGCtrl);
 	m_pBGCtrl->SetupTask(m_pBase, offset);
 }
 

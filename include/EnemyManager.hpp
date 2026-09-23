@@ -24,7 +24,8 @@ public:
 	EnemyManager();
 	~EnemyManager();
 
-	void Init(uint8_t* base, BackgroundCtrl* bgctrl);
+	void Init(BackgroundCtrl* bgctrl);
+	void SetBaseAddress(uint8_t* base);
 
 	void Move(float dt);
 	void Draw();

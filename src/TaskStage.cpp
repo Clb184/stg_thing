@@ -1,6 +1,8 @@
 #include "TaskStage.hpp"
 #include "GameCore.hpp"
+#include "EnemyManager.hpp"
 #include "cstring"
+#include "cassert"
 
 TaskStage::TaskStage() {
 	memset(GRI, 0x00, sizeof(int) * 4);
@@ -37,7 +39,7 @@ int XASM2StageTask(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
 			vm->cmd += 4;
 			break;
 		case 0x85:
-			task->enm_man.AddEnemy(vm->r[0].f, vm->r[1].f, vm->r[2].i, *(int*)vm->cmd);
+			task->enm_man->AddEnemy(vm->r[0].f, vm->r[1].f, vm->r[2].i, *(int*)vm->cmd);
 			vm->cmd += 4;
 		default: return -1;
 	}
