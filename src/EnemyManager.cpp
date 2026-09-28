@@ -63,6 +63,7 @@ void EnemyManager::Move(float dt) {
 	//printf("Enm cnt: %d\n", m_Set.Size());
 	for (int i = 0; i < m_Set.Size(); i++) {
 		uint32_t idx = m_Set.Get(ents[i]);
+		//printf("Id: %d Idx: %d\n", ents[i], idx);
 		m_VM[idx].extra_id = idx;
 		XASM2Move(&m_VM[idx], dt, EnmCallback, this);
 	}

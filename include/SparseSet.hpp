@@ -102,13 +102,13 @@ public:
 	}
 
 	int Add(Entity id) {
-		id >>= 8;
-		printf("id is: %d\n", id);
-		assert(id < max_ents && id >= 0);
+		int id_h = id >> 8;
+		printf("id is: %d\n", id_h);
+		assert(id_h < max_ents && id_h >= 0);
 		int idx = m_DenseCnt;
 		m_DenseCnt++;
 		m_DenseToEntity[idx] = id;
-		m_SparseID[id] = idx;
+		m_SparseID[id_h] = idx;
 		return idx;
 	}
 
