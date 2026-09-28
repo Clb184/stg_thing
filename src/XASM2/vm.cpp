@@ -171,7 +171,7 @@ start:
 		assert(*vm->cmd >= 0 && *vm->cmd < 4);
 		assert(*(vm->cmd + 1) >= 0 && *(vm->cmd + 1) < 4);
 		vm->r[*vm->cmd] = vm->r[*(vm->cmd + 1)];
-		vm->cmd += 2 * sizeof(int);
+		vm->cmd += 2;
 		goto start;
 
 	case XASM2_PUSH:
@@ -693,6 +693,17 @@ start:
 	case XASM2_DELTATIME:
 		vm->cmd++;
 		vm->r[0].f *= dt;
+		goto start;
+
+	case XASM2_PRINTREG:
+		fprintf(stdout, "CMD: 0x%p (0x%x, %d)\n", cmd, *cmd, *cmd);
+		fprintf(stdout, "r1 i: %d f: %f\n", vm->r[0].i, vm->r[0].f);
+		fprintf(stdout, "r2 i: %d f: %f\n", vm->r[1].i, vm->r[1].f);
+		fprintf(stdout, "r3 i: %d f: %f\n", vm->r[2].i, vm->r[2].f);
+		fprintf(stdout, "r4 i: %d f: %f\n", vm->r[3].i, vm->r[3].f);
+		fprintf(stdout, "Frame pointer: %d\n", vm->frame_ptr);
+		fprintf(stdout, "Stack pointer: %d\n", vm->stack_ptr);
+		vm->cmd++;
 		goto start;
 
 	default:

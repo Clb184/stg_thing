@@ -176,6 +176,7 @@ inline const cmd_map cmd2byte = { // Table with base command values
 	{"maxf", {XASM2_MAXF, {}}},
 	{"maxfc", {XASM2_MAXFC, {ARG_FLOAT}}},
 	{"deltatime", {XASM2_DELTATIME, {}}},
+	{"printreg", {XASM2_PRINTREG, {}}},
 };
 /*
 inline std::map<uint8_t, std::vector<ARG_TYPE>> g_ExtraCmdArgs= {}; // Extra commands arguments
