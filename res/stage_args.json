@@ -5,7 +5,8 @@
 		{ "name" : "musicplay" },
 		{ "name" : "musicpause" },
 		{ "name" : "musicstop" },
-		{ "name" : "setcamera", "args" : ["address"]}
+		{ "name" : "setcamera", "args" : ["address"]},
+		{ "name" : "enmcreate", "args" : ["address"]}
 	],
 	"set" : [
 		{

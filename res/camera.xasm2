@@ -1,17 +1,36 @@
 #stage
 @main:
+	; Set camera function
 	setcamera camera
 
+	; Play first music entry
 	loadc r1, 0
 	musicload
 	musicplay
+	
+	; Test enemy
+	loadc r1, 3000
+	printreg
+create:
+	;nop
+	movr r4, r1
+	loadc r1, 100.0
+	loadc r2, 0.0
+	loadc r3, 100
+	enmcreate enm0
+	movr r1, r4
+	dec
+	jmpt create
+	printreg
 
 	wait 60.0
-
+	
+	; Play second music entry
 	loadc r1, 1
 	musicload
 	musicplay
 	
+	; Stop all operations
 	halt
 
 #camera
@@ -41,3 +60,39 @@ redo:
 	subfc 256.0
 	storem 21
 	jmp loop
+
+#enemy
+@enm0:
+	anm anm01
+	enter 2
+	nop
+	debughello
+	loadc r1, 0.0
+	movr r3, r1
+enm0_01:
+	loadc r1, 0.01
+	deltatime
+	movr r2, r1
+	movr r1, r3
+	addf
+	movr r3, r1
+	sin
+	mulfc 100.0
+	addfc 40.0
+	movr r2, r1
+	loadc r1, 0.0
+	setpos
+	
+	nop
+	jmp enm0_01
+	halt
+
+#anim
+@anm01:
+	tex -1 ; Texture unit -1 is blank texture
+	size 32.0, 32.0 ; Size in pixels, width and height
+	rot 0.0 ; Rotation in radians
+	scale 1.0, 1.0 ; Scale x, y
+	uv 0.0, 0.0, 1.0, 1.0 ; UV, texture coordinates for rect
+	halt
+
