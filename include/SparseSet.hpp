@@ -103,6 +103,7 @@ public:
 
 	int Add(Entity id) {
 		id >>= 8;
+		printf("id is: %d\n", id);
 		assert(id < max_ents && id >= 0);
 		int idx = m_DenseCnt;
 		m_DenseCnt++;
