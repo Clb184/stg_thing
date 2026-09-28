@@ -137,6 +137,10 @@ void SceneGameMain::Draw() {
 	sprintf(buf, "Max  : %010d", m_ScoreMax);
 	DrawString(&m_Font, 640.0f - 200.0f, 86.0f, buf, 0xff44eeee);
 
+	// Debug draw
+	sprintf(buf, "Enemies: %d", m_EnmMan.GetSize());
+	DrawString(&m_Font, 640.0f - 200.0f, 120.0f, buf, 0xff44eeee);
+
 	DrawCameraProps();
 }
 

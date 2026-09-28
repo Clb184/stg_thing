@@ -35,6 +35,8 @@ public:
 	void AddEnemy(float x, float y, int hp, uint32_t offset);
 	
 	void SetCameraTask(uint32_t offset);
+
+	int GetSize() const;
 private:
 	void ApplyDamage();
 

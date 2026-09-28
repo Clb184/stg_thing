@@ -49,6 +49,9 @@ int EnmCallback(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
 			enm->SetCameraTask(*(int*)vm->cmd);
 			vm->cmd += 4;
 			break;
+		case 0x88: // Debug message
+			printf("Enemy \"%d\" says hello\n", vm->extra_id);
+			break;
 		default:
 			return -1;
 	}
@@ -57,6 +60,7 @@ int EnmCallback(uint8_t cmd, xasm2_vm_t* vm, float dt, void* data) {
 
 void EnemyManager::Move(float dt) {
 	Entity* ents = m_Set.GetData();
+	//printf("Enm cnt: %d\n", m_Set.Size());
 	for (int i = 0; i < m_Set.Size(); i++) {
 		uint32_t idx = m_Set.Get(ents[i]);
 		m_VM[idx].extra_id = idx;
@@ -88,6 +92,10 @@ void EnemyManager::AddEnemy(float x, float y, int hp, uint32_t offset) {
 void EnemyManager::SetCameraTask(uint32_t offset) {
 	assert(0 != m_pBGCtrl);
 	m_pBGCtrl->SetupTask(m_pBase, offset);
+}
+
+int EnemyManager::GetSize() const {
+	return m_Set.Size();
 }
 
 void EnemyManager::Delete(Entity id) {
