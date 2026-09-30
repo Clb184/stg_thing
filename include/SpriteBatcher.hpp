@@ -28,7 +28,7 @@ public:
 		m_SpriteIndex = 0;
 		m_VA = 0;
 		m_IB = 0;
-		m_pInst = nullptr;
+		//m_pInst = nullptr;
 	}
 
 	~SpriteBatcher() {
@@ -64,7 +64,7 @@ public:
 			{2, 4, GL_UNSIGNED_BYTE, GL_TRUE, (sizeof(float) * 4)}
 		};
 		
-		m_pInst = (SpriteInst*)calloc(sizeof(SpriteInst), 1);
+		//m_pInst = (SpriteInst*)calloc(sizeof(SpriteInst), 1);
 
 		// Vertex array, linked with indices
 		buffer_info_t buffinfo = { m_PBuffer.GetBufferID(), sizeof(TLVertex2D)};
@@ -79,9 +79,9 @@ public:
 		
 	}
 
-	SpriteInst* GetInstances() {
+	/*SpriteInst* GetInstances() {
 		return m_pInst;
-	}
+	}*/
 
 	void InitDrawList() { // Begin a draw list, current sprites = 0, enables the draw list
 		m_bEnabled = true;
@@ -102,37 +102,37 @@ public:
 	}
 
 	void Draw() { // Draw each sprite
-		assert(m_pInst != 0);
+		//assert(m_pInst != 0);
 		if (m_SpriteIndex <= 0) return;
 		
 		TLVertex2D* vertices = (TLVertex2D*)m_PBuffer.RequestBuffer();
 	
 		for (int i = 0; i < m_SpriteIndex; i++) {
-			float c = DirectX::XMScalarCos(m_pInst->dir[i]), s = DirectX::XMScalarSin(m_pInst->dir[i]),
-			      hw = m_pInst->size[i].x * 0.5f, hh = m_pInst->size[i].y * 0.5f;
-			vertices[i*4].x = (c * -hw - s * -hh) + m_pInst->pos[i].x; 
-			vertices[i*4].y = (s * -hw + c * -hh) + m_pInst->pos[i].y; 
-			vertices[i*4].u = m_pInst->uv[i].x;
-			vertices[i*4].v = m_pInst->uv[i].y;
-			vertices[i*4].color = m_pInst->color[i];
+			float c = DirectX::XMScalarCos(m_Dir[i]), s = DirectX::XMScalarSin(m_Dir[i]),
+			      hw = m_Size[i].x * 0.5f, hh = m_Size[i].y * 0.5f;
+			vertices[i*4].x = (c * -hw - s * -hh) + m_Pos[i].x; 
+			vertices[i*4].y = (s * -hw + c * -hh) + m_Pos[i].y; 
+			vertices[i*4].u = m_UV[i].x;
+			vertices[i*4].v = m_UV[i].y;
+			vertices[i*4].color = m_Color[i];
 	
-			vertices[i*4+1].x = (c * -hw - s * hh) + m_pInst->pos[i].x;
-			vertices[i*4+1].y = (s * -hw + c * hh) + m_pInst->pos[i].y;
-			vertices[i*4+1].u = m_pInst->uv[i].x;
-			vertices[i*4+1].v = m_pInst->uv[i].w;
-			vertices[i*4+1].color = m_pInst->color[i];
+			vertices[i*4+1].x = (c * -hw - s * hh) + m_Pos[i].x;
+			vertices[i*4+1].y = (s * -hw + c * hh) + m_Pos[i].y;
+			vertices[i*4+1].u = m_UV[i].x;
+			vertices[i*4+1].v = m_UV[i].w;
+			vertices[i*4+1].color = m_Color[i];
 	
-			vertices[i*4+2].x = (c * hw - s * -hh) + m_pInst->pos[i].x;
-			vertices[i*4+2].y = (s * hw + c * -hh) + m_pInst->pos[i].y;
-			vertices[i*4+2].u = m_pInst->uv[i].z;
-			vertices[i*4+2].v = m_pInst->uv[i].y;
-			vertices[i*4+2].color = m_pInst->color[i];
+			vertices[i*4+2].x = (c * hw - s * -hh) + m_Pos[i].x;
+			vertices[i*4+2].y = (s * hw + c * -hh) + m_Pos[i].y;
+			vertices[i*4+2].u = m_UV[i].z;
+			vertices[i*4+2].v = m_UV[i].y;
+			vertices[i*4+2].color = m_Color[i];
 	
-			vertices[i*4+3].x = (c * hw - s * hh) + m_pInst->pos[i].x;
-			vertices[i*4+3].y = (s * hw + c * hh) + m_pInst->pos[i].y;
-			vertices[i*4+3].u = m_pInst->uv[i].z;
-			vertices[i*4+3].v = m_pInst->uv[i].w;
-			vertices[i*4+3].color = m_pInst->color[i];
+			vertices[i*4+3].x = (c * hw - s * hh) + m_Pos[i].x;
+			vertices[i*4+3].y = (s * hw + c * hh) + m_Pos[i].y;
+			vertices[i*4+3].u = m_UV[i].z;
+			vertices[i*4+3].v = m_UV[i].w;
+			vertices[i*4+3].color = m_Color[i];
 	
 		}
 		
@@ -141,8 +141,8 @@ public:
 		int base = 0;
 		int inst_cnt = 0;
 		for(int i = 0; i < m_SpriteIndex; i++) {
-			if(current_tex != m_pInst->tex_id[i]) {
-				current_tex = m_pInst->tex_id[i];
+			if(current_tex != m_TexID[i]) {
+				current_tex = m_TexID[i];
 				glBindTextureUnit(0, current_tex);
 				if(0 != inst_cnt)
 					glDrawElements(GL_TRIANGLES, base * 6, inst_cnt * 6, 0);
@@ -157,10 +157,10 @@ public:
 	}
 
 	void Cleanup() {
-		if(nullptr != m_pInst) {
+		/*if(nullptr != m_pInst) {
 			free(m_pInst);
 			m_pInst = nullptr;
-		}
+		}*/
 		glDeleteVertexArrays(1, &m_VA);
 		m_VA = 0;
 		glDeleteBuffers(1, &m_IB);
@@ -173,8 +173,25 @@ private:
 	bool m_bEnabled;
 	GLuint m_VA; // Vertex Array
 	GLuint m_IB; // Index Buffer
+	
+	GLuint m_Blank; // Blank texture
+	
+	EntityManager<ENEMY_MAX> m_Entities;
+	FixedSparseSet<ENEMY_MAX> m_Set;
+
+	// Properties
+	DirectX::XMFLOAT2* m_pParentPos;
+	DirectX::XMFLOAT2 m_Pos[cnt]; // Position X Y
+	//DirectX::XMFLOAT2 cossin[cnt]; // Precalc cosine and sine
+	float m_Dir[cnt]; // Angle radians
+	DirectX::XMFLOAT2 m_Size[cnt]; // Size Width Height
+	DirectX::XMFLOAT2 m_Scale[cnt]; // Scale X Y
+	uint32_t m_Color[cnt];
+	DirectX::XMFLOAT4 m_UV[cnt];
+	GLuint m_TexID[cnt];
+
 	int m_SpriteIndex;
-	SpriteInst* m_pInst;
+	//SpriteInst* m_pInst;
 	PersistentBuffer<buffers> m_PBuffer;
 };
 
